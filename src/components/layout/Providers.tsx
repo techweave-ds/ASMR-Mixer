@@ -8,11 +8,10 @@ import { PlayerBar } from "@/components/player/PlayerBar"
 import { BottomNav } from "@/components/layout/BottomNav"
 import { SearchContent } from "@/components/search/SearchContent"
 import { useSettingsStore } from "@/store"
-import { useUiStore } from "@/store"
 
 export function Providers({ children }: { children: React.ReactNode }) {
-  const { theme, reducedMotion } = useSettingsStore()
-  const { rightPanelOpen } = useUiStore()
+  const theme = useSettingsStore((s) => s.theme)
+  const reducedMotion = useSettingsStore((s) => s.reducedMotion)
 
   useEffect(() => {
     document.documentElement.classList.toggle("dark", theme === "dark")
@@ -20,20 +19,20 @@ export function Providers({ children }: { children: React.ReactNode }) {
   }, [theme, reducedMotion])
 
   return (
-    <>
-      <div className="flex min-h-screen bg-bg-base">
+    <div className="h-screen w-screen flex flex-col bg-bg-base overflow-hidden">
+      <div className="flex flex-1 min-h-0">
         <Sidebar />
-        <div className="flex flex-1 flex-col min-w-0 lg:ml-[280px]">
+        <div className="flex flex-1 flex-col min-w-0">
           <TopBar />
-          <main className="flex-1 px-6 py-6 lg:px-10 xl:px-12 pb-28">
+          <main className="flex-1 overflow-y-auto px-6 lg:px-8 xl:px-10 py-6">
             {children}
           </main>
         </div>
-        {rightPanelOpen && <RightPanel />}
+        <RightPanel />
       </div>
       <PlayerBar />
       <BottomNav />
       <SearchContent />
-    </>
+    </div>
   )
 }

@@ -4,6 +4,7 @@ import { audioEngine } from "@/audio"
 interface PlayingState {
   currentSoundId: string | null
   isPlaying: boolean
+  isPaused: boolean
   volume: number
   progress: number
   duration: number
@@ -17,6 +18,7 @@ interface AudioActions {
   playSound: (soundId: string) => Promise<void>
   stopSound: (soundId: string) => Promise<void>
   stopAll: () => void
+  togglePause: () => void
   setVolume: (soundId: string, volume: number) => void
   setMasterVolume: (volume: number) => void
   setTimer: (minutes: number | null) => void
@@ -26,9 +28,12 @@ interface AudioActions {
 
 type AudioStore = PlayingState & AudioActions
 
+let timerInterval: ReturnType<typeof setInterval> | null = null
+
 export const useAudioStore = create<AudioStore>((set, get) => ({
   currentSoundId: null,
   isPlaying: false,
+  isPaused: false,
   volume: 0.8,
   progress: 0,
   duration: 0,
@@ -45,19 +50,21 @@ export const useAudioStore = create<AudioStore>((set, get) => ({
       set({ isPlayingSounds: next, isPlaying: next.size > 0 })
     } else {
       await audioEngine.init()
+      audioEngine.resume()
       await audioEngine.playSound(soundId, get().volume)
       const next = new Set(isPlayingSounds)
       next.add(soundId)
-      set({ isPlayingSounds: next, isPlaying: true, currentSoundId: soundId })
+      set({ isPlayingSounds: next, isPlaying: true, isPaused: false })
     }
   },
 
   playSound: async (soundId: string) => {
     await audioEngine.init()
+    audioEngine.resume()
     await audioEngine.playSound(soundId, get().volume)
     const next = new Set(get().isPlayingSounds)
     next.add(soundId)
-    set({ isPlayingSounds: next, isPlaying: true, currentSoundId: soundId })
+    set({ isPlayingSounds: next, isPlaying: true, isPaused: false })
   },
 
   stopSound: async (soundId: string) => {
@@ -69,32 +76,61 @@ export const useAudioStore = create<AudioStore>((set, get) => ({
 
   stopAll: () => {
     audioEngine.stopAll()
-    set({ isPlayingSounds: new Set(), isPlaying: false, currentSoundId: null })
+    set({ isPlayingSounds: new Set(), isPlaying: false, isPaused: false })
+  },
+
+  togglePause: () => {
+    const { isPaused, isPlaying } = get()
+    if (!isPlaying && isPaused) {
+      audioEngine.resume()
+      set({ isPlaying: true, isPaused: false })
+    } else if (isPlaying) {
+      audioEngine.suspend()
+      set({ isPlaying: false, isPaused: true })
+    }
   },
 
   setVolume: (soundId: string, volume: number) => {
     audioEngine.setSoundVolume(soundId, volume)
-    set({ volume })
   },
 
   setMasterVolume: (volume: number) => {
     audioEngine.setMasterVolume(volume)
-    set({ volume })
   },
 
   setTimer: (minutes: number | null) => {
+    const { cancelTimer } = get()
+    cancelTimer()
+
     if (minutes) {
-      audioEngine.setFadeTimer(minutes, () => {
-        set({ isPlayingSounds: new Set(), isPlaying: false, timerRemaining: null, timerMinutes: null })
-      })
+      const endTime = Date.now() + minutes * 60 * 1000
+      set({ timerMinutes: minutes, timerRemaining: minutes * 60 })
+
+      timerInterval = setInterval(() => {
+        const state = get()
+        if (state.isPlayingSounds.size === 0) {
+          if (timerInterval) { clearInterval(timerInterval); timerInterval = null }
+          set({ timerMinutes: null, timerRemaining: null })
+          return
+        }
+        const remaining = Math.max(0, Math.round((endTime - Date.now()) / 1000))
+        set({ timerRemaining: remaining })
+        if (remaining <= 0) {
+          if (timerInterval) { clearInterval(timerInterval); timerInterval = null }
+          audioEngine.fadeOutAll(30)
+          set({ isPlayingSounds: new Set(), isPlaying: false, isPaused: false, timerMinutes: null, timerRemaining: null })
+        }
+      }, 1000)
     }
-    set({ timerMinutes: minutes, timerRemaining: minutes ? minutes * 60 : null })
   },
 
   cancelTimer: () => {
+    if (timerInterval) { clearInterval(timerInterval); timerInterval = null }
     audioEngine.cancelFadeTimer()
     set({ timerMinutes: null, timerRemaining: null })
   },
+
+
 
   isSoundPlaying: (soundId: string) => {
     return get().isPlayingSounds.has(soundId)

@@ -15,23 +15,14 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Silent Circuit – Premium ASMR & Ambient Sounds",
-  description:
-    "Immerse yourself in premium-quality ambient soundscapes. Relax, sleep, study, and focus with Silent Circuit.",
+  description: "Immerse yourself in premium-quality ambient soundscapes. Relax, sleep, study, and focus with Silent Circuit.",
   icons: { icon: "/favicon.ico" },
 }
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode
-}>) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html
-      lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased dark`}
-      suppressHydrationWarning
-    >
-      <body className="min-h-full bg-bg-base text-text-primary" suppressHydrationWarning>
+    <html lang="en" className={`${geistSans.variable} ${geistMono.variable} dark`} suppressHydrationWarning>
+      <body suppressHydrationWarning>
         <Providers>{children}</Providers>
       </body>
     </html>

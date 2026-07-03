@@ -13,36 +13,21 @@ export function SearchContent() {
   const results = useMemo(() => {
     if (!query.trim()) return []
     const q = query.toLowerCase()
-    return sounds.filter(
-      (s) =>
-        s.title.toLowerCase().includes(q) ||
-        s.tags.some((t) => t.toLowerCase().includes(q)) ||
-        s.category.toLowerCase().includes(q) ||
-        s.description.toLowerCase().includes(q)
-    )
+    return sounds.filter((s) => s.title.toLowerCase().includes(q) || s.tags.some((t) => t.toLowerCase().includes(q)) || s.category.toLowerCase().includes(q))
   }, [query])
-
-  const trendingSounds = useMemo(() => sounds.slice(0, 6), [])
 
   if (!searchOpen) return null
 
   return (
     <div className="fixed inset-0 z-50 bg-bg-base/95 backdrop-blur-2xl">
-      <div className="mx-auto max-w-2xl px-4 pt-16">
+      <div className="mx-auto max-w-2xl px-4 pt-20">
         <div className="relative">
           <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-text-quaternary" />
-          <input
-            type="text"
-            placeholder="Search sounds, categories, tags..."
-            value={query}
+          <input type="text" placeholder="Search sounds, categories, tags..." value={query}
             onChange={(e) => setQuery(e.target.value)}
-            className="w-full rounded-2xl border border-border bg-glass py-4 pl-12 pr-12 text-base text-text-primary outline-none transition-all placeholder:text-text-quaternary focus:border-accent/50"
-            autoFocus
-          />
-          <button
-            onClick={() => { setSearchOpen(false); setQuery("") }}
-            className="absolute right-4 top-1/2 -translate-y-1/2 text-text-quaternary hover:text-text-secondary transition-colors"
-          >
+            className="w-full rounded-xl border border-border bg-glass py-4 pl-12 pr-12 text-base text-text-primary outline-none placeholder:text-text-quaternary focus:border-accent/50 transition-all" autoFocus />
+          <button onClick={() => { setSearchOpen(false); setQuery("") }}
+            className="absolute right-4 top-1/2 -translate-y-1/2 text-text-quaternary hover:text-text-secondary transition-colors">
             <X size={18} />
           </button>
         </div>
@@ -52,11 +37,7 @@ export function SearchContent() {
             <p className="text-xs text-text-tertiary mb-3">{results.length} result{results.length > 1 ? 's' : ''} found</p>
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
               {results.map((sound) => (
-                <SoundCard
-                  key={sound.id}
-                  {...sound}
-                  onClick={() => { addRecentSearch(query); setSearchOpen(false); setQuery("") }}
-                />
+                <SoundCard key={sound.id} {...sound} onClick={() => { addRecentSearch(query); setSearchOpen(false); setQuery("") }} />
               ))}
             </div>
           </div>
@@ -74,38 +55,28 @@ export function SearchContent() {
           <div className="animate-fade-in">
             {recentSearches.length > 0 && (
               <div className="mt-8">
-                <div className="mb-3 flex items-center justify-between">
+                <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-2">
                     <Clock size={14} className="text-text-tertiary" />
                     <span className="text-sm font-medium text-text-secondary">Recent Searches</span>
                   </div>
-                  <button onClick={clearRecentSearches} className="text-[10px] text-text-quaternary hover:text-text-secondary transition-colors">
-                    Clear All
-                  </button>
+                  <button onClick={clearRecentSearches} className="text-[10px] text-text-quaternary hover:text-text-secondary transition-colors">Clear All</button>
                 </div>
                 <div className="flex flex-wrap gap-2">
                   {recentSearches.map((s) => (
-                    <button
-                      key={s}
-                      onClick={() => setQuery(s)}
-                      className="rounded-full bg-glass border border-border-subtle px-3 py-1.5 text-xs text-text-tertiary transition-colors hover:text-text-secondary hover:bg-glass-hover"
-                    >
-                      {s}
-                    </button>
+                    <button key={s} onClick={() => setQuery(s)}
+                      className="rounded-full bg-glass border border-border-subtle px-3 py-1.5 text-xs text-text-tertiary hover:text-text-secondary hover:bg-glass-hover transition-colors">{s}</button>
                   ))}
                 </div>
               </div>
             )}
-
             <div className="mt-8">
-              <div className="mb-4 flex items-center gap-2">
+              <div className="flex items-center gap-2 mb-4">
                 <TrendingUp size={14} className="text-accent-light" />
                 <span className="text-sm font-medium text-text-secondary">Trending Sounds</span>
               </div>
               <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-                {trendingSounds.map((sound) => (
-                  <SoundCard key={sound.id} {...sound} />
-                ))}
+                {sounds.slice(0, 6).map((sound) => (<SoundCard key={sound.id} {...sound} />))}
               </div>
             </div>
           </div>

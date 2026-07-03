@@ -528,6 +528,14 @@ class AsmrAudioEngine {
     }
   }
 
+  suspend(): void {
+    if (this.ctx?.state === "running") this.ctx.suspend()
+  }
+
+  resume(): void {
+    if (this.ctx?.state === "suspended") this.ctx.resume()
+  }
+
   setMasterVolume(volume: number): void {
     if (this.masterGain) {
       this.masterGain.gain.linearRampToValueAtTime(Math.max(0, Math.min(1, volume)), this.ctx!.currentTime + 0.05)
@@ -608,7 +616,7 @@ class AsmrAudioEngine {
     if (this.fadeTimer) { clearTimeout(this.fadeTimer); this.fadeTimer = null }
   }
 
-  private async fadeOutAll(durationSeconds: number): Promise<void> {
+  async fadeOutAll(durationSeconds: number): Promise<void> {
     if (!this.masterGain) return
     const now = this.ctx!.currentTime
     this.masterGain.gain.linearRampToValueAtTime(0, now + durationSeconds)
