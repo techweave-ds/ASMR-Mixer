@@ -7,7 +7,7 @@
 | **Framework** | Next.js | 16.2.7 | React framework, routing, static export |
 | **Language** | TypeScript | 5.x | Type safety throughout |
 | **Styling** | TailwindCSS | v4 | Utility-first CSS with `@theme inline` tokens |
-| **Animation** | framer-motion | 12.x | Page transitions, entrance sequences, UI motion |
+| **Animation** | framer-motion | 12.x | Page transitions, entrance sequences, drag-and-drop |
 | **State** | zustand | 5.x | Lightweight global state (no context boilerplate) |
 | **3D** | three + @react-three/fiber + @react-three/drei | 0.185 / 9.6 / 10.7 | Hero 3D scene, interactive orbs, environments |
 | **Audio** | Web Audio API | native | Procedural sound generation (no audio files) |
@@ -22,7 +22,7 @@
 | **Static export** | Zero server cost, global CDN, SPA-like UX after first load |
 | **TailwindCSS v4** | `@theme inline` tokens map directly to Volume 2 design system; no CSS-in-JS overhead |
 | **zustand** | Simpler than Redux, no providers needed, selectors prevent re-renders, works outside React (audio engine) |
-| **framer-motion** | Industry standard for React animation; AnimatePresence for route transitions |
+| **framer-motion** | Industry standard for React animation; AnimatePresence for route transitions; Reorder for drag-and-drop |
 | **Three.js/R3F** | Declarative 3D that integrates with React component model |
 | **Web Audio API** | Zero bundle size for audio; fully procedural — every sound is generated in real-time |
 | **no audio files** | All 56+ sounds use oscillators, noise buffers, LFOs, and scheduled intervals |
@@ -93,16 +93,21 @@ The **7 stores** (audio, mixer, favorites, settings, ui, toast, search) each han
 ## Audio Engine Architecture
 
 ```
-AudioEngine class
+AudioEngine class (singleton)
 ├── AudioContext (lazy init on first user gesture)
-├── masterGainNode
-├── Map<soundId, { source, gain, nodes }>
-├── Methods: init(), playSound(), stopSound(), stopAll(),
-│            suspend(), resume(), fadeOutAll(), setMasterVolume()
-└── Sleep timer via setInterval with 30s volume fade-out
+├── masterGainNode (linearRampToValueAtTime for all volume changes)
+├── Map<soundId, { gain, nodes[], cleanup }>
+├── MAX_CONCURRENT_SOUNDS = 16 (soft ceiling)
+├── init() → check/restore suspended AudioContext, try-catch wrapped
+├── playSound(id, vol) → ensureContext() + builder graph
+├── stopSound(id) → linearRampToValueAtTime fade, proper node cleanup with block-scoped try-catch
+├── stopAll() → iterates activeSounds
+├── fadeOutAll(sec) → linear ramp masterGain to 0, wait, stopAll, restore gain
+├── suspend/resume → AudioContext.state check
+└── Sleep timer → setTimeout → fadeOutAll(30) over 30 seconds
 ```
 
-The engine is a singleton (`src/audio/engine.ts`). All 56+ sound profiles are defined as configuration objects with generator functions — each sound knows how to build its own oscillator/noise/interval graph.
+The engine is a singleton (`src/audio/engine.ts`). All 56+ sound profiles are defined as configuration objects with generator functions — each sound knows how to build its own oscillator/noise/interval graph. Base functions (noiseSource, lfoModulate, makeChirp, makeClick, makeCrackle, makeRumble) all use `setValueAtTime`/`linearRampToValueAtTime` for precise scheduling.
 
 ## Build & Deploy
 

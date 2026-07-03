@@ -46,6 +46,6 @@ export const useSettingsStore = create<SettingsStore>()(
       setReducedMotion: (enabled) => set({ reducedMotion: enabled }),
       setLanguage: (language) => set({ language }),
     }),
-    { name: "asmr-settings-storage" }
+    { name: "noctune-settings-storage" }
   )
 )

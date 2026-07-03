@@ -1,11 +1,9 @@
 "use client"
 
 import { useEffect } from "react"
-import { useRouter } from "next/navigation"
 import { useUiStore, useAudioStore, useToastStore } from "@/store"
 
 export function useKeyboardShortcuts() {
-  const router = useRouter()
   const togglePause = useAudioStore((s) => s.togglePause)
   const isPlaying = useAudioStore((s) => s.isPlaying)
   const setSearchOpen = useUiStore((s) => s.setSearchOpen)

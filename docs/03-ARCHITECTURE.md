@@ -6,6 +6,7 @@
 ┌─────────────────────────────────────────────────────────┐
 │                    Next.js App Router                    │
 │  /  /explore  /mixer  /favorites  /profile  /settings   │
+│  /robots.txt  /sitemap.xml  /_not-found                  │
 ├─────────────────────────────────────────────────────────┤
 │                    Providers (layout)                    │
 │  ┌─────────┬─────────────────────┬──────────────┐       │
@@ -14,8 +15,10 @@
 │  ├─────────┴─────────────────────┴──────────────┤       │
 │  │              PlayerBar (92px)                 │       │
 │  ├──────────────────────────────────────────────┤       │
-│  │              BottomNav (mobile)               │       │
+│  │              BottomNav (mobile, 64px)         │       │
 │  └──────────────────────────────────────────────┘       │
+│  SearchContent (⌘K overlay)                              │
+│  ToastContainer (fixed bottom-right)                     │
 └─────────────────────────────────────────────────────────┘
 ```
 
@@ -24,7 +27,7 @@
 | Page | Layout | Description |
 |------|--------|-------------|
 | `/` (Home) | Immersive | Full-screen hero, no sidebar/topbar/rightpanel, `overflow-y-auto` |
-| All other pages | App shell | Sidebar \| content+topbar \| right panel + player bar |
+| All other pages | App shell | Sidebar \| content+topbar \| right panel + player bar + bottom nav |
 
 ## Component Hierarchy
 
@@ -34,21 +37,21 @@ Providers (wraps all routes)
 ├── SearchContent (full-screen overlay, toggled via ⌘K)
 │
 ├── [HOME PAGE] ─── div.h-screen.overflow-y-auto
-│   ├── Hero3D (Three.js canvas, 100vh)
+│   ├── Hero3D (Three.js canvas, 100vh, auto-degraded to static on low-power mobile)
 │   ├── HeroOverlay (text overlays, entrance sequence)
-│   ├── HomeContent (scroll narrative sections)
+│   ├── HomeContent (opaque bg-bg-primary sections, blocks hero bleed-through)
 │   ├── PlayerBar (always at bottom)
 │   └── BottomNav (mobile only)
 │
 └── [OTHER PAGES] ─── div.h-screen.flex
-    ├── Sidebar (280px, nav + library + collections)
+    ├── Sidebar (280px, off-canvas on mobile, nav + library + premium card)
     ├── div.flex-1
-    │   ├── TopBar (scroll-aware frosted glass)
+    │   ├── TopBar (scroll-aware frosted glass, hamburger on mobile)
     │   └── main (overflow-y-auto, AnimatePresence pages)
-    └── RightPanel (360px, always mounted, closable)
+    └── RightPanel (360px desktop / bottom sheet mobile, always mounted)
     │
-    ├── PlayerBar (always at bottom, 92px)
-    └── BottomNav (mobile only)
+    ├── PlayerBar (always at bottom, 92px desktop / 82px mobile)
+    └── BottomNav (fixed bottom, 5 items, mobile only)
 ```
 
 ## Page → Content Component Mapping
@@ -56,11 +59,13 @@ Providers (wraps all routes)
 | Route | Content Component | Description |
 |-------|-------------------|-------------|
 | `/` | Hero3D + HeroOverlay + HomeContent | Full-screen 3D hero + narrative scroll |
-| `/explore` | ExploreContent | Sound browser with filters, categories |
+| `/explore` | ExploreContent | Sound browser with category chips, horizontal scroll |
 | `/mixer` | MixerContent | Layer mixer with save/load presets |
-| `/favorites` | (direct rendering) | Saved sounds and collections |
-| `/profile` | ProfileContent | Account, preferences, usage stats |
+| `/favorites` | FavoritesContent | Saved sounds and collections |
+| `/profile` | ProfileContent | Account, stats, listening history |
 | `/settings` | SettingsContent | Appearance, Audio, Playback, Privacy (Vol 3 §17) |
+| 404 | not-found.tsx | Custom 404 with gradient title + Go Home link |
+| Error | error.tsx | Client error boundary with Try Again reset |
 
 ## Store Architecture
 
@@ -80,10 +85,10 @@ Providers (wraps all routes)
 │ volume   │  │ save()   │  │ []       │  │ motion   │  │open      │  │remove    │  │setQuery  │
 │ timer    │  │ load()   │  │ add()    │  │ crossfade│  │right     │  │ Toast()  │  │ ()       │
 │ toggle   │  │ delete() │  │ remove() │  │ timer    │  │Panel     │  │          │  │          │
-│ Sound()  │  │          │  │          │  │ notifs   │  │          │  │          │  │          │
+│ Sound()  │  │          │  │          │  │ notifs+  │  │open      │  │          │  │          │
 ├──────────┤  ├──────────┤  ├──────────┤  ├──────────┤  ├──────────┤  ├──────────┤  ├──────────┤
-│persist:no│  │persist:yes│  │persist:  │  │persist:  │  │persist:  │  │persist:no│  │persist:no│
-│          │  │          │  │ yes      │  │ yes      │  │ yes      │  │          │  │          │
+│persist:no│  │persist:  │  │persist:  │  │persist:  │  │persist:  │  │persist:  │  │persist:  │
+│          │  │ yes      │  │ yes      │  │ yes      │  │ yes      │  │ no       │  │ no       │
 └─────┬────┘  └──────────┘  └──────────┘  └──────────┘  └──────────┘  └──────────┘  └──────────┘
       │
       ▼
@@ -106,14 +111,16 @@ Providers (wraps all routes)
 2. SoundCard dispatches audioStore.toggleSound(soundId)
 3. Audio Store:
    a. Calls audioEngine.init() (lazy AudioContext creation)
-   b. Calls audioEngine.resume() (user gesture requirement)
-   c. Calls audioEngine.playSound(soundId)
-   d. Updates isPlayingSounds Set, isPlaying flag
+   b. Checks activeSounds size < MAX_CONCURRENT_SOUNDS (16)
+   c. Calls audioEngine.resume() (user gesture requirement)
+   d. Calls audioEngine.playSound(soundId)
+   e. Updates isPlayingSounds Set, isPlaying flag
 4. Audio Engine:
-   a. Looks up sound config from sounds.ts
-   b. Creates oscillator/noise buffer nodes
-   c. Connects to gain node → masterGain → AudioContext.destination
-   d. Returns control to store
+   a. Looks up sound builder from SOUND_BUILDERS map
+   b. Creates oscillator/noise buffer nodes with linearRampToValueAtTime gain scheduling
+   c. Connects to soundGain → masterGain → AudioContext.destination
+   d. Registers sound in activeSounds Map
+   e. Returns control to store
 5. PlayerBar and RightPanel reactively update via zustand selectors
 ```
 
@@ -125,8 +132,8 @@ Providers (wraps all routes)
 3. Every tick: calculate remaining, update timerRemaining
 4. Components render live MM:SS countdown
 5. When remaining hits 0:
-   a. audioEngine.fadeOutAll(30) — 30-second volume fade
-   b. After fade, stop all sounds, clear timer
+   a. audioEngine.fadeOutAll(30) — linearRampToValueAtTime over 30 seconds
+   b. After fade, stopAll(), reset masterGain with setValueAtTime(0.8)
 6. If all sounds stop manually before timer: auto-cancel
 ```
 
@@ -141,19 +148,19 @@ audioEngine (singleton)
 │   ├── gainNode: GainNode
 │   ├── extraNodes: BiquadFilterNode | LFO | etc.
 │   └── cleanup: () => void
-├── currentSoundId: string | null
+├── MAX_CONCURRENT_SOUNDS = 16
 ├── fadeTimer: timeout reference
 │
-├── init()          — create AudioContext if missing
+├── init()          — create AudioContext, check/restore suspended state
 ├── resume()        — AudioContext.resume()
 ├── suspend()       — AudioContext.suspend()
-├── playSound(id)   — instantiate sound graph from config
-├── stopSound(id)   — disconnect + cleanup nodes
+├── playSound(id)   — instantiate sound graph from config (enforce ceiling)
+├── stopSound(id)   — linearRamp fade, proper node stop + disconnect (block-scoped)
 ├── stopAll()       — stop all active sounds
-├── fadeOutAll(sec) — ramp gain to 0 over N seconds, then stop
+├── fadeOutAll(sec) — ramp masterGain to 0 over N seconds, restore with setValueAtTime
 ├── cancelFade()    — cancel pending fadeOut
-├── setVolume(id,v) — set individual sound gain
-└── setMaster(v)    — set masterGainNode gain
+├── setVolume(id,v) — linearRampToValueAtTime individual sound gain
+└── setMaster(v)    — linearRampToValueAtTime masterGainNode gain
 ```
 
 ## Component → Store Wiring
@@ -161,12 +168,16 @@ audioEngine (singleton)
 | Component | Stores Used | Key Selectors |
 |-----------|------------|---------------|
 | Sidebar | ui, settings, audio | sidebarOpen, theme, isPlaying |
-| TopBar | ui | searchOpen |
-| RightPanel | audio | isPlayingSounds, timerRemaining, volume |
-| PlayerBar | audio | isPlaying, isPaused, volume, timerRemaining |
-| SoundCard | audio, favorites | toggleSound, isSoundPlaying, favorites |
+| TopBar | ui | searchOpen, sidebarOpen |
+| RightPanel | audio, mixer, ui | isPlayingSounds, layers, timerRemaining, rightPanelOpen |
+| PlayerBar | audio, favorites, ui | isPlaying, isPaused, volume, timerRemaining, isPlayingSounds |
+| SoundCard | audio, favorites | toggleSound, isSoundPlaying, isSoundFavorited |
 | ExploreContent | audio, ui | toggleSound, playSound |
 | MixerContent | mixer, audio | layers, presets, save, load |
-| SettingsContent | settings | theme, reducedMotion, crossfade, timer |
+| FavoritesContent | favorites, audio | sounds, collections, remove |
+| ProfileContent | audio, favorites | isPlaying, favorites count |
+| SettingsContent | settings | theme, reducedMotion, crossfade, timer, analytics |
 | SearchContent | ui, audio | searchOpen, query |
 | ToastContainer | toast | toasts, removeToast |
+| QueuePanel | mixer, audio | layers, setLayers, volume, sounds |
+| Toast (offline) | toast (via Providers) | addToast |

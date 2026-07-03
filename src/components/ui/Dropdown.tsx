@@ -35,11 +35,13 @@ export function Dropdown({ items, selected, onSelect, trigger, align = "left", s
     return () => document.removeEventListener("mousedown", handle)
   }, [])
 
+  const prevOpen = useRef(open)
   useEffect(() => {
     if (open && searchable && inputRef.current) {
       setTimeout(() => inputRef.current?.focus(), 50)
     }
-    if (!open) setQuery("")
+    if (!open && prevOpen.current) setQuery("")
+    prevOpen.current = open
   }, [open, searchable])
 
   const filtered = query

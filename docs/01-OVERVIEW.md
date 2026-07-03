@@ -6,13 +6,13 @@
 
 | Attribute | Value |
 |-----------|-------|
-| **Product** | Noctune (renamed from "Silent Circuit") |
+| **Product** | Noctune |
 | **Platform** | Web (desktop-first, responsive tablet/mobile) |
 | **Render** | Static export (SPA with routing) |
 | **Deploy target** | Cloudflare Pages |
-| **State** | Active development — Phases 0–4 complete, Phases 5+ in progress |
-| **URL** | https://github.com/techweave-ds/ASMR-Mixer.git |
-| **Branch** | opencode/silent-circuit |
+| **State** | Production-readiness audit — Prompts A–L (A–J complete) |
+| **URL** | https://noctune.pages.dev |
+| **Source** | https://github.com/techweave-ds/ASMR-Mixer.git |
 
 ## What It Does
 
@@ -20,28 +20,33 @@ Noctune generates ambient/ASMR sounds entirely procedurally via the Web Audio AP
 
 ## Key Features
 
-- **Procedural audio engine** — 56+ sound types using oscillators, noise buffers, LFO modulation, scheduled intervals
-- **3D immersive hero** — Three.js/R3F scene with 3 layered mountain ranges, 200 stars, fog, fireflies, 6 interactive glass orbs, 7 environments
-- **Desktop-first layout** — 100vw/100vh, fixed 280px sidebar + fluid content + 360px right panel + 92px player bar
-- **Volume 2 design system** — Full design token system (bg, accent, text, surface, glass, motion vars), rounded-2xl buttons, rounded-3xl cards
-- **Phase 1 component library** — Button (6 variants/4 sizes), Card (6 types), Modal, Tabs (3 variants), Toggle, TextInput, Chips, EmptyState, Slider
-- **Phase 2 motion** — framer-motion page transitions (150ms fade + 220ms slide), staggered hero entrance (~2.5s), AnimatePresence
-- **Phase 3 motion classes** — `.hover-lift`, `.scale-hover`, `.image-zoom`, `.stagger-enter`, `.card-hover` in globals.css
-- **Phase 4 components** — Visualizer (4 modes), Toast/notification system, Dropdown (searchable), Keyboard shortcuts (⌘K, Space, M, ?)
-- **Phase 5 in progress** — Settings screen (Appearance/Audio/Playback/Privacy per Vol 3 §17), Queue Panel, drag-and-drop, responsive refinements
+- **Procedural audio engine** — 56+ sound types using oscillators, noise buffers, LFO modulation, scheduled intervals; linear ramps for all gain changes; soft ceiling at 16 concurrent sounds; suspended-state recovery
+- **3D immersive hero** — Three.js/R3F scene with mountain ranges, stars, fog, fireflies, 6 interactive glass orbs, 7 environments; auto-degrades to static gradient on low-power mobile GPUs
+- **Desktop-first layout** — 100vw/100vh, fixed 280px sidebar + fluid content + 360px right panel + 92px player bar + mobile bottom nav
+- **Volume 2 design system** — Full design token system (bg, accent, text, surface, glass, motion vars), rounded-2xl buttons, rounded-3xl cards, glassmorphism
+- **Settings screen** — 4-tab settings (Appearance/Audio/Playback/Privacy) per Vol 3 §17, system theme support, crossfade, sleep timer
+- **Queue Panel** — framer-motion Reorder drag-and-drop queue, per-sound volume sliders, duplicate/remove
+- **Toast/notification system** — 4 types (success/error/warning/info), auto-dismiss, offline detection
+- **Keyboard shortcuts** — ⌘K (search), Space (pause), M (mute toast), ? (help modal)
+- **Accessibility** — aria-labels on all icon buttons, keyboard nav, WCAG AA contrast, reduced-motion support
+- **SEO** — Per-route metadata, Open Graph, Twitter cards, sitemap.xml, robots.txt, JSON-LD
 
 ## Current Status
 
-| Phase | Focus | Status |
-|-------|-------|--------|
-| 0 | Project init, directory structure, audio engine, core stores | ✅ Complete |
-| 1 | UI component library (Button, Card, Modal, Tabs, Toggle, etc.) | ✅ Complete |
-| 2 | Screens, page layouts, page transitions, hero entrance sequence | ✅ Complete |
-| 3 | Motion utilities, CSS animations, hover/scale/zoom classes | ✅ Complete |
-| 4 | Visualizer, Toast, Dropdown, Keyboard shortcuts | ✅ Complete |
-| 5 | Settings screen, Queue Panel, drag-drop, stagger-enter lists | 🔄 In progress |
-| 6 | Premium screen (Vol 3 §18), Onboarding (Vol 3 §19) | ⏳ Planned |
-| 7 | Responsive tablet/mobile refinements, final polish | ⏳ Planned |
+| Prompt | Focus | Status |
+|--------|-------|--------|
+| A | Hero overlap fix — bg-bg-primary on content, overflow-hidden on hero | ✅ Complete |
+| B | Home route sidebar/topbar/rightpanel suppression | ✅ Verified |
+| C | StatsSection — real sounds.length + collections.length, non-zero fallback | ✅ Complete |
+| D | SoundCard defensive fallbacks, data validation in sounds.ts | ✅ Complete |
+| E | Legacy branding removal — all references use "Noctune" | ✅ Verified |
+| F | not-found.tsx, error.tsx, offline detection toast | ✅ Complete |
+| G | Audio engine QA — linear ramps, node cleanup, soft ceiling at 16 | ✅ Complete |
+| H | Mobile responsive — GPU fallback, BottomNav 5 items, player above nav | ✅ Complete |
+| I | Accessibility — aria-labels on all icon buttons, keyboard nav pass | ✅ Complete |
+| J | SEO — metadata per route, sitemap.xml, robots.txt, OG/Twitter cards | ✅ Complete |
+| K | Testing — Vitest config, store + engine tests | 🔄 In progress |
+| L | Auth/payments — decision doc, Stripe scaffold, useEntitlement() | ⏳ Planned |
 
 ## Related Documents
 

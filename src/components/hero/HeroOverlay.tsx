@@ -56,7 +56,6 @@ export function HeroOverlay() {
   const [descIdx, setDescIdx] = useState(0)
   const [activeEnv, setActiveEnv] = useState<"rainforest" | "forest" | "ocean" | "campfire" | "snow" | "night" | "desert">("rainforest")
   const [currentTime, setCurrentTime] = useState("")
-  const [entered] = useState(true)
 
   const { toggleSound, isSoundPlaying } = useAudioStore()
 
@@ -127,11 +126,11 @@ export function HeroOverlay() {
       <div className="absolute inset-0 z-[1] bg-gradient-to-t from-bg-base/90 via-transparent to-bg-base/30 pointer-events-none" />
       <div className="absolute inset-0 z-[1] bg-gradient-to-r from-bg-base/40 via-transparent to-bg-base/40 pointer-events-none" />
 
-      {/* === ENTRANCE SEQUENCE (staggered entrance) === */}
+      {/* === ENTRANCE SEQUENCE (staggered entrance) — content always visible via CSS in case stagger fails === */}
       <motion.div
         variants={stagger}
-        initial="hidden"
-        animate={entered ? "show" : "hidden"}
+        initial={false}
+        animate="show"
         className="absolute inset-0 z-10"
       >
         {/* Nav */}

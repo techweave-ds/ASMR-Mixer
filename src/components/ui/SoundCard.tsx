@@ -17,7 +17,7 @@ interface SoundCardProps {
 }
 
 export function SoundCard({
-  id, title, description, gradient, duration, coverUrl, isPremium, className, onClick,
+  id, title, description, gradient = "from-gray-800/30 to-gray-900/30", duration = 0, coverUrl, isPremium, className, onClick,
 }: SoundCardProps) {
   const toggleSound = useAudioStore((s) => s.toggleSound)
   const isSoundPlaying = useAudioStore((s) => s.isSoundPlaying)
@@ -25,6 +25,10 @@ export function SoundCard({
   const isSoundFavorited = useFavoritesStore((s) => s.isSoundFavorited)
   const playing = isSoundPlaying(id)
   const favorited = isSoundFavorited(id)
+
+  const safeTitle = title || id.replace(/-/g, " ")
+  const safeDesc = description || "Ambient soundscape"
+  const safeCover = coverUrl || undefined
 
   const formatDuration = (s: number) => {
     const h = Math.floor(s / 3600)
@@ -36,7 +40,7 @@ export function SoundCard({
     <div className={cn("group cursor-pointer", className)} onClick={() => onClick ? onClick() : toggleSound(id)}>
       {/* Artwork */}
       <div className={cn("relative aspect-square rounded-xl bg-gradient-to-br overflow-hidden card-hover", gradient)}
-        style={coverUrl ? { backgroundImage: `url(${coverUrl})`, backgroundSize: 'cover', backgroundPosition: 'center' } : {}}>
+        style={safeCover ? { backgroundImage: `url(${safeCover})`, backgroundSize: 'cover', backgroundPosition: 'center' } : {}}>
         <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300" />
         {playing && (
           <div className="absolute top-2 left-2 flex items-center gap-1 rounded-full bg-black/50 backdrop-blur-sm px-2 py-0.5">
@@ -66,8 +70,8 @@ export function SoundCard({
       </div>
       {/* Info */}
       <div className="pt-2.5">
-        <h3 className="text-sm font-medium text-text-primary truncate">{title}</h3>
-        <p className="text-xs text-text-tertiary truncate mt-0.5">{description}</p>
+        <h3 className="text-sm font-medium text-text-primary truncate">{safeTitle}</h3>
+        <p className="text-xs text-text-tertiary truncate mt-0.5">{safeDesc}</p>
         <div className="flex items-center gap-2 mt-1.5">
           <span className="flex items-center gap-1 text-[11px] text-text-quaternary">
             <Clock size={10} />

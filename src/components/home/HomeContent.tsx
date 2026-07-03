@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useRef, useState } from "react"
+import { useRef } from "react"
 import dynamic from "next/dynamic"
 import { motion } from "framer-motion"
 import { Sparkles, Moon, Sun, Cloud, Wind, Mountain, Trees } from "lucide-react"
@@ -9,21 +9,9 @@ import { UseCasesSection } from "@/components/home/UseCasesSection"
 import { StatsSection } from "@/components/home/StatsSection"
 import { EnvironmentsCarousel } from "@/components/home/EnvironmentsCarousel"
 import { cn } from "@/lib/utils"
+import { useScrollProgress } from "@/hooks/useScrollContainer"
 
 const HeroOverlay = dynamic(() => import("@/components/hero/HeroOverlay").then((m) => ({ default: m.HeroOverlay })), { ssr: false })
-
-function useScrollProgress() {
-  const [progress, setProgress] = useState(0)
-  useEffect(() => {
-    const onScroll = () => {
-      const h = document.documentElement.scrollHeight - window.innerHeight
-      setProgress(h > 0 ? Math.min(window.scrollY / h, 1) : 0)
-    }
-    window.addEventListener("scroll", onScroll, { passive: true })
-    return () => window.removeEventListener("scroll", onScroll)
-  }, [])
-  return progress
-}
 
 function SectionTitle({ children, className }: { children: React.ReactNode; className?: string }) {
   return (
@@ -38,29 +26,30 @@ function SectionSubtitle({ children }: { children: React.ReactNode }) {
 }
 
 export function HomeContent() {
+  const contentRef = useRef<HTMLDivElement>(null!)
+
   const scrollProgress = useScrollProgress()
+  const heroFadedOut = scrollProgress > 0.3
   const heroScale = 1 - scrollProgress * 0.06
   const heroOpacity = Math.max(0, 1 - scrollProgress * 2.5)
 
-  const contentRef = useRef<HTMLDivElement>(null!)
-
   return (
     <div className="relative">
-      {/* === HERO (fixed, covers viewport) === */}
+      {/* === HERO (fixed, covers viewport) — unmounts + opaque content blocks bleed-through === */}
       <div
-        className="fixed inset-0 z-0"
+        className="fixed inset-0 overflow-hidden z-0"
         style={{
           transform: `scale(${heroScale})`,
           opacity: heroOpacity,
           transition: "transform 0.1s ease-out, opacity 0.15s ease-out",
-          pointerEvents: scrollProgress > 0.3 ? "none" : "auto",
+          pointerEvents: heroFadedOut ? "none" : "auto",
         } as React.CSSProperties}
       >
         <HeroOverlay />
       </div>
 
-      {/* === CONTENT SECTIONS (scrolls in from below) === */}
-      <div ref={contentRef} className="relative z-10 mt-[100vh]">
+      {/* === CONTENT SECTIONS (scrolls in from below) — opaque background prevents hero bleed-through === */}
+      <div ref={contentRef} className="relative z-10 mt-[100vh] bg-bg-primary">
         {/* Transition spacer */}
         <div className="h-16 md:h-24" />
 
@@ -194,7 +183,7 @@ export function HomeContent() {
           <div className="max-w-7xl mx-auto flex items-center justify-between">
             <div className="flex items-center gap-2">
               <div className="h-6 w-6 rounded-md bg-accent/20 border border-accent/30 flex items-center justify-center">
-                <span className="text-accent-light text-[10px] font-bold">SC</span>
+                <span className="text-accent-light text-[10px] font-bold">N</span>
               </div>
               <span className="text-white/30 text-xs">Noctune · Find your quiet.</span>
             </div>

@@ -1,24 +1,16 @@
 "use client"
 
-import { useEffect, useRef, useState } from "react"
+import { useRef, useState } from "react"
 import { Compass, ChevronRight } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useRouter } from "next/navigation"
+import { useScrollScrolled } from "@/hooks/useScrollContainer"
 
 export function ExploreButton() {
   const router = useRouter()
   const ref = useRef<HTMLButtonElement>(null!)
-  const [scrolled, setScrolled] = useState(false)
+  const scrolled = useScrollScrolled(80)
   const [hovered, setHovered] = useState(false)
-
-  useEffect(() => {
-    const onScroll = () => {
-      const s = window.scrollY > 80
-      setScrolled((prev) => prev !== s ? s : prev)
-    }
-    window.addEventListener("scroll", onScroll, { passive: true })
-    return () => window.removeEventListener("scroll", onScroll)
-  }, [])
 
   return (
     <button

@@ -208,9 +208,29 @@ function SceneContent({ env, onOrbClick }: SceneContentProps) {
   )
 }
 
+function useLowPerformance(): boolean {
+  const [lowPerf] = useState(() => {
+    if (typeof navigator === "undefined") return false
+    const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent)
+    const lowCores = navigator.hardwareConcurrency !== undefined && navigator.hardwareConcurrency <= 4
+    const dm = (navigator as { deviceMemory?: number }).deviceMemory
+    const lowMemory = dm !== undefined && dm <= 4
+    return isMobile && (lowCores || lowMemory)
+  })
+  return lowPerf
+}
+
 export function HeroScene({ env = "rainforest", onOrbClick }: { env?: EnvKey; onOrbClick?: (label: string) => void }) {
+  const lowPerf = useLowPerformance()
+
+  if (lowPerf) {
+    return (
+      <div className="absolute inset-0 bg-gradient-to-b from-[#08081a] via-[#0a0a2e] to-[#050510]" />
+    )
+  }
+
   return (
-    <Canvas camera={{ position: [0, 0.3, 5.5], fov: 50 }} dpr={[0.5, 1]} gl={{ antialias: false, alpha: false }} frameloop="demand">
+    <Canvas camera={{ position: [0, 0.3, 5.5], fov: 50 }} dpr={[0.5, 1]} gl={{ antialias: false, alpha: false }} frameloop="always">
       <SceneContent env={env} onOrbClick={onOrbClick || (() => {})} />
     </Canvas>
   )

@@ -43,7 +43,7 @@ export function RightPanel() {
             </p>
           </div>
         </div>
-        <button onClick={() => setRightPanelOpen(false)}
+        <button aria-label="Close panel" onClick={() => setRightPanelOpen(false)}
           className="h-7 w-7 rounded-lg text-text-quaternary hover:text-text-secondary hover:bg-glass-hover transition-colors flex items-center justify-center">
           <X size={14} />
         </button>

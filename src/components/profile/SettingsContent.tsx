@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Sun, Moon, Monitor, Volume2, Timer, Play, RotateCcw, BarChart3, Shield, Download, Music, Sliders } from "lucide-react"
+import { Sun, Moon, Monitor, Volume2, Timer, Play, RotateCcw, BarChart3, Shield, Download, Music, Sliders, type LucideIcon } from "lucide-react"
 import { useSettingsStore } from "@/store"
 import { Toggle } from "@/components/ui/Toggle"
 import { Slider } from "@/components/ui/Slider"
@@ -15,7 +15,7 @@ const SECTION_TABS = [
   { id: "privacy", label: "Privacy" },
 ]
 
-const themeOptions: { id: "dark" | "light" | "system"; icon: any; label: string }[] = [
+const themeOptions: { id: "dark" | "light" | "system"; icon: LucideIcon; label: string }[] = [
   { id: "dark", icon: Moon, label: "Dark" },
   { id: "light", icon: Sun, label: "Light" },
   { id: "system", icon: Monitor, label: "System" },
@@ -134,7 +134,7 @@ export function SettingsContent() {
   )
 }
 
-function SettingRow({ icon: Icon, label, desc, children }: { icon: any; label: string; desc: string; children: React.ReactNode }) {
+function SettingRow({ icon: Icon, label, desc, children }: { icon: LucideIcon; label: string; desc: string; children: React.ReactNode }) {
   return (
     <div className="flex items-center justify-between px-5 py-4">
       <div className="flex items-center gap-3">

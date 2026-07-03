@@ -44,6 +44,6 @@ export const useUiStore = create<UiStore>()(
       },
       clearRecentSearches: () => set({ recentSearches: [] }),
     }),
-    { name: "asmr-ui-storage" }
+    { name: "noctune-ui-storage" }
   )
 )

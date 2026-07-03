@@ -24,4 +24,9 @@ This is NOT the Next.js you may know. Read `node_modules/next/dist/docs/` before
 - **Static export** — no SSR, no API routes, `output: "export"`
 - **No comments** in source code — let types and naming be self-documenting
 - **No emojis** in code unless explicitly requested
-- Verify with `npx next build` — must compile clean (0 errors, 0 warnings)
+- **aria-labels on all icon-only buttons** — accessibility requirement
+- **linearRampToValueAtTime for all audio gain changes** — never direct `.value =` for gain
+- **useStoreHydration must guard persisted-store reads** — prevents SSR/static hydration mismatch
+- **Stats must derive from real data** — never hardcode sounds.length, collections.length
+- **Counter must initialize at target value** — never start at 0 (avoids "0+" display)
+- **Verify with `npx next build`** — must compile clean (0 errors, 0 warnings)

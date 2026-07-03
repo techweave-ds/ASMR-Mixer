@@ -772,3 +772,16 @@ export function getFeaturedSounds(): Sound[] {
 export function getPremiumSounds(): Sound[] {
   return sounds.filter((s) => s.isPremium)
 }
+
+const requiredKeys: (keyof Sound)[] = ["id","title","category","description","duration","coverUrl","color","gradient","isPremium","tags"]
+
+const MISSING = sounds.some((s) => {
+  for (const key of requiredKeys) {
+    if (s[key] === undefined || s[key] === null || (key === "title" && s.title.trim() === "")) return true
+  }
+  return false
+})
+
+if (MISSING) {
+  console.error("[sounds.ts] One or more sound entries are missing required fields. Check the data above.")
+}

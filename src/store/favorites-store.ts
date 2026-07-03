@@ -70,6 +70,6 @@ export const useFavoritesStore = create<FavoritesStore>()(
         set({ soundIds: [], collectionIds: [], savedCollections: [] })
       },
     }),
-    { name: "asmr-favorites-storage" }
+    { name: "noctune-favorites-storage" }
   )
 )

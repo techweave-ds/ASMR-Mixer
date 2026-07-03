@@ -1,20 +1,14 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { Search, Bell, Sparkles, ChevronDown, Menu, ListMusic } from "lucide-react"
+import { Search, Bell, Sparkles, ChevronDown, Menu } from "lucide-react"
 import { useUiStore, useAudioStore } from "@/store"
 import { cn } from "@/lib/utils"
+import { useScrollScrolled } from "@/hooks/useScrollContainer"
 
 export function TopBar() {
   const { setSearchOpen, setSidebarOpen, sidebarOpen } = useUiStore()
   const isPlaying = useAudioStore((s) => s.isPlaying)
-  const [scrolled, setScrolled] = useState(false)
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 60)
-    window.addEventListener("scroll", onScroll, { passive: true })
-    return () => window.removeEventListener("scroll", onScroll)
-  }, [])
+  const scrolled = useScrollScrolled(60)
 
   return (
     <header
@@ -26,12 +20,12 @@ export function TopBar() {
       )}
       style={{ height: scrolled ? "60px" : "68px" }}
     >
-      <button onClick={() => setSidebarOpen(!sidebarOpen)}
+      <button aria-label={sidebarOpen ? "Close menu" : "Open menu"} onClick={() => setSidebarOpen(!sidebarOpen)}
         className="flex lg:hidden h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-glass border border-border-subtle text-text-tertiary hover:text-text-secondary transition-colors">
         <Menu size={16} />
       </button>
       {/* Search */}
-      <button
+      <button aria-label="Search"
         onClick={() => setSearchOpen(true)}
         className={cn(
           "flex items-center gap-3 w-full max-w-[600px] rounded-xl border px-4 py-2.5 text-sm transition-all",
@@ -52,7 +46,7 @@ export function TopBar() {
             <span className="text-[10px] font-medium text-accent-light/80">Playing</span>
           </div>
         )}
-        <button className="relative h-9 w-9 rounded-lg bg-glass border border-border-subtle flex items-center justify-center text-text-tertiary hover:text-text-secondary transition-colors">
+        <button aria-label="Notifications" className="relative h-9 w-9 rounded-lg bg-glass border border-border-subtle flex items-center justify-center text-text-tertiary hover:text-text-secondary transition-colors">
           <Bell size={16} />
           <span className="absolute top-1.5 right-1.5 h-1.5 w-1.5 rounded-full bg-accent-red" />
         </button>

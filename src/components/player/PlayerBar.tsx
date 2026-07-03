@@ -83,15 +83,15 @@ export function PlayerBar() {
       {/* Center: Controls + Progress */}
       <div className="flex-1 flex flex-col items-center gap-1 max-w-[600px] mx-auto">
         <div className="flex items-center gap-5">
-          <button className={cn("transition-colors", hasSounds ? "text-text-quaternary hover:text-text-secondary" : "text-text-quaternary/30")} disabled={!hasSounds}><Shuffle size={15} /></button>
-          <button className={cn("transition-colors", hasSounds ? "text-text-quaternary hover:text-text-secondary" : "text-text-quaternary/30")} disabled={!hasSounds}><SkipBack size={17} /></button>
-          <button onClick={() => hasSounds && togglePause()}
+          <button aria-label="Shuffle" className={cn("transition-colors", hasSounds ? "text-text-quaternary hover:text-text-secondary" : "text-text-quaternary/30")} disabled={!hasSounds}><Shuffle size={15} /></button>
+          <button aria-label="Previous track" className={cn("transition-colors", hasSounds ? "text-text-quaternary hover:text-text-secondary" : "text-text-quaternary/30")} disabled={!hasSounds}><SkipBack size={17} /></button>
+          <button aria-label={showPlayIcon ? "Play" : "Pause"} onClick={() => hasSounds && togglePause()}
             className={cn("flex h-10 w-10 items-center justify-center rounded-full transition-all",
               hasSounds ? "bg-accent/15 text-accent-light hover:bg-accent/25 hover:scale-105 active:scale-95 play-btn-glow cursor-pointer" : "bg-glass text-text-quaternary/30 cursor-default")}>
             {showPlayIcon ? <Play size={18} /> : <Pause size={18} />}
           </button>
-          <button className={cn("transition-colors", hasSounds ? "text-text-quaternary hover:text-text-secondary" : "text-text-quaternary/30")} disabled={!hasSounds}><SkipForward size={17} /></button>
-          <button className={cn("transition-colors", hasSounds ? "text-text-quaternary hover:text-text-secondary" : "text-text-quaternary/30")} disabled={!hasSounds}><Repeat size={15} /></button>
+          <button aria-label="Next track" className={cn("transition-colors", hasSounds ? "text-text-quaternary hover:text-text-secondary" : "text-text-quaternary/30")} disabled={!hasSounds}><SkipForward size={17} /></button>
+          <button aria-label="Repeat" className={cn("transition-colors", hasSounds ? "text-text-quaternary hover:text-text-secondary" : "text-text-quaternary/30")} disabled={!hasSounds}><Repeat size={15} /></button>
         </div>
         <div className="flex items-center gap-2 w-full">
           <span className="text-[10px] text-text-quaternary w-8 text-right flex-shrink-0">{formatTime(0)}</span>
@@ -107,7 +107,7 @@ export function PlayerBar() {
       {/* Right: Volume + Widgets */}
       <div className="flex items-center gap-3 w-[280px] flex-shrink-0 justify-end">
         <div className="flex items-center gap-2">
-          <button
+          <button aria-label="Volume"
             onMouseEnter={() => setShowVolume(true)}
             onMouseLeave={() => setShowVolume(false)}
             className="text-text-quaternary hover:text-text-secondary transition-colors relative"
@@ -129,22 +129,22 @@ export function PlayerBar() {
         </div>
 
         <div className="flex items-center gap-1">
-          <button onClick={() => setRightPanelOpen(true)}
+          <button aria-label="Open current mix" onClick={() => setRightPanelOpen(true)}
             className={cn("h-8 w-8 rounded-2xl transition-all flex items-center justify-center lg:hidden",
               hasSounds ? "text-text-quaternary hover:text-text-secondary hover:bg-glass-hover" : "text-text-quaternary/30")} disabled={!hasSounds}>
             <ListMusic size={15} />
           </button>
-          <button onClick={() => setRightPanelOpen(true)}
+          <button aria-label="Open current mix" onClick={() => setRightPanelOpen(true)}
             className={cn("h-8 w-8 rounded-2xl transition-all flex items-center justify-center hidden lg:flex",
               hasSounds ? "text-text-quaternary hover:text-text-secondary hover:bg-glass-hover" : "text-text-quaternary/30")} disabled={!hasSounds}>
             <ListMusic size={15} />
           </button>
-          <button className={cn("h-8 w-8 rounded-2xl transition-all flex items-center justify-center",
+          <button aria-label="Output device" className={cn("h-8 w-8 rounded-2xl transition-all flex items-center justify-center",
             hasSounds ? "text-text-quaternary hover:text-text-secondary hover:bg-glass-hover" : "text-text-quaternary/30")} disabled={!hasSounds}>
             <MonitorSpeaker size={15} />
           </button>
           <div className="relative">
-            <button onClick={() => setShowTimer(!showTimer)}
+            <button aria-label="Sleep timer" onClick={() => setShowTimer(!showTimer)}
               className={cn("h-8 w-8 rounded-2xl transition-all flex items-center justify-center gap-1",
                 timerMinutes ? "text-accent-light bg-accent/10 w-auto px-2" : hasSounds ? "text-text-quaternary hover:text-text-secondary hover:bg-glass-hover" : "text-text-quaternary/30")}>
               <Timer size={15} />
@@ -173,7 +173,7 @@ export function PlayerBar() {
               </div>
             )}
           </div>
-          <button className={cn("h-8 w-8 rounded-2xl transition-all flex items-center justify-center",
+          <button aria-label="Settings" className={cn("h-8 w-8 rounded-2xl transition-all flex items-center justify-center",
             hasSounds ? "text-text-quaternary hover:text-text-secondary hover:bg-glass-hover" : "text-text-quaternary/30")} disabled={!hasSounds}>
             <Settings size={15} />
           </button>

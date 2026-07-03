@@ -8,10 +8,27 @@ const inter = Inter({
   subsets: ["latin"],
 })
 
+const siteUrl = "https://noctune.pages.dev"
+
 export const metadata: Metadata = {
-  title: "Noctune – Premium Ambient Soundscapes",
+  title: { default: "Noctune – Premium Ambient Soundscapes", template: "%s | Noctune" },
   description: "Immerse yourself in premium-quality ambient soundscapes. Relax, sleep, study, and focus with Noctune.",
+  metadataBase: new URL(siteUrl),
   icons: { icon: "/favicon.ico" },
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    siteName: "Noctune",
+    title: "Noctune – Premium Ambient Soundscapes",
+    description: "Immerse yourself in premium-quality ambient soundscapes. Relax, sleep, study, and focus with Noctune.",
+    url: siteUrl,
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Noctune – Premium Ambient Soundscapes",
+    description: "Immerse yourself in premium-quality ambient soundscapes. Relax, sleep, study, and focus with Noctune.",
+  },
+  robots: { index: true, follow: true },
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

@@ -37,12 +37,12 @@ function noiseSource(ctx: AudioContext, type: "white" | "brown" | "pink", amp: n
   src.buffer = buf
   src.loop = true
   const gain = ctx.createGain()
-  gain.gain.value = amp
+  gain.gain.setValueAtTime(amp, ctx.currentTime)
   if (filter) {
     const f = ctx.createBiquadFilter()
     f.type = filter.type
-    f.frequency.value = filter.freq
-    f.Q.value = filter.Q
+    f.frequency.setValueAtTime(filter.freq, ctx.currentTime)
+    f.Q.setValueAtTime(filter.Q, ctx.currentTime)
     src.connect(gain)
     gain.connect(f)
     f.connect(dest)
@@ -59,8 +59,8 @@ function lfoModulate(ctx: AudioContext, freq: number, amp: number, target: Audio
   const lfo = ctx.createOscillator()
   const lfoGain = ctx.createGain()
   lfo.type = "sine"
-  lfo.frequency.value = freq
-  lfoGain.gain.value = amp
+  lfo.frequency.setValueAtTime(freq, ctx.currentTime)
+  lfoGain.gain.setValueAtTime(amp, ctx.currentTime)
   lfo.connect(lfoGain)
   lfoGain.connect(target)
   lfo.start()
@@ -89,7 +89,7 @@ function makeClick(ctx: AudioContext, delay: number, freq: number, amp: number, 
   const osc = ctx.createOscillator()
   const gain = ctx.createGain()
   osc.type = "square"
-  osc.frequency.value = freq
+  osc.frequency.setValueAtTime(freq, ctx.currentTime)
   gain.gain.setValueAtTime(0, now + delay)
   gain.gain.linearRampToValueAtTime(amp, now + delay + 0.001)
   gain.gain.exponentialRampToValueAtTime(0.001, now + delay + 0.03)
@@ -108,8 +108,8 @@ function makeCrackle(ctx: AudioContext, delay: number, amp: number, dest: AudioN
   const gain = ctx.createGain()
   const filter = ctx.createBiquadFilter()
   filter.type = "highpass"
-  filter.frequency.value = 3000
-  filter.Q.value = 0.5
+  filter.frequency.setValueAtTime(3000, ctx.currentTime)
+  filter.Q.setValueAtTime(0.5, ctx.currentTime)
   gain.gain.setValueAtTime(amp, now + delay)
   gain.gain.exponentialRampToValueAtTime(0.001, now + delay + 0.05)
   src.connect(filter)
@@ -127,8 +127,8 @@ function makeRumble(ctx: AudioContext, delay: number, amp: number, dest: AudioNo
   const gain = ctx.createGain()
   const filter = ctx.createBiquadFilter()
   filter.type = "lowpass"
-  filter.frequency.value = 150
-  filter.Q.value = 0.5
+  filter.frequency.setValueAtTime(150, ctx.currentTime)
+  filter.Q.setValueAtTime(0.5, ctx.currentTime)
   gain.gain.setValueAtTime(0, now + delay)
   gain.gain.linearRampToValueAtTime(amp, now + delay + 0.3)
   gain.gain.linearRampToValueAtTime(0, now + delay + 1.5)
@@ -272,8 +272,7 @@ const SOUND_BUILDERS: Record<string, SoundBuilder> = {
     const m = lfoModulate(ctx, 0.08, 0.025, n.gain.gain)
     const sweep = ctx.createBiquadFilter()
     sweep.type = "lowpass"
-    sweep.frequency.value = 2000
-    ctx.createOscillator()
+    sweep.frequency.setValueAtTime(2000, ctx.currentTime)
     return { nodes: [...n.nodes, ...m.nodes] }
   },
   "wind-strong": (ctx, dest) => {
@@ -417,16 +416,16 @@ const SOUND_BUILDERS: Record<string, SoundBuilder> = {
     const drone = ctx.createOscillator()
     const droneGain = ctx.createGain()
     drone.type = "sine"
-    drone.frequency.value = 60
-    droneGain.gain.value = 0.03
+    drone.frequency.setValueAtTime(60, ctx.currentTime)
+    droneGain.gain.setValueAtTime(0.03, ctx.currentTime)
     drone.connect(droneGain)
     droneGain.connect(dest)
     drone.start()
     const drone2 = ctx.createOscillator()
     const drone2Gain = ctx.createGain()
     drone2.type = "sine"
-    drone2.frequency.value = 72
-    drone2Gain.gain.value = 0.015
+    drone2.frequency.setValueAtTime(72, ctx.currentTime)
+    drone2Gain.gain.setValueAtTime(0.015, ctx.currentTime)
     drone2.connect(drone2Gain)
     drone2Gain.connect(dest)
     drone2.start()
@@ -447,7 +446,7 @@ const SOUND_BUILDERS: Record<string, SoundBuilder> = {
       const osc = ctx.createOscillator()
       const gain = ctx.createGain()
       osc.type = "triangle"
-      osc.frequency.value = 1000
+      osc.frequency.setValueAtTime(1000, now)
       gain.gain.setValueAtTime(0.04, now)
       gain.gain.exponentialRampToValueAtTime(0.001, now + 0.01)
       osc.connect(gain)
@@ -493,6 +492,8 @@ const SOUND_BUILDERS: Record<string, SoundBuilder> = {
   },
 }
 
+const MAX_CONCURRENT_SOUNDS = 16
+
 class AsmrAudioEngine {
   private ctx: AudioContext | null = null
   private initialized = false
@@ -511,7 +512,7 @@ class AsmrAudioEngine {
     try {
       this.ctx = new AudioContext()
       this.masterGain = this.ctx.createGain()
-      this.masterGain.gain.value = 0.8
+      this.masterGain.gain.setValueAtTime(0.8, this.ctx.currentTime)
       this.masterGain.connect(this.ctx.destination)
       this.initialized = true
     } catch (e) {
@@ -562,6 +563,10 @@ class AsmrAudioEngine {
   async playSound(soundId: string, volume: number = 0.5): Promise<void> {
     if (!this.ctx || !this.masterGain) return
     if (this.activeSounds.has(soundId)) return
+    if (this.activeSounds.size >= MAX_CONCURRENT_SOUNDS) {
+      console.warn(`[Audio] Reached max concurrent sounds (${MAX_CONCURRENT_SOUNDS}). Ignoring "${soundId}".`)
+      return
+    }
 
     this.ensureContext()
     this.volumeCache.set(soundId, volume)
@@ -570,7 +575,7 @@ class AsmrAudioEngine {
     if (!builder) return
 
     const soundGain = this.ctx.createGain()
-    soundGain.gain.value = 0
+    soundGain.gain.setValueAtTime(0, this.ctx.currentTime)
     soundGain.gain.linearRampToValueAtTime(volume, this.ctx.currentTime + 2)
     soundGain.connect(this.masterGain)
 
@@ -589,7 +594,10 @@ class AsmrAudioEngine {
     }
 
     active.nodes.forEach((n) => {
-      try { if (n instanceof OscillatorNode || n instanceof AudioBufferSourceNode) n.stop(); n.disconnect() } catch {}
+      try {
+        if (n instanceof OscillatorNode || n instanceof AudioBufferSourceNode) n.stop()
+        n.disconnect()
+      } catch {}
     })
     active.gain.disconnect()
     if (active.cleanup) active.cleanup()
@@ -627,7 +635,7 @@ class AsmrAudioEngine {
     this.masterGain.gain.linearRampToValueAtTime(0, now + durationSeconds)
     await new Promise((resolve) => setTimeout(resolve, durationSeconds * 1000))
     this.stopAll()
-    this.masterGain.gain.value = 0.8
+    this.masterGain.gain.setValueAtTime(0.8, this.ctx!.currentTime)
   }
 }
 

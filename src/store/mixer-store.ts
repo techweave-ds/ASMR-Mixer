@@ -136,6 +136,6 @@ export const useMixerStore = create<MixerStore>()(
         set({ layers: [], masterVolume: 0.8, activePresetId: null })
       },
     }),
-    { name: "asmr-mixer-storage" }
+    { name: "noctune-mixer-storage" }
   )
 )

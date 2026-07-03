@@ -18,7 +18,10 @@ export function Visualizer({ mode = "minimal", bars = 24, className, height = 48
   const canvasRef = useRef<HTMLCanvasElement>(null!)
   const rafRef = useRef<number>(0)
 
-  const amplitudes = useMemo(() => Array.from({ length: bars }, () => Math.random() * 0.5 + 0.25), [bars])
+  const amplitudes = useMemo(() => Array.from({ length: bars }, (_, i) => {
+    const seed = (i * 137 + 51) % 100
+    return (seed / 100) * 0.5 + 0.25
+  }), [bars])
 
   useEffect(() => {
     if (!canvasRef.current || mode === "minimal") return
@@ -44,7 +47,7 @@ export function Visualizer({ mode = "minimal", bars = 24, className, height = 48
           const amp = amplitudes[i] * (0.3 + 0.7 * (0.5 + 0.5 * Math.sin(frame * 0.02 + i * 0.5)))
           const x = i * (w + 1.5) + w / 2
           const y = centerY + amp * centerY * Math.sin(frame * 0.03 + i * 0.3)
-          i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y)
+          if (i === 0) { ctx.moveTo(x, y) } else { ctx.lineTo(x, y) }
         }
         ctx.strokeStyle = "rgba(90, 124, 255, 0.4)"
         ctx.lineWidth = 1.5
