@@ -26,7 +26,7 @@ export function ProfileContent() {
 
       <section>
         <h2 className="text-sm font-semibold text-text-primary mb-4">Preferences</h2>
-        <div className="rounded-xl border border-border-subtle bg-glass divide-y divide-border-subtle">
+        <div className="rounded-3xl border border-border-subtle bg-glass divide-y divide-border-subtle">
           {[
             { icon: theme === "dark" ? Moon : Sun, iconColor: theme === "dark" ? "text-accent-light" : "text-accent-amber", label: "Theme", desc: theme === "dark" ? "Dark mode" : "Light mode", action: () => setTheme(theme === "dark" ? "light" : "dark"), buttonLabel: theme === "dark" ? "Dark" : "Light", buttonActive: true },
             { icon: Bell, iconColor: "text-text-tertiary", label: "Notifications", desc: "Enable app notifications", action: () => setNotificationsEnabled(!notificationsEnabled), buttonLabel: notificationsEnabled ? "On" : "Off", buttonActive: notificationsEnabled },
@@ -81,7 +81,7 @@ export function ProfileContent() {
 
       <section>
         <h2 className="text-sm font-semibold text-text-primary mb-4">Storage</h2>
-        <div className="rounded-xl border border-border-subtle bg-glass px-5 py-4">
+        <div className="rounded-3xl border border-border-subtle bg-glass px-5 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <Trash2 size={16} className="text-text-tertiary" />
@@ -94,8 +94,8 @@ export function ProfileContent() {
 
       <section>
         <h2 className="text-sm font-semibold text-text-primary mb-4">About</h2>
-        <div className="rounded-xl border border-border-subtle bg-glass px-5 py-4 space-y-1">
-          <p className="text-sm text-text-tertiary">Silent Circuit v1.0.0</p>
+        <div className="rounded-3xl border border-border-subtle bg-glass px-5 py-4 space-y-1">
+          <p className="text-sm text-text-tertiary">Noctune v1.0.0</p>
           <p className="text-xs text-text-quaternary">Premium ASMR & Ambient Sound Application</p>
           <div className="flex gap-4 pt-2">
             {["Privacy Policy", "Terms of Service", "Send Feedback"].map((l) => (

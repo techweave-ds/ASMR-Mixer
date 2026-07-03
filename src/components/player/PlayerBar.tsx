@@ -51,11 +51,11 @@ export function PlayerBar() {
   }
 
   return (
-    <div className={cn("h-[92px] flex-shrink-0 border-t flex items-center px-4 lg:px-6 gap-4 transition-all duration-300",
-      hasSounds ? "bg-[#0c0c14] border-border-subtle" : "bg-transparent border-transparent")}>
+    <div className={cn("rounded-[28px] h-[92px] flex-shrink-0 border-t flex items-center px-4 lg:px-6 gap-4 transition-all duration-300",
+      hasSounds ? "bg-bg-secondary border-border-subtle" : "bg-transparent border-transparent")}>
       {/* Left: Track Info */}
       <div className="flex items-center gap-3 min-w-0 w-[280px] flex-shrink-0">
-        <div className={cn("h-14 w-14 flex-shrink-0 rounded-lg overflow-hidden shadow-lg flex items-center justify-center",
+        <div className={cn("h-14 w-14 flex-shrink-0 rounded-xl overflow-hidden shadow-lg flex items-center justify-center",
           hasSounds ? "bg-gradient-to-br" : "bg-glass border border-border-subtle")}
           style={firstSound?.coverUrl ? { backgroundImage: `url(${firstSound.coverUrl})`, backgroundSize: 'cover', backgroundPosition: 'center' } : {}}>
           {!hasSounds && <Disc3 size={20} className="text-text-quaternary" />}
@@ -128,17 +128,17 @@ export function PlayerBar() {
         </div>
 
         <div className="flex items-center gap-1">
-          <button className={cn("h-8 w-8 rounded-lg transition-all flex items-center justify-center",
+          <button className={cn("h-8 w-8 rounded-2xl transition-all flex items-center justify-center",
             hasSounds ? "text-text-quaternary hover:text-text-secondary hover:bg-glass-hover" : "text-text-quaternary/30")} disabled={!hasSounds}>
             <ListMusic size={15} />
           </button>
-          <button className={cn("h-8 w-8 rounded-lg transition-all flex items-center justify-center",
+          <button className={cn("h-8 w-8 rounded-2xl transition-all flex items-center justify-center",
             hasSounds ? "text-text-quaternary hover:text-text-secondary hover:bg-glass-hover" : "text-text-quaternary/30")} disabled={!hasSounds}>
             <MonitorSpeaker size={15} />
           </button>
           <div className="relative">
             <button onClick={() => setShowTimer(!showTimer)}
-              className={cn("h-8 w-8 rounded-lg transition-all flex items-center justify-center gap-1",
+              className={cn("h-8 w-8 rounded-2xl transition-all flex items-center justify-center gap-1",
                 timerMinutes ? "text-accent-light bg-accent/10 w-auto px-2" : hasSounds ? "text-text-quaternary hover:text-text-secondary hover:bg-glass-hover" : "text-text-quaternary/30")}>
               <Timer size={15} />
               {timerMinutes && timerRemaining && timerRemaining > 0 && (
@@ -166,7 +166,7 @@ export function PlayerBar() {
               </div>
             )}
           </div>
-          <button className={cn("h-8 w-8 rounded-lg transition-all flex items-center justify-center",
+          <button className={cn("h-8 w-8 rounded-2xl transition-all flex items-center justify-center",
             hasSounds ? "text-text-quaternary hover:text-text-secondary hover:bg-glass-hover" : "text-text-quaternary/30")} disabled={!hasSounds}>
             <Settings size={15} />
           </button>

@@ -1,19 +1,40 @@
 "use client"
 
+import { useEffect, useState } from "react"
 import { Search, Bell, Sparkles, ChevronDown } from "lucide-react"
-import { useUiStore } from "@/store"
-import { useAudioStore } from "@/store"
+import { useUiStore, useAudioStore } from "@/store"
+import { cn } from "@/lib/utils"
 
 export function TopBar() {
   const { setSearchOpen } = useUiStore()
   const isPlaying = useAudioStore((s) => s.isPlaying)
+  const [scrolled, setScrolled] = useState(false)
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 60)
+    window.addEventListener("scroll", onScroll, { passive: true })
+    return () => window.removeEventListener("scroll", onScroll)
+  }, [])
 
   return (
-    <header className="flex h-[68px] items-center gap-6 border-b border-border-subtle bg-bg-base/80 backdrop-blur-xl px-6 lg:px-8 xl:px-10 flex-shrink-0">
+    <header
+      className={cn(
+        "flex h-[68px] items-center gap-6 border-b px-6 lg:px-8 xl:px-10 flex-shrink-0 sticky top-0 z-30 transition-all duration-300",
+        scrolled
+          ? "bg-bg-base/80 backdrop-blur-xl border-border-subtle"
+          : "bg-transparent border-transparent"
+      )}
+      style={{ height: scrolled ? "60px" : "68px" }}
+    >
       {/* Search */}
       <button
         onClick={() => setSearchOpen(true)}
-        className="flex items-center gap-3 w-full max-w-[600px] rounded-xl bg-glass border border-border-subtle px-4 py-2.5 text-sm text-text-tertiary transition-all hover:bg-glass-hover hover:border-border"
+        className={cn(
+          "flex items-center gap-3 w-full max-w-[600px] rounded-xl border px-4 py-2.5 text-sm transition-all",
+          scrolled
+            ? "bg-glass border-border-subtle text-text-tertiary hover:bg-glass-hover hover:border-border"
+            : "bg-white/[0.04] border-white/10 text-white/40 hover:bg-white/[0.06] hover:border-white/20"
+        )}
       >
         <Search size={16} className="text-text-quaternary" />
         <span className="hidden sm:inline">Search sounds, categories, collections...</span>

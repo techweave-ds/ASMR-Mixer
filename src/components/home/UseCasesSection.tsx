@@ -34,7 +34,7 @@ export function UseCasesSection() {
         <h2 className="text-3xl md:text-4xl font-bold text-text-primary mb-4">
           How do you want to <span className="bg-gradient-to-r from-blue-300 to-indigo-300 bg-clip-text text-transparent">feel</span> today?
         </h2>
-        <p className="text-text-tertiary max-w-lg mx-auto">Choose your mood and let Silent Circuit create the perfect soundscape for you.</p>
+        <p className="text-text-tertiary max-w-lg mx-auto">Choose your mood and let Noctune create the perfect soundscape for you.</p>
       </motion.div>
 
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
@@ -48,7 +48,7 @@ export function UseCasesSection() {
             initial={{ opacity: 0, y: 20 }}
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.4, delay: i * 0.04 }}
-            className={cn("group relative rounded-xl border border-border-subtle p-5 text-left transition-transform duration-200 hover:border-border/50 hover:scale-[1.02] active:scale-[0.98] overflow-hidden", uc.gradient)}
+            className={cn("group relative rounded-3xl border border-border-subtle p-5 text-left transition-transform duration-200 hover:border-border/50 hover:scale-[1.02] active:scale-[0.98] overflow-hidden", uc.gradient)}
           >
             <div className="text-2xl mb-3">{uc.emoji}</div>
             <h3 className="text-sm font-semibold text-text-primary mb-1">{uc.label}</h3>

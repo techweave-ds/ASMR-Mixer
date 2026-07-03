@@ -128,7 +128,7 @@ export function MixerContent() {
 
       {showSaveDialog && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-          <div className="w-80 rounded-xl border border-border bg-bg-elevated p-6 shadow-2xl">
+          <div className="w-80 rounded-3xl border border-border bg-bg-elevated p-6 shadow-2xl">
             <h3 className="mb-1 text-base font-semibold text-text-primary">Save Mix</h3>
             <p className="mb-4 text-xs text-text-tertiary">Save your current layer configuration</p>
             <input type="text" placeholder="Mix name..." value={presetName}
@@ -136,9 +136,9 @@ export function MixerContent() {
               className="w-full rounded-lg border border-border bg-glass px-4 py-2.5 text-sm text-text-primary outline-none placeholder:text-text-quaternary focus:border-accent/50 mb-4" autoFocus />
             <div className="flex gap-2">
               <button onClick={() => { if (presetName.trim()) savePreset(presetName.trim()); setShowSaveDialog(false); setPresetName("") }}
-                className="flex-1 rounded-lg bg-accent/15 py-2.5 text-sm font-medium text-accent-light hover:bg-accent/25 transition-colors">Save</button>
+                className="flex-1 rounded-2xl bg-accent/15 py-2.5 text-sm font-medium text-accent-light hover:bg-accent/25 transition-colors">Save</button>
               <button onClick={() => setShowSaveDialog(false)}
-                className="flex-1 rounded-lg bg-glass py-2.5 text-sm font-medium text-text-tertiary hover:text-text-secondary hover:bg-glass-hover transition-colors">Cancel</button>
+                className="flex-1 rounded-2xl bg-glass py-2.5 text-sm font-medium text-text-tertiary hover:text-text-secondary hover:bg-glass-hover transition-colors">Cancel</button>
             </div>
           </div>
         </div>

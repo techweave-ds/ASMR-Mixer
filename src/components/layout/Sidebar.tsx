@@ -38,7 +38,7 @@ export function Sidebar() {
       )}
       <aside
         className={cn(
-          "w-[280px] flex-shrink-0 flex flex-col bg-[#0c0c14] border-r border-border-subtle",
+          "w-[280px] flex-shrink-0 flex flex-col bg-bg-secondary border-r border-border-subtle",
           "fixed left-0 top-0 z-50 h-full transition-transform duration-500 lg:static lg:z-auto lg:translate-x-0",
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         )}
@@ -49,7 +49,7 @@ export function Sidebar() {
             <Sparkles size={16} className="text-accent-light" />
           </div>
           <div>
-            <span className="text-base font-semibold tracking-tight text-text-primary">Silent Circuit</span>
+            <span className="text-base font-semibold tracking-tight text-text-primary">Noctune</span>
             <p className="text-[10px] text-text-tertiary tracking-wider uppercase">Premium ASMR</p>
           </div>
         </div>
@@ -117,7 +117,7 @@ export function Sidebar() {
 
         {/* Premium Card */}
         <div className="px-4 py-3">
-          <div className="rounded-xl bg-gradient-to-br from-blue-500/8 to-indigo-600/8 p-4 ring-1 ring-accent/10">
+          <div className="rounded-3xl bg-gradient-to-br from-blue-500/8 to-indigo-600/8 p-4 ring-1 ring-accent/10">
             <div className="flex items-center gap-2 mb-2">
               <Crown size={14} className="text-accent-amber" />
               <span className="text-xs font-semibold text-accent-amber/90">Go Premium</span>
@@ -125,7 +125,7 @@ export function Sidebar() {
             <p className="mb-3 text-[11px] leading-relaxed text-text-tertiary">
               Unlock all sounds, offline mode, and high-quality audio.
             </p>
-            <button className="w-full rounded-lg bg-accent/15 px-3 py-2 text-xs font-medium text-accent-light/90 transition-all hover:bg-accent/25">
+            <button className="w-full rounded-2xl bg-accent/15 px-3 py-2 text-xs font-medium text-accent-light/90 transition-all hover:bg-accent/25">
               See Plans
             </button>
           </div>
@@ -159,10 +159,16 @@ export function Sidebar() {
               {theme === "dark" ? <Moon size={12} /> : <Sun size={12} />}
               {theme === "dark" ? "Dark" : "Light"}
             </button>
-            <button className="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-[11px] text-text-tertiary hover:text-text-secondary hover:bg-glass-hover transition-colors">
+            <Link href="/settings" onClick={() => setSidebarOpen(false)}
+              className={cn(
+                "flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-[11px] transition-colors",
+                pathname === "/settings"
+                  ? "text-accent-light bg-accent/10"
+                  : "text-text-tertiary hover:text-text-secondary hover:bg-glass-hover"
+              )}>
               <Settings size={12} />
               Settings
-            </button>
+            </Link>
           </div>
         </div>
       </aside>

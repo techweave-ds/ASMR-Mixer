@@ -48,7 +48,7 @@ export function EnvironmentsCarousel() {
             initial={{ opacity: 0, x: 40 }}
             animate={inView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.5, delay: i * 0.06 }}
-            className="group relative flex-shrink-0 w-[280px] sm:w-[300px] rounded-2xl overflow-hidden cursor-pointer card-hover"
+            className="group relative flex-shrink-0 w-[280px] sm:w-[300px] rounded-3xl overflow-hidden cursor-pointer card-hover"
           >
             <div className={cn("aspect-[4/3] bg-gradient-to-br relative overflow-hidden", env.gradient)}
               style={env.cover ? { backgroundImage: `url(${env.cover})`, backgroundSize: 'cover', backgroundPosition: 'center' } : {}}>

@@ -35,7 +35,7 @@ export function SoundCard({
   return (
     <div className={cn("group cursor-pointer", className)} onClick={() => onClick ? onClick() : toggleSound(id)}>
       {/* Artwork */}
-      <div className={cn("relative aspect-square rounded-lg bg-gradient-to-br overflow-hidden card-hover", gradient)}
+      <div className={cn("relative aspect-square rounded-xl bg-gradient-to-br overflow-hidden card-hover", gradient)}
         style={coverUrl ? { backgroundImage: `url(${coverUrl})`, backgroundSize: 'cover', backgroundPosition: 'center' } : {}}>
         <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300" />
         {playing && (

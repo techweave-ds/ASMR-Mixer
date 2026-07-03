@@ -1,7 +1,7 @@
 # Cloudflare Pages deployment via Wrangler CLI
-# Usage: npx wrangler pages deploy out --project-name=silent-circuit
+# Usage: npx wrangler pages deploy out --project-name=noctune
 
-name = "silent-circuit"
+name = "noctune"
 compatibility_date = "2025-01-01"
 
 pages_build_output_dir = "out"

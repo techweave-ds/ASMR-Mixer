@@ -29,14 +29,14 @@ export function RightPanel() {
       {/* Closed state: floating reopen tab */}
       {!rightPanelOpen && (
         <button onClick={() => setRightPanelOpen(true)}
-          className="fixed right-0 top-1/2 z-30 -translate-y-1/2 hidden lg:flex h-12 w-7 items-center justify-center rounded-l-lg bg-[#0c0c14] border border-border-subtle border-r-0 text-text-tertiary hover:text-text-secondary transition-all hover:border-accent/30">
+          className="fixed right-0 top-1/2 z-30 -translate-y-1/2 hidden lg:flex h-12 w-7 items-center justify-center rounded-l-lg bg-bg-secondary border border-border-subtle border-r-0 text-text-tertiary hover:text-text-secondary transition-all hover:border-accent/30">
           <ListMusic size={13} />
         </button>
       )}
 
       {/* Open state: full panel */}
       {rightPanelOpen && (
-        <aside className="w-[360px] flex-shrink-0 flex flex-col bg-[#0c0c14] border-l border-border-subtle">
+        <aside className="w-[360px] flex-shrink-0 flex flex-col bg-bg-secondary border-l border-border-subtle rounded-3xl">
           <div className="flex items-center justify-between h-[68px] px-5 border-b border-border-subtle flex-shrink-0">
             <div className="flex items-center gap-2.5">
               <div className="h-8 w-8 rounded-lg bg-accent/10 flex items-center justify-center">
@@ -72,7 +72,7 @@ export function RightPanel() {
                 return (
                   <div key={layer.soundId}
                     className={cn(
-                      "rounded-xl border p-3 transition-all",
+                      "rounded-2xl border p-3 transition-all",
                       isAudible ? "border-border-subtle bg-glass" : "border-border-subtle/50 bg-glass/50 opacity-50"
                     )}>
                     <div className="flex items-center gap-3">

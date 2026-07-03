@@ -36,7 +36,7 @@ export function CollectionCard({
   }
 
   return (
-    <div className={cn("group cursor-pointer rounded-lg overflow-hidden card-hover", className)}>
+    <div className={cn("group cursor-pointer rounded-3xl overflow-hidden card-hover", className)}>
       <div className={cn("relative aspect-[3/2] bg-gradient-to-br", gradient)}
         style={coverUrl ? { backgroundImage: `url(${coverUrl})`, backgroundSize: 'cover', backgroundPosition: 'center' } : {}}>
         <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />

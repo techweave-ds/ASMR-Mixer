@@ -1,5 +1,5 @@
 {
-  "name": "silent-circuit",
+  "name": "noctune",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "npx serve out",
     "lint": "eslint",
-    "deploy:cloudflare": "npx wrangler pages deploy out --project-name=silent-circuit"
+    "deploy:cloudflare": "npx wrangler pages deploy out --project-name=noctune"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.7",
