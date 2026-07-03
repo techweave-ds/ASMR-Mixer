@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Sun, Moon, Volume2, Timer, Play, RotateCcw, BarChart3, Shield, Download, Music } from "lucide-react"
+import { Sun, Moon, Monitor, Volume2, Timer, Play, RotateCcw, BarChart3, Shield, Download, Music, Sliders } from "lucide-react"
 import { useSettingsStore } from "@/store"
 import { Toggle } from "@/components/ui/Toggle"
 import { Slider } from "@/components/ui/Slider"
@@ -9,10 +9,16 @@ import { Tabs } from "@/components/ui/Tabs"
 import { cn } from "@/lib/utils"
 
 const SECTION_TABS = [
-  { id: "appearance", label: "Appearance", icon: undefined },
-  { id: "audio", label: "Audio", icon: undefined },
-  { id: "playback", label: "Playback", icon: undefined },
-  { id: "privacy", label: "Privacy", icon: undefined },
+  { id: "appearance", label: "Appearance" },
+  { id: "audio", label: "Audio" },
+  { id: "playback", label: "Playback" },
+  { id: "privacy", label: "Privacy" },
+]
+
+const themeOptions: { id: "dark" | "light" | "system"; icon: any; label: string }[] = [
+  { id: "dark", icon: Moon, label: "Dark" },
+  { id: "light", icon: Sun, label: "Light" },
+  { id: "system", icon: Monitor, label: "System" },
 ]
 
 export function SettingsContent() {
@@ -38,10 +44,25 @@ export function SettingsContent() {
       <Tabs tabs={SECTION_TABS} active={activeSection} onChange={setActiveSection} variant="segmented" />
 
       {activeSection === "appearance" && (
-        <div className="rounded-3xl border border-border-subtle bg-glass divide-y divide-border-subtle">
-          <SettingRow icon={theme === "dark" ? Moon : Sun} label="Theme" desc="Switch between dark and light mode">
-            <Toggle checked={theme === "dark"} onChange={(v) => setTheme(v ? "dark" : "light")} />
-          </SettingRow>
+        <div className="space-y-4">
+          <div className="rounded-3xl border border-border-subtle bg-glass p-5 space-y-4">
+            <p className="text-xs font-medium text-text-secondary uppercase tracking-wider">Theme</p>
+            <div className="flex gap-2">
+              {themeOptions.map((opt) => {
+                const Icon = opt.icon
+                const active = theme === opt.id
+                return (
+                  <button key={opt.id} onClick={() => setTheme(opt.id)}
+                    className={cn("flex flex-1 items-center justify-center gap-2 rounded-2xl border py-3 text-sm font-medium transition-all",
+                      active ? "border-accent/30 bg-accent/8 text-accent-light" : "border-border-subtle text-text-tertiary hover:border-border hover:text-text-secondary"
+                    )}>
+                    <Icon size={15} />
+                    {opt.label}
+                  </button>
+                )
+              })}
+            </div>
+          </div>
           <SettingRow icon={Music} label="Reduced Motion" desc="Minimize animations and motion effects">
             <Toggle checked={reducedMotion} onChange={setReducedMotion} />
           </SettingRow>
@@ -50,21 +71,18 @@ export function SettingsContent() {
 
       {activeSection === "audio" && (
         <div className="rounded-3xl border border-border-subtle bg-glass divide-y divide-border-subtle">
-          <SettingRow icon={Volume2} label="Crossfade" desc={`${crossfadeDuration}s transition between sounds`}>
-            <Slider value={crossfadeDuration} onChange={setCrossfadeDuration} min={0} max={5} step={0.5} size="sm" className="w-24" />
+          <SettingRow icon={Sliders} label="Crossfade" desc="Smooth transition between sounds">
+            <div className="flex items-center gap-3">
+              <Toggle checked={crossfadeDuration > 0} onChange={(v) => setCrossfadeDuration(v ? 2 : 0)} />
+              {crossfadeDuration > 0 && (
+                <div className="flex items-center gap-2">
+                  <Slider value={crossfadeDuration} onChange={setCrossfadeDuration} min={0.5} max={5} step={0.5} size="sm" className="w-20" />
+                  <span className="text-[11px] text-text-muted w-6">{crossfadeDuration}s</span>
+                </div>
+              )}
+            </div>
           </SettingRow>
           <SettingRow icon={Volume2} label="Volume Normalization" desc="Balance volume across all sounds">
-            <Toggle checked={true} onChange={() => {}} />
-          </SettingRow>
-        </div>
-      )}
-
-      {activeSection === "playback" && (
-        <div className="rounded-3xl border border-border-subtle bg-glass divide-y divide-border-subtle">
-          <SettingRow icon={Play} label="Autoplay" desc="Auto-play sounds when opening a collection">
-            <Toggle checked={false} onChange={() => {}} />
-          </SettingRow>
-          <SettingRow icon={RotateCcw} label="Loop" desc="Continuously loop active sounds">
             <Toggle checked={true} onChange={() => {}} />
           </SettingRow>
           <SettingRow icon={Timer} label="Default Sleep Timer" desc={defaultSleepTimer ? `${defaultSleepTimer} minutes` : "No default timer set"}>
@@ -78,6 +96,20 @@ export function SettingsContent() {
                 </button>
               ))}
             </div>
+          </SettingRow>
+        </div>
+      )}
+
+      {activeSection === "playback" && (
+        <div className="rounded-3xl border border-border-subtle bg-glass divide-y divide-border-subtle">
+          <SettingRow icon={Play} label="Autoplay" desc="Auto-play sounds when opening a collection">
+            <Toggle checked={false} onChange={() => {}} />
+          </SettingRow>
+          <SettingRow icon={RotateCcw} label="Loop" desc="Continuously loop active sounds">
+            <Toggle checked={true} onChange={() => {}} />
+          </SettingRow>
+          <SettingRow icon={Timer} label="Auto-clear Timer on Pause" desc="Reset the sleep timer when you pause playback">
+            <Toggle checked={false} onChange={() => {}} />
           </SettingRow>
           <SettingRow icon={RotateCcw} label="Resume Previous Session" desc="Pick up where you left off">
             <Toggle checked={true} onChange={() => {}} />

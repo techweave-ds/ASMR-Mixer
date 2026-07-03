@@ -68,8 +68,15 @@ export function Providers({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
 
   useEffect(() => {
-    document.documentElement.classList.toggle("dark", theme === "dark")
+    const resolved = theme === "system" ? (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light") : theme
+    document.documentElement.classList.toggle("dark", resolved === "dark")
     document.documentElement.classList.toggle("reduce-motion", reducedMotion)
+    const mq = window.matchMedia("(prefers-color-scheme: dark)")
+    const handler = (e: MediaQueryListEvent) => {
+      if (theme === "system") document.documentElement.classList.toggle("dark", e.matches)
+    }
+    mq.addEventListener("change", handler)
+    return () => mq.removeEventListener("change", handler)
   }, [theme, reducedMotion])
 
   const transitionProps = reducedMotion ? {} : pageTransition

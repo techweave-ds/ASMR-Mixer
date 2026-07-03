@@ -502,15 +502,20 @@ class AsmrAudioEngine {
   private fadeTimer: ReturnType<typeof setTimeout> | null = null
 
   async init(): Promise<void> {
-    if (this.initialized) return
+    if (this.initialized && this.ctx) {
+      try {
+        if (this.ctx.state === "suspended") await this.ctx.resume()
+      } catch {}
+      return
+    }
     try {
       this.ctx = new AudioContext()
       this.masterGain = this.ctx.createGain()
       this.masterGain.gain.value = 0.8
       this.masterGain.connect(this.ctx.destination)
       this.initialized = true
-    } catch {
-      console.warn("[ASMR Audio] Web Audio API not available")
+    } catch (e) {
+      console.warn("[ASMR Audio] Web Audio API not available", e)
     }
   }
 

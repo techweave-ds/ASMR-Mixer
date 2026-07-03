@@ -11,6 +11,7 @@ import { usePathname } from "next/navigation"
 import { useUiStore, useSettingsStore, useAudioStore } from "@/store"
 import { cn } from "@/lib/utils"
 import { Equalizer } from "@/components/ui/Equalizer"
+import { useStoreHydration } from "@/hooks/useStoreHydration"
 
 const navItems = [
   { href: "/", icon: Home, label: "Home" },
@@ -26,10 +27,13 @@ const libraryItems = [
 ]
 
 export function Sidebar() {
+  const hydrated = useStoreHydration()
   const pathname = usePathname()
   const { sidebarOpen, setSidebarOpen } = useUiStore()
   const { theme, setTheme } = useSettingsStore()
   const isPlaying = useAudioStore((s) => s.isPlaying)
+
+  if (!hydrated) return null
 
   return (
     <>

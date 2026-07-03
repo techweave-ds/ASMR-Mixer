@@ -45,7 +45,7 @@ export function SoundCard({
           </div>
         )}
         {isPremium && !playing && (
-          <div className="absolute top-2 left-2 rounded-full bg-gradient-to-r from-amber-500/80 to-orange-500/80 px-2 py-0.5 text-[8px] font-bold text-white uppercase tracking-wider">
+          <div className="absolute top-2 left-2 rounded-full bg-glass backdrop-blur-sm border border-[rgba(123,92,255,0.3)] px-2 py-0.5 text-[8px] font-bold text-accent-secondary uppercase tracking-wider">
             Premium
           </div>
         )}

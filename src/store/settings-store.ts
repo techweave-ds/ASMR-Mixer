@@ -2,7 +2,7 @@ import { create } from "zustand"
 import { persist } from "zustand/middleware"
 
 interface SettingsState {
-  theme: "dark" | "light"
+  theme: "dark" | "light" | "system"
   crossfadeDuration: number
   defaultSleepTimer: number | null
   playbackQuality: "low" | "medium" | "high"
@@ -13,7 +13,7 @@ interface SettingsState {
 }
 
 interface SettingsActions {
-  setTheme: (theme: "dark" | "light") => void
+  setTheme: (theme: "dark" | "light" | "system") => void
   setCrossfadeDuration: (duration: number) => void
   setDefaultSleepTimer: (minutes: number | null) => void
   setPlaybackQuality: (quality: "low" | "medium" | "high") => void

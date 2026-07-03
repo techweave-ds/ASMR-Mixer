@@ -6,7 +6,7 @@ import {
   Volume2, Timer, Shuffle, Repeat,
   ListMusic, MonitorSpeaker, Settings, Disc3
 } from "lucide-react"
-import { useAudioStore, useFavoritesStore } from "@/store"
+import { useAudioStore, useFavoritesStore, useUiStore } from "@/store"
 import { cn } from "@/lib/utils"
 import { getSoundById } from "@/data/sounds"
 
@@ -25,6 +25,7 @@ export function PlayerBar() {
   const cancelTimer = useAudioStore((s) => s.cancelTimer)
   const isSoundFavorited = useFavoritesStore((s) => s.isSoundFavorited)
   const toggleFav = useFavoritesStore((s) => s.toggleSound)
+  const setRightPanelOpen = useUiStore((s) => s.setRightPanelOpen)
   const [showTimer, setShowTimer] = useState(false)
   const [showVolume, setShowVolume] = useState(false)
 
@@ -51,8 +52,8 @@ export function PlayerBar() {
   }
 
   return (
-    <div className={cn("rounded-[28px] h-[92px] flex-shrink-0 border-t flex items-center px-4 lg:px-6 gap-4 transition-all duration-300",
-      hasSounds ? "bg-bg-secondary border-border-subtle" : "bg-transparent border-transparent")}>
+    <div className={cn("rounded-[28px] h-[92px] lg:h-[92px] md:h-[82px] flex-shrink-0 border-t flex items-center px-4 lg:px-6 gap-4 transition-all duration-300",
+      hasSounds ? "bg-bg-secondary border-[rgba(255,255,255,0.08)]" : "bg-transparent border-transparent")}>
       {/* Left: Track Info */}
       <div className="flex items-center gap-3 min-w-0 w-[280px] flex-shrink-0">
         <div className={cn("h-14 w-14 flex-shrink-0 rounded-xl overflow-hidden shadow-lg flex items-center justify-center",
@@ -128,8 +129,14 @@ export function PlayerBar() {
         </div>
 
         <div className="flex items-center gap-1">
-          <button className={cn("h-8 w-8 rounded-2xl transition-all flex items-center justify-center",
-            hasSounds ? "text-text-quaternary hover:text-text-secondary hover:bg-glass-hover" : "text-text-quaternary/30")} disabled={!hasSounds}>
+          <button onClick={() => setRightPanelOpen(true)}
+            className={cn("h-8 w-8 rounded-2xl transition-all flex items-center justify-center lg:hidden",
+              hasSounds ? "text-text-quaternary hover:text-text-secondary hover:bg-glass-hover" : "text-text-quaternary/30")} disabled={!hasSounds}>
+            <ListMusic size={15} />
+          </button>
+          <button onClick={() => setRightPanelOpen(true)}
+            className={cn("h-8 w-8 rounded-2xl transition-all flex items-center justify-center hidden lg:flex",
+              hasSounds ? "text-text-quaternary hover:text-text-secondary hover:bg-glass-hover" : "text-text-quaternary/30")} disabled={!hasSounds}>
             <ListMusic size={15} />
           </button>
           <button className={cn("h-8 w-8 rounded-2xl transition-all flex items-center justify-center",

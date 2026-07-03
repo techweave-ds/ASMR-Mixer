@@ -1,12 +1,12 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { Search, Bell, Sparkles, ChevronDown } from "lucide-react"
+import { Search, Bell, Sparkles, ChevronDown, Menu, ListMusic } from "lucide-react"
 import { useUiStore, useAudioStore } from "@/store"
 import { cn } from "@/lib/utils"
 
 export function TopBar() {
-  const { setSearchOpen } = useUiStore()
+  const { setSearchOpen, setSidebarOpen, sidebarOpen } = useUiStore()
   const isPlaying = useAudioStore((s) => s.isPlaying)
   const [scrolled, setScrolled] = useState(false)
 
@@ -19,13 +19,17 @@ export function TopBar() {
   return (
     <header
       className={cn(
-        "flex h-[68px] items-center gap-6 border-b px-6 lg:px-8 xl:px-10 flex-shrink-0 sticky top-0 z-30 transition-all duration-300",
+        "flex h-[68px] items-center gap-3 lg:gap-6 border-b px-4 lg:px-8 xl:px-10 flex-shrink-0 sticky top-0 z-30 transition-all duration-300",
         scrolled
           ? "bg-bg-base/80 backdrop-blur-xl border-border-subtle"
           : "bg-transparent border-transparent"
       )}
       style={{ height: scrolled ? "60px" : "68px" }}
     >
+      <button onClick={() => setSidebarOpen(!sidebarOpen)}
+        className="flex lg:hidden h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-glass border border-border-subtle text-text-tertiary hover:text-text-secondary transition-colors">
+        <Menu size={16} />
+      </button>
       {/* Search */}
       <button
         onClick={() => setSearchOpen(true)}
@@ -41,7 +45,7 @@ export function TopBar() {
         <span className="sm:hidden">Search...</span>
       </button>
 
-      <div className="flex items-center gap-3 ml-auto">
+      <div className="flex items-center gap-2 lg:gap-3 ml-auto">
         {isPlaying && (
           <div className="flex items-center gap-1.5 rounded-full bg-accent/10 px-3 py-1">
             <span className="h-1.5 w-1.5 rounded-full bg-accent-light animate-pulse" />
