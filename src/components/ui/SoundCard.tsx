@@ -1,5 +1,6 @@
 "use client"
 
+import { useState } from "react"
 import { Play, Pause, Heart, Clock } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useAudioStore, useFavoritesStore } from "@/store"
@@ -19,6 +20,7 @@ interface SoundCardProps {
 export function SoundCard({
   id, title, description, gradient = "from-gray-800/30 to-gray-900/30", duration = 0, coverUrl, isPremium, className, onClick,
 }: SoundCardProps) {
+  const [imgFailed, setImgFailed] = useState(false)
   const toggleSound = useAudioStore((s) => s.toggleSound)
   const isSoundPlaying = useAudioStore((s) => s.isSoundPlaying)
   const toggleFav = useFavoritesStore((s) => s.toggleSound)
@@ -28,7 +30,7 @@ export function SoundCard({
 
   const safeTitle = title || id.replace(/-/g, " ")
   const safeDesc = description || "Ambient soundscape"
-  const safeCover = coverUrl || undefined
+  const safeCover = !imgFailed ? coverUrl || undefined : undefined
 
   const formatDuration = (s: number) => {
     const h = Math.floor(s / 3600)
@@ -41,6 +43,9 @@ export function SoundCard({
       {/* Artwork */}
       <div className={cn("relative aspect-square rounded-xl bg-gradient-to-br overflow-hidden card-hover", gradient)}
         style={safeCover ? { backgroundImage: `url(${safeCover})`, backgroundSize: 'cover', backgroundPosition: 'center' } : {}}>
+        {coverUrl && !imgFailed && (
+          <img src={coverUrl} alt="" className="hidden" onError={() => setImgFailed(true)} />
+        )}
         <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300" />
         {playing && (
           <div className="absolute top-2 left-2 flex items-center gap-1 rounded-full bg-black/50 backdrop-blur-sm px-2 py-0.5">
