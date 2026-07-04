@@ -19,6 +19,8 @@ export function PlayerBar() {
   const volume = useAudioStore((s) => s.volume)
   const setMasterVolume = useAudioStore((s) => s.setMasterVolume)
   const togglePause = useAudioStore((s) => s.togglePause)
+  const progress = useAudioStore((s) => s.progress)
+  const duration = useAudioStore((s) => s.duration)
   const timerMinutes = useAudioStore((s) => s.timerMinutes)
   const timerRemaining = useAudioStore((s) => s.timerRemaining)
   const setTimer = useAudioStore((s) => s.setTimer)
@@ -94,12 +96,12 @@ export function PlayerBar() {
           <button aria-label="Repeat" className={cn("transition-colors", hasSounds ? "text-text-quaternary hover:text-text-secondary" : "text-text-quaternary/30")} disabled={!hasSounds}><Repeat size={15} /></button>
         </div>
         <div className="flex items-center gap-2 w-full">
-          <span className="text-[10px] text-text-quaternary w-8 text-right flex-shrink-0">{formatTime(0)}</span>
+          <span className="text-[10px] text-text-quaternary w-8 text-right flex-shrink-0">{formatTime(hasSounds ? progress : 0)}</span>
           <div className={cn("flex-1 h-1 rounded-full relative", hasSounds ? "bg-border group cursor-pointer" : "bg-border/30")}>
-            <div className="h-full w-0 rounded-full bg-text-primary/20 transition-colors" />
+            <div className="h-full rounded-full bg-text-primary/40 transition-all" style={{ width: hasSounds && duration > 0 ? `${Math.min(100, (progress / duration) * 100)}%` : '0%' }} />
           </div>
           <span className="text-[10px] text-text-quaternary w-8 flex-shrink-0">
-            {hasSounds && firstSound ? formatTime(firstSound.duration) : formatTime(0)}
+            {hasSounds && firstSound ? formatTime(duration || firstSound.duration) : formatTime(0)}
           </span>
         </div>
       </div>
