@@ -22,7 +22,7 @@ export function EnvironmentsCarousel() {
   const toggleSound = useAudioStore((s) => s.toggleSound)
 
   return (
-    <div ref={ref} className="py-24 px-6 lg:px-8">
+    <div ref={ref} className="py-16 px-6 lg:px-8">
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={inView ? { opacity: 1, y: 0 } : {}}

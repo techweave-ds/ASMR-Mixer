@@ -48,7 +48,7 @@ export function StatsSection() {
   const inView = useInView(ref, { once: true, margin: "-100px" })
 
   return (
-    <section ref={ref} className="py-20 px-6 lg:px-8">
+    <section ref={ref} className="py-14 px-6 lg:px-8">
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={inView ? { opacity: 1, y: 0 } : {}}

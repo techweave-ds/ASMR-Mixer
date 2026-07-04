@@ -21,7 +21,7 @@ export function ExperienceCards() {
   const toggleSound = useAudioStore((s) => s.toggleSound)
 
   return (
-    <section ref={ref} id="content-start" className="py-24 px-6 lg:px-8 max-w-7xl mx-auto">
+    <section ref={ref} id="content-start" className="py-16 px-6 lg:px-8 max-w-7xl mx-auto">
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={inView ? { opacity: 1, y: 0 } : {}}

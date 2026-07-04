@@ -51,10 +51,10 @@ export function HomeContent() {
       {/* === CONTENT SECTIONS (scrolls in from below) — opaque background prevents hero bleed-through === */}
       <div ref={contentRef} className="relative z-10 mt-[100vh] bg-bg-primary">
         {/* Transition spacer */}
-        <div className="h-16 md:h-24" />
+        <div className="h-10 md:h-16" />
 
         {/* Section 1: Why Noctune Exists */}
-        <section id="content-start" className="px-6 md:px-16 lg:px-24 max-w-7xl mx-auto mb-24">
+        <section id="content-start" className="px-6 md:px-16 lg:px-24 max-w-7xl mx-auto mb-16">
           <motion.div
             initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -72,7 +72,7 @@ export function HomeContent() {
         </section>
 
         {/* Section 2: How Do You Want to Feel? */}
-        <section className="px-6 md:px-16 lg:px-24 max-w-7xl mx-auto mb-24">
+        <section className="px-6 md:px-16 lg:px-24 max-w-7xl mx-auto mb-16">
           <motion.div
             initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -90,7 +90,7 @@ export function HomeContent() {
         </section>
 
         {/* Section 3: Stats / Impact */}
-        <section className="px-6 md:px-16 lg:px-24 max-w-7xl mx-auto mb-24">
+        <section className="px-6 md:px-16 lg:px-24 max-w-7xl mx-auto mb-16">
           <motion.div
             initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -108,7 +108,7 @@ export function HomeContent() {
         </section>
 
         {/* Section 4: Explore Environments */}
-        <section className="px-6 md:px-16 lg:px-24 max-w-7xl mx-auto mb-24">
+        <section className="px-6 md:px-16 lg:px-24 max-w-7xl mx-auto mb-16">
           <motion.div
             initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -126,7 +126,7 @@ export function HomeContent() {
         </section>
 
         {/* Section 5: Curated Collections */}
-        <section className="px-6 md:px-16 lg:px-24 max-w-7xl mx-auto mb-32">
+        <section className="px-6 md:px-16 lg:px-24 max-w-7xl mx-auto mb-24">
           <motion.div
             initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}

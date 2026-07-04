@@ -1,6 +1,6 @@
 "use client"
 
-import { useRef, useMemo, useState } from "react"
+import { useRef, useState } from "react"
 import { Canvas, useFrame } from "@react-three/fiber"
 import * as THREE from "three"
 
@@ -101,49 +101,48 @@ function Fireflies() {
   )
 }
 
-interface InteractiveOrbProps {
-  position: [number, number, number]
-  color: string
-  onClick: () => void
-}
-
-function InteractiveOrb({ position, color, onClick }: InteractiveOrbProps) {
+function AuroraBand({ color = "#60A5FA", positionY = 0, opacity = 0.06, speed = 0.008 }: { color?: string; positionY?: number; opacity?: number; speed?: number }) {
   const meshRef = useRef<THREE.Mesh>(null!)
-  const [hovered, setHovered] = useState(false)
-  const [clicked, setClicked] = useState(false)
-
   useFrame((state) => {
     if (!meshRef.current) return
-    meshRef.current.position.y = position[1] + Math.sin(state.clock.elapsedTime * 0.4 + position[0]) * 0.1
-    const scale = hovered ? 1.3 : clicked ? 1.15 : 1
-    meshRef.current.scale.lerp(new THREE.Vector3(scale, scale, scale), 0.08)
+    meshRef.current.position.x = Math.sin(state.clock.elapsedTime * speed) * 2
+    const mat = meshRef.current.material as THREE.MeshBasicMaterial
+    mat.opacity = opacity + Math.sin(state.clock.elapsedTime * speed * 0.5) * 0.02
   })
-
   return (
-    <group>
-      <mesh
-        ref={meshRef}
-        position={position}
-        onClick={(e) => { e.stopPropagation(); setClicked(!clicked); onClick() }}
-        onPointerOver={() => setHovered(true)}
-        onPointerOut={() => setHovered(false)}
-      >
-        <sphereGeometry args={[0.2, 16, 16]} />
-        <meshPhysicalMaterial
-          color={color}
-          transparent
-          opacity={hovered ? 0.8 : 0.5}
-          roughness={0.1}
-          metalness={0.2}
-          clearcoat={0.3}
-          emissive={color}
-          emissiveIntensity={hovered ? 0.3 : 0.1}
-        />
-      </mesh>
-      <sprite position={[position[0], position[1] + 0.3, position[2]]} scale={[0.01, 0.01, 0.01]}>
-        <spriteMaterial transparent opacity={0} />
-      </sprite>
-    </group>
+    <mesh ref={meshRef} position={[0, positionY, -8]} rotation={[0.2, 0.3, 0.1]}>
+      <planeGeometry args={[20, 1.5]} />
+      <meshBasicMaterial color={color} transparent opacity={opacity} blending={THREE.AdditiveBlending} depthWrite={false} />
+    </mesh>
+  )
+}
+
+function BokehParticles({ env }: { env: EnvKey }) {
+  const meshRef = useRef<THREE.Points>(null!)
+  useFrame((state) => {
+    if (!meshRef.current) return
+    meshRef.current.rotation.y += 0.0003
+    meshRef.current.position.y = Math.sin(state.clock.elapsedTime * 0.01) * 0.2
+  })
+  const c = ENVIRONMENTS[env]
+  const count = 15
+  const pos = new Float32Array(count * 3)
+  const sizes = new Float32Array(count)
+  const rand = rng()
+  for (let i = 0; i < count; i++) {
+    pos[i * 3] = (rand() - 0.5) * 30
+    pos[i * 3 + 1] = (rand() - 0.5) * 12
+    pos[i * 3 + 2] = (rand() - 0.5) * 20 - 5
+    sizes[i] = 0.3 + rand() * 0.8
+  }
+  return (
+    <points ref={meshRef}>
+      <bufferGeometry>
+        <bufferAttribute attach="attributes-position" args={[pos, 3]} />
+        <bufferAttribute attach="attributes-size" args={[sizes, 1]} />
+      </bufferGeometry>
+      <pointsMaterial size={0.8} color={c.light} transparent opacity={0.04} sizeAttenuation depthWrite={false} blending={THREE.AdditiveBlending} />
+    </points>
   )
 }
 
@@ -161,17 +160,8 @@ interface SceneContentProps {
   onOrbClick: (label: string) => void
 }
 
-function SceneContent({ env, onOrbClick }: SceneContentProps) {
+function SceneContent({ env }: SceneContentProps) {
   const groupRef = useRef<THREE.Group>(null!)
-
-  const orbs = useMemo(() => [
-    { position: [-3.5, 0.3, -2.5] as const, color: "#F59E0B", label: "Campfire" },
-    { position: [-1, 0.8, -1.5] as const, color: "#60A5FA", label: "Rain" },
-    { position: [1.5, 1, -2] as const, color: "#34D399", label: "Forest" },
-    { position: [3.8, 0.5, -3] as const, color: "#93C5FD", label: "Ocean" },
-    { position: [-2, -0.2, -0.8] as const, color: "#F87171", label: "Birds" },
-    { position: [3, 0.1, -1.2] as const, color: "#E2E8F0", label: "Wind" },
-  ], [])
 
   const config = ENVIRONMENTS[env]
 
@@ -194,11 +184,13 @@ function SceneContent({ env, onOrbClick }: SceneContentProps) {
       <MountainRange color="#15152a" opacity={0.15} posZ={-6} segments={10} />
       <MountainRange color="#12122a" opacity={0.18} posZ={-4.5} segments={8} />
       <FogParticles env={env} />
+      {/* Aurora bands */}
+      <AuroraBand color={config.light} positionY={2} opacity={0.04} speed={0.006} />
+      <AuroraBand color={config.light} positionY={-1} opacity={0.03} speed={0.01} />
+      {/* Bokeh */}
+      <BokehParticles env={env} />
       <Fireflies />
       <GroundGlow env={env} />
-      {orbs.map((orb) => (
-        <InteractiveOrb key={orb.label} position={[orb.position[0], orb.position[1], orb.position[2]]} color={orb.color} onClick={() => onOrbClick(orb.label)} />
-      ))}
       {/* Foreground foliage layer */}
       <mesh position={[0, -2.2, 0.5]} rotation={[0, 0, 0]}>
         <planeGeometry args={[20, 4]} />
@@ -220,7 +212,7 @@ function useLowPerformance(): boolean {
   return lowPerf
 }
 
-export function HeroScene({ env = "rainforest", onOrbClick }: { env?: EnvKey; onOrbClick?: (label: string) => void }) {
+export function HeroScene({ env = "rainforest" }: { env?: EnvKey }) {
   const lowPerf = useLowPerformance()
 
   if (lowPerf) {
@@ -231,7 +223,7 @@ export function HeroScene({ env = "rainforest", onOrbClick }: { env?: EnvKey; on
 
   return (
     <Canvas camera={{ position: [0, 0.3, 5.5], fov: 50 }} dpr={[0.5, 1]} gl={{ antialias: false, alpha: false }} frameloop="always">
-      <SceneContent env={env} onOrbClick={onOrbClick || (() => {})} />
+      <SceneContent env={env} onOrbClick={() => {}} />
     </Canvas>
   )
 }

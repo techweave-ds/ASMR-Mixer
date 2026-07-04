@@ -119,7 +119,7 @@ export function HeroOverlay() {
     <section className="relative h-screen w-full overflow-hidden">
       {/* 3D Scene — full viewport */}
       <div className="absolute inset-0 z-0">
-        <HeroScene env={activeEnv} onOrbClick={handleOrbClick} />
+        <HeroScene env={activeEnv} />
       </div>
 
       {/* Gradient Vignette */}
@@ -192,15 +192,15 @@ export function HeroOverlay() {
             </motion.div>
 
             <motion.div variants={fadeUp} className="flex items-center gap-3 flex-wrap">
-              <button className="group relative flex items-center gap-2.5 rounded-full bg-white/10 border border-white/20 px-6 py-2.5 text-sm font-medium text-white transition-all hover:bg-white/15 active:scale-[0.97] overflow-hidden">
+              <button onClick={() => document.getElementById("content-start")?.scrollIntoView({ behavior: "smooth" })}
+                className="group relative flex items-center gap-2.5 rounded-full bg-white/15 border border-white/25 px-7 py-3 text-sm font-semibold text-white transition-all hover:bg-white/20 active:scale-[0.97] overflow-hidden shadow-lg shadow-white/5">
                 <Sparkles size={14} className="text-accent-light" />
                 Start Listening
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity rounded-full glow-accent" />
               </button>
               <button onClick={scrollToContent}
-                className="flex items-center gap-2 rounded-full border border-white/10 px-6 py-2.5 text-sm font-medium text-white/50 transition-all hover:text-white/70 hover:border-white/20 active:scale-[0.97]">
-                <Compass size={14} />
-                Explore
+                className="flex items-center gap-2 rounded-full border border-white/10 px-5 py-2.5 text-xs font-medium text-white/40 transition-all hover:text-white/60 hover:border-white/15 active:scale-[0.97]">
+                Browse Sounds
               </button>
             </motion.div>
           </div>
