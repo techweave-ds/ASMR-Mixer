@@ -22,7 +22,7 @@ export function ToastContainer() {
   const { toasts, removeToast } = useToastStore()
 
   return (
-    <div className="fixed bottom-24 right-6 z-[60] flex flex-col gap-2 pointer-events-none">
+    <div className="fixed bottom-36 right-6 z-[60] flex flex-col gap-2 pointer-events-none">
       {toasts.map((toast) => {
         const Icon = icons[toast.type]
         return (

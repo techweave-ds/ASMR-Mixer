@@ -1,10 +1,11 @@
 "use client"
 
-import { useState, useCallback } from "react"
+import { useState, useCallback, useMemo } from "react"
 import { GripVertical, X, Copy, Volume2, Headphones } from "lucide-react"
 import { Reorder } from "framer-motion"
 import { cn } from "@/lib/utils"
 import { useAudioStore } from "@/store"
+import { audioEngine } from "@/audio"
 import { getSoundById } from "@/data/sounds"
 import { Slider } from "@/components/ui/Slider"
 
@@ -14,6 +15,13 @@ export function QueuePanel() {
   const setVolume = useAudioStore((s) => s.setVolume)
   const toggleSound = useAudioStore((s) => s.toggleSound)
   const [queue, setQueue] = useState<string[]>(() => Array.from(isPlayingSounds))
+  const playingIds = useMemo(() => Array.from(isPlayingSounds), [isPlayingSounds])
+
+  if (queue.length !== playingIds.length || !playingIds.every((id) => queue.includes(id))) {
+    const merged = [...queue]
+    playingIds.forEach((id) => { if (!merged.includes(id)) merged.push(id) })
+    setQueue(merged.filter((id) => playingIds.includes(id)))
+  }
 
   const sounds = queue.map((id) => ({ id, sound: getSoundById(id) })).filter((s) => s.sound)
 
@@ -55,7 +63,7 @@ export function QueuePanel() {
             </div>
             <div className="flex items-center gap-2">
               <Volume2 size={11} className="text-text-muted shrink-0" />
-              <Slider value={0.5} onChange={(v) => setVolume(item.id, v)} size="sm" className="w-16" />
+              <Slider value={0.5} onChange={(v) => { setVolume(item.id, v); audioEngine.setSoundVolume(item.id, v) }} size="sm" className="w-16" />
             </div>
             <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
               <button onClick={() => duplicate(item.id)}

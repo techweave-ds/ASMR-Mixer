@@ -86,13 +86,13 @@ export function HeroOverlay() {
   const handleEnvChange = (id: EnvKey) => {
     setActiveEnv(id)
     const soundMap: Record<EnvKey, string> = {
-      rainforest: "rain",
-      forest: "forest",
-      ocean: "ocean",
+      rainforest: "rain-light",
+      forest: "forest-day",
+      ocean: "ocean-waves",
       campfire: "campfire",
-      snow: "snow",
-      night: "night",
-      desert: "desert",
+      snow: "snow-falling",
+      night: "night-crickets",
+      desert: "wind-gentle",
     }
     const soundId = soundMap[id]
     if (soundId && !isSoundPlaying(soundId)) {
@@ -103,11 +103,11 @@ export function HeroOverlay() {
   const handleOrbClick = (label: string) => {
     const soundMap: Record<string, string> = {
       Campfire: "campfire",
-      Rain: "rain",
-      Forest: "forest",
-      Ocean: "ocean",
-      Birds: "birds",
-      Wind: "wind",
+      Rain: "rain-light",
+      Forest: "forest-day",
+      Ocean: "ocean-waves",
+      Birds: "birds-garden",
+      Wind: "wind-gentle",
     }
     const soundId = soundMap[label]
     if (soundId) {

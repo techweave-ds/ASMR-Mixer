@@ -68,7 +68,9 @@ export function FloatingControls({ env, onEnvChange }: FloatingControlsProps) {
 
         {/* Day/Night toggle */}
         <button onClick={() => setIsDay(!isDay)}
-          className="flex items-center gap-2 rounded-lg px-2.5 py-1.5 text-[11px] text-white/50 hover:text-white/70 hover:bg-white/5 transition-all">
+          className={cn("flex items-center gap-2 rounded-lg px-2.5 py-1.5 text-[11px] transition-all",
+            isDay ? "text-white/50 hover:text-white/70 hover:bg-white/5" : "text-accent-light bg-accent/10"
+          )}>
           {isDay ? <Sun size={12} /> : <Moon size={12} />}
           {isDay ? "Day" : "Night"}
         </button>

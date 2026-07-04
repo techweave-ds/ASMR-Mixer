@@ -5,7 +5,6 @@ import { motion, useInView } from "framer-motion"
 import { Moon, Target, Leaf, Heart, Book, Palette, Trees, Sparkles, Monitor, type LucideIcon } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useAudioStore } from "@/store"
-import { sounds } from "@/data/sounds"
 
 const useCases = [
   { label: "Better Sleep", icon: "Moon", desc: "Fall asleep naturally with layered ambient soundscapes.", gradient: "from-indigo-600/20 to-purple-900/20" },
@@ -46,8 +45,19 @@ export function UseCasesSection() {
           <motion.button
             key={uc.label}
             onClick={() => {
-              const match = sounds.find((s) => s.tags.some((t) => uc.label.toLowerCase().includes(t)) || s.category === uc.label.toLowerCase())
-              if (match) toggleSound(match.id)
+              const soundMap: Record<string, string> = {
+                "Better Sleep": "rain-light",
+                "Deep Focus": "white-noise",
+                "Stress Relief": "wind-gentle",
+                "Meditation": "ocean-waves",
+                "Read Better": "library-quiet",
+                "Creative Flow": "writing-pencil",
+                "Nature Escape": "forest-day",
+                "Anxiety Relief": "rain-light",
+                "Productivity": "cafe-bustling",
+              }
+              const sid = soundMap[uc.label]
+              if (sid) toggleSound(sid)
             }}
             initial={{ opacity: 0, y: 20 }}
             animate={inView ? { opacity: 1, y: 0 } : {}}

@@ -5,7 +5,6 @@ import { motion, useInView } from "framer-motion"
 import { Play, Music, Clock, ChevronRight } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useAudioStore } from "@/store"
-import { sounds } from "@/data/sounds"
 
 const environments = [
   { title: "Mountain Cabin", description: "Warm fireplace, rain on window, soft wind", gradient: "from-stone-700/40 to-indigo-900/40", cover: "https://images.unsplash.com/photo-1449158743715-0a90ebb6d2d8?auto=format&fit=crop&w=600&q=80", duration: 60, sounds: 6 },
@@ -23,7 +22,7 @@ export function EnvironmentsCarousel() {
   const toggleSound = useAudioStore((s) => s.toggleSound)
 
   return (
-    <section ref={ref} className="py-24 px-6 lg:px-8">
+    <div ref={ref} className="py-24 px-6 lg:px-8">
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={inView ? { opacity: 1, y: 0 } : {}}
@@ -62,8 +61,16 @@ export function EnvironmentsCarousel() {
                 </div>
               </div>
               <button onClick={() => {
-                const match = sounds.find((s) => env.title.toLowerCase().includes(s.category))
-                if (match) toggleSound(match.id)
+                const envSoundMap: Record<string, string> = {
+                  "Mountain Cabin": "fireplace",
+                  "Ocean Storm": "ocean-storm",
+                  "Japanese Garden": "river-gentle",
+                  "Forest Trail": "forest-day",
+                  "Night Sky": "night-crickets",
+                  "Coffee Shop": "cafe-bustling",
+                }
+                const sid = envSoundMap[env.title]
+                if (sid) toggleSound(sid)
               }}
                 className="absolute top-4 right-4 flex h-10 w-10 items-center justify-center rounded-full bg-accent text-white shadow-xl opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-200 hover:scale-105 active:scale-95">
                 <Play size={14} />
@@ -72,6 +79,6 @@ export function EnvironmentsCarousel() {
           </motion.div>
         ))}
       </div>
-    </section>
+    </div>
   )
 }

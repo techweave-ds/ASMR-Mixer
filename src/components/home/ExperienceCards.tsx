@@ -5,7 +5,6 @@ import { motion, useInView } from "framer-motion"
 import { Moon, Target, Flower2, BookOpen, Brush, Heart, Sparkles } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useAudioStore } from "@/store"
-import { sounds } from "@/data/sounds"
 
 const experiences = [
   { icon: Moon, label: "Better Sleep", desc: "Fall asleep naturally with layered ambient soundscapes that quiet the mind and reduce nighttime distractions.", gradient: "from-indigo-500/10 to-purple-600/10", iconColor: "#A78BFA" },
@@ -42,8 +41,16 @@ export function ExperienceCards() {
           <motion.div
             key={exp.label}
             onClick={() => {
-              const match = sounds.find((s) => exp.label.toLowerCase().includes(s.category) || s.tags.some((t) => exp.label.toLowerCase().includes(t)))
-              if (match) toggleSound(match.id)
+              const soundMap: Record<string, string> = {
+                "Better Sleep": "rain-light",
+                "Deep Focus": "brown-noise",
+                "Stress Relief": "wind-gentle",
+                "Meditation": "ocean-waves",
+                "Read Better": "library-quiet",
+                "Creative Flow": "writing-pencil",
+              }
+              const sid = soundMap[exp.label]
+              if (sid) toggleSound(sid)
             }}
             initial={{ opacity: 0, y: 30 }}
             animate={inView ? { opacity: 1, y: 0 } : {}}

@@ -588,6 +588,8 @@ class AsmrAudioEngine {
     const active = this.activeSounds.get(soundId)
     if (!active) return
 
+    if (active.cleanup) active.cleanup()
+
     if (fadeOut && this.ctx) {
       active.gain.gain.linearRampToValueAtTime(0, this.ctx.currentTime + 1.5)
       await new Promise((resolve) => setTimeout(resolve, 1500))
@@ -600,7 +602,6 @@ class AsmrAudioEngine {
       } catch {}
     })
     active.gain.disconnect()
-    if (active.cleanup) active.cleanup()
     this.activeSounds.delete(soundId)
   }
 

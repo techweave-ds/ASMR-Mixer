@@ -28,9 +28,9 @@ export function SettingsContent() {
     reducedMotion, setReducedMotion,
     crossfadeDuration, setCrossfadeDuration,
     defaultSleepTimer, setDefaultSleepTimer,
-    notificationsEnabled, setNotificationsEnabled,
-    dailyReminder, setDailyReminder,
   } = useSettingsStore()
+  const [analyticsEnabled, setAnalyticsEnabled] = useState(true)
+  const [crashReportsEnabled, setCrashReportsEnabled] = useState(true)
 
   const timerOptions = [15, 30, 45, 60, 120]
 
@@ -120,10 +120,10 @@ export function SettingsContent() {
       {activeSection === "privacy" && (
         <div className="rounded-3xl border border-border-subtle bg-glass divide-y divide-border-subtle">
           <SettingRow icon={BarChart3} label="Usage Analytics" desc="Help improve Noctune with anonymous usage data">
-            <Toggle checked={notificationsEnabled} onChange={setNotificationsEnabled} />
+            <Toggle checked={analyticsEnabled} onChange={setAnalyticsEnabled} />
           </SettingRow>
           <SettingRow icon={Shield} label="Crash Reports" desc="Automatically send crash reports to help fix issues">
-            <Toggle checked={dailyReminder} onChange={setDailyReminder} />
+            <Toggle checked={crashReportsEnabled} onChange={setCrashReportsEnabled} />
           </SettingRow>
           <SettingRow icon={Download} label="Download Management" desc="Manage your downloaded content">
             <button className="text-xs text-accent hover:underline">Manage</button>

@@ -1,6 +1,6 @@
 "use client"
 
-import { User, Moon, Sun, Bell, Trash2, Timer, Music, Volume2, Crown } from "lucide-react"
+import { User, Moon, Sun, Monitor, Bell, Trash2, Timer, Music, Volume2, Crown } from "lucide-react"
 import { useSettingsStore } from "@/store"
 import { Slider } from "@/components/ui/Slider"
 import { cn } from "@/lib/utils"
@@ -28,7 +28,7 @@ export function ProfileContent() {
         <h2 className="text-sm font-semibold text-text-primary mb-4">Preferences</h2>
         <div className="rounded-3xl border border-border-subtle bg-glass divide-y divide-border-subtle">
           {[
-            { icon: theme === "dark" ? Moon : Sun, iconColor: theme === "dark" ? "text-accent-light" : "text-accent-amber", label: "Theme", desc: theme === "dark" ? "Dark mode" : "Light mode", action: () => setTheme(theme === "dark" ? "light" : "dark"), buttonLabel: theme === "dark" ? "Dark" : "Light", buttonActive: true },
+            { icon: theme === "dark" ? Moon : theme === "light" ? Sun : Monitor, iconColor: theme === "dark" ? "text-accent-light" : theme === "light" ? "text-accent-amber" : "text-text-tertiary", label: "Theme", desc: theme === "dark" ? "Dark mode" : theme === "light" ? "Light mode" : "System", action: () => setTheme(theme === "dark" ? "light" : theme === "light" ? "system" : "dark"), buttonLabel: theme === "dark" ? "Dark" : theme === "light" ? "Light" : "System", buttonActive: true },
             { icon: Bell, iconColor: "text-text-tertiary", label: "Notifications", desc: "Enable app notifications", action: () => setNotificationsEnabled(!notificationsEnabled), buttonLabel: notificationsEnabled ? "On" : "Off", buttonActive: notificationsEnabled },
             { icon: Bell, iconColor: "text-text-tertiary", label: "Daily Reminder", desc: "\"Time to relax\" notification", action: () => setDailyReminder(!dailyReminder), buttonLabel: dailyReminder ? "On" : "Off", buttonActive: dailyReminder },
           ].map((item, i) => (

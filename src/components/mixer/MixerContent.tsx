@@ -6,6 +6,7 @@ import {
   Layers, Headphones
 } from "lucide-react"
 import { useMixerStore, useAudioStore } from "@/store"
+import { audioEngine } from "@/audio"
 import { Slider } from "@/components/ui/Slider"
 import { SoundCard } from "@/components/ui/SoundCard"
 import { sounds, getSoundById } from "@/data/sounds"
@@ -92,11 +93,17 @@ export function MixerContent() {
                 <span className="text-[10px] text-text-quaternary w-8 text-right">{Math.round(layer.volume * 100)}%</span>
               </div>
               <div className="flex items-center gap-1">
-                <button onClick={() => { toggleMute(layer.soundId); if (isSoundPlaying(layer.soundId)) toggleSound(layer.soundId) }}
+                <button onClick={() => {
+                  const willMute = !layer.isMuted
+                  toggleMute(layer.soundId)
+                  if (isSoundPlaying(layer.soundId)) {
+                    audioEngine.setSoundVolume(layer.soundId, willMute ? 0 : layer.volume)
+                  }
+                }}
                   className={cn("rounded-lg p-1.5 transition-colors", layer.isMuted ? "bg-red-500/20 text-accent-red" : "text-text-quaternary hover:text-text-secondary")}>
                   {layer.isMuted ? <VolumeX size={14} /> : <Volume2 size={14} />}
                 </button>
-                <button onClick={() => { removeLayer(layer.soundId); if (isSoundPlaying(layer.soundId)) toggleSound(layer.soundId) }}
+                <button onClick={() => { if (isSoundPlaying(layer.soundId)) toggleSound(layer.soundId); removeLayer(layer.soundId) }}
                   className="rounded-lg p-1.5 text-text-quaternary hover:text-accent-red transition-colors">
                   <Trash2 size={14} />
                 </button>

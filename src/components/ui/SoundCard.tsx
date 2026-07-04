@@ -60,7 +60,7 @@ export function SoundCard({
       <div className={cn("relative aspect-square rounded-xl bg-gradient-to-br overflow-hidden card-hover", gradient)}
         style={safeCover ? { backgroundImage: `url(${safeCover})`, backgroundSize: 'cover', backgroundPosition: 'center' } : {}}>
         {coverUrl && !imgFailed && (
-          <img src={coverUrl} alt="" className="hidden" onError={() => setImgFailed(true)} />
+          <img src={coverUrl} alt="" className="hidden" onError={() => setImgFailed(true)} loading="lazy" />
         )}
         <div className={cn("absolute inset-0 transition-colors duration-300", locked ? "bg-black/40" : "bg-black/0 group-hover:bg-black/20")} />
         {playing && (
