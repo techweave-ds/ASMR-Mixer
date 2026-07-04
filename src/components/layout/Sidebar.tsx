@@ -49,13 +49,7 @@ export function Sidebar() {
       >
         {/* Logo */}
         <div className="flex h-[68px] items-center gap-3 px-6 border-b border-border-subtle">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500/20 to-indigo-600/20 ring-1 ring-accent/20">
-            <Sparkles size={16} className="text-accent-light" />
-          </div>
-          <div>
-            <span className="text-base font-semibold tracking-tight text-text-primary">Noctune</span>
-            <p className="text-[10px] text-text-tertiary tracking-wider uppercase">Premium ASMR</p>
-          </div>
+          <img src="/logo.png" alt="Noctune" className="h-8 w-auto" />
         </div>
 
         {/* Navigation */}

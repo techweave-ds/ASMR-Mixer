@@ -490,6 +490,130 @@ const SOUND_BUILDERS: Record<string, SoundBuilder> = {
     const extraNodes: AudioNode[] = []
     return { nodes: [...n.nodes, ...m.nodes], cleanup: () => { active.current = false; clearInterval(thunderTimer) } }
   },
+  "whisper-soft": (ctx, dest) => {
+    const n = noiseSource(ctx, "pink", 0.05, dest, { type: "bandpass", freq: 1500, Q: 1.5 })
+    n.gain.gain.linearRampToValueAtTime(0.07, ctx.currentTime + 3)
+    const m = lfoModulate(ctx, 0.3, 0.03, n.gain.gain)
+    const n2 = noiseSource(ctx, "white", 0.02, dest, { type: "bandpass", freq: 3500, Q: 3.0 })
+    n2.gain.gain.linearRampToValueAtTime(0.03, ctx.currentTime + 3)
+    const m2 = lfoModulate(ctx, 0.6, 0.015, n2.gain.gain)
+    return { nodes: [...n.nodes, ...n2.nodes, ...m.nodes, ...m2.nodes] }
+  },
+  "whisper-breathy": (ctx, dest) => {
+    const n = noiseSource(ctx, "pink", 0.04, dest, { type: "bandpass", freq: 600, Q: 1.2 })
+    n.gain.gain.linearRampToValueAtTime(0.05, ctx.currentTime + 4)
+    const m = lfoModulate(ctx, 0.15, 0.025, n.gain.gain)
+    const n2 = noiseSource(ctx, "white", 0.015, dest, { type: "bandpass", freq: 2500, Q: 4.0 })
+    n2.gain.gain.linearRampToValueAtTime(0.02, ctx.currentTime + 4)
+    const m2 = lfoModulate(ctx, 0.4, 0.01, n2.gain.gain)
+    return { nodes: [...n.nodes, ...n2.nodes, ...m.nodes, ...m2.nodes] }
+  },
+  "tapping-gentle": (ctx, dest) => {
+    const active = { current: true }
+    const tapTimer = setInterval(() => {
+      if (!active.current) { clearInterval(tapTimer); return }
+      const d = Math.random() * 0.3
+      const freq = 800 + Math.random() * 1200
+      const c = makeClick(ctx, d, freq, 0.03, dest)
+      extraNodes.push(...c.nodes)
+      if (Math.random() < 0.35) {
+        const c2 = makeClick(ctx, d + 0.05 + Math.random() * 0.1, freq * 1.2, 0.02, dest)
+        extraNodes.push(...c2.nodes)
+      }
+    }, 1200)
+    const n = noiseSource(ctx, "white", 0.008, dest, { type: "highpass", freq: 4000, Q: 0.5 })
+    const extraNodes: AudioNode[] = []
+    return { nodes: [...n.nodes], cleanup: () => { active.current = false; clearInterval(tapTimer) } }
+  },
+  "tapping-chalkboard": (ctx, dest) => {
+    const n = noiseSource(ctx, "white", 0.02, dest, { type: "bandpass", freq: 3000, Q: 3.0 })
+    n.gain.gain.linearRampToValueAtTime(0.025, ctx.currentTime + 2)
+    const m = lfoModulate(ctx, 2.0, 0.01, n.gain.gain)
+    const active = { current: true }
+    const chalkTimer = setInterval(() => {
+      if (!active.current) { clearInterval(chalkTimer); return }
+      const d = Math.random() * 0.5
+      const n2 = noiseSource(ctx, "white", 0.025, dest, { type: "bandpass", freq: 2000 + Math.random() * 2000, Q: 4.0 })
+      const g = n2.gain
+      if (g) { g.gain.setValueAtTime(0.03, ctx.currentTime + d); g.gain.linearRampToValueAtTime(0, ctx.currentTime + d + 0.2 + Math.random() * 0.3) }
+      extraNodes.push(...n2.nodes)
+    }, 1500)
+    const extraNodes: AudioNode[] = []
+    return { nodes: [...n.nodes, ...m.nodes], cleanup: () => { active.current = false; clearInterval(chalkTimer) } }
+  },
+  "pages-turning": (ctx, dest) => {
+    const active = { current: true }
+    const pageTimer = setInterval(() => {
+      if (!active.current) { clearInterval(pageTimer); return }
+      const d = Math.random() * 1.5
+      const buf = createNoiseBuffer(ctx, "white", 0.15)
+      const src = ctx.createBufferSource()
+      src.buffer = buf
+      const gain = ctx.createGain()
+      const filter = ctx.createBiquadFilter()
+      filter.type = "bandpass"
+      filter.frequency.setValueAtTime(2500 + Math.random() * 1000, ctx.currentTime + d)
+      filter.Q.setValueAtTime(2.0, ctx.currentTime + d)
+      gain.gain.setValueAtTime(0, ctx.currentTime + d)
+      gain.gain.linearRampToValueAtTime(0.05, ctx.currentTime + d + 0.02)
+      gain.gain.linearRampToValueAtTime(0, ctx.currentTime + d + 0.12)
+      src.connect(filter)
+      filter.connect(gain)
+      gain.connect(dest)
+      src.start(ctx.currentTime + d)
+      extraNodes.push(src, filter, gain)
+    }, 4000)
+    const n = noiseSource(ctx, "brown", 0.01, dest, { type: "lowpass", freq: 200, Q: 0.5 })
+    const extraNodes: AudioNode[] = []
+    return { nodes: [...n.nodes], cleanup: () => { active.current = false; clearInterval(pageTimer) } }
+  },
+  "crinkling-paper": (ctx, dest) => {
+    const n = noiseSource(ctx, "white", 0.03, dest, { type: "bandpass", freq: 4000, Q: 2.0 })
+    n.gain.gain.linearRampToValueAtTime(0.04, ctx.currentTime + 2)
+    const m = lfoModulate(ctx, 8.0, 0.025, n.gain.gain)
+    const active = { current: true }
+    const crinkleTimer = setInterval(() => {
+      if (!active.current) { clearInterval(crinkleTimer); return }
+      if (Math.random() < 0.3) {
+        const c = makeCrackle(ctx, Math.random() * 0.2, 0.03 + Math.random() * 0.04, dest)
+        extraNodes.push(...c.nodes)
+      }
+    }, 900)
+    const extraNodes: AudioNode[] = []
+    return { nodes: [...n.nodes, ...m.nodes], cleanup: () => { active.current = false; clearInterval(crinkleTimer) } }
+  },
+  "crinkling-cellophane": (ctx, dest) => {
+    const n = noiseSource(ctx, "white", 0.04, dest, { type: "highpass", freq: 5000, Q: 0.5 })
+    n.gain.gain.linearRampToValueAtTime(0.05, ctx.currentTime + 2)
+    const m = lfoModulate(ctx, 12.0, 0.03, n.gain.gain)
+    const active = { current: true }
+    const crinkleTimer = setInterval(() => {
+      if (!active.current) { clearInterval(crinkleTimer); return }
+      if (Math.random() < 0.35) {
+        const c = makeCrackle(ctx, Math.random() * 0.15, 0.04 + Math.random() * 0.05, dest)
+        extraNodes.push(...c.nodes)
+      }
+    }, 600)
+    const extraNodes: AudioNode[] = []
+    return { nodes: [...n.nodes, ...m.nodes], cleanup: () => { active.current = false; clearInterval(crinkleTimer) } }
+  },
+  "scratching-fabric": (ctx, dest) => {
+    const n = noiseSource(ctx, "brown", 0.03, dest, { type: "bandpass", freq: 400, Q: 1.5 })
+    n.gain.gain.linearRampToValueAtTime(0.04, ctx.currentTime + 2)
+    const m = lfoModulate(ctx, 0.8, 0.02, n.gain.gain)
+    const active = { current: true }
+    const scratchTimer = setInterval(() => {
+      if (!active.current) { clearInterval(scratchTimer); return }
+      if (Math.random() < 0.25) {
+        const n2 = noiseSource(ctx, "white", 0.025, dest, { type: "bandpass", freq: 1500 + Math.random() * 1500, Q: 3.0 })
+        const g = n2.gain
+        if (g) { g.gain.setValueAtTime(0.025, ctx.currentTime); g.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.2 + Math.random() * 0.4) }
+        extraNodes.push(...n2.nodes)
+      }
+    }, 1000)
+    const extraNodes: AudioNode[] = []
+    return { nodes: [...n.nodes, ...m.nodes], cleanup: () => { active.current = false; clearInterval(scratchTimer) } }
+  },
 }
 
 const MAX_CONCURRENT_SOUNDS = 16
@@ -588,8 +712,6 @@ class AsmrAudioEngine {
     const active = this.activeSounds.get(soundId)
     if (!active) return
 
-    if (active.cleanup) active.cleanup()
-
     if (fadeOut && this.ctx) {
       active.gain.gain.linearRampToValueAtTime(0, this.ctx.currentTime + 1.5)
       await new Promise((resolve) => setTimeout(resolve, 1500))
@@ -602,6 +724,7 @@ class AsmrAudioEngine {
       } catch {}
     })
     active.gain.disconnect()
+    if (active.cleanup) active.cleanup()
     this.activeSounds.delete(soundId)
   }
 

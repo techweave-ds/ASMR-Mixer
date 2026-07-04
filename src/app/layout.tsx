@@ -14,7 +14,7 @@ export const metadata: Metadata = {
   title: { default: "Noctune – Premium Ambient Soundscapes", template: "%s | Noctune" },
   description: "Immerse yourself in premium-quality ambient soundscapes. Relax, sleep, study, and focus with Noctune.",
   metadataBase: new URL(siteUrl),
-  icons: { icon: "/favicon.ico" },
+  icons: { icon: "/logo.png" },
   openGraph: {
     type: "website",
     locale: "en_US",
