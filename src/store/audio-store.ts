@@ -1,5 +1,22 @@
 import { create } from "zustand"
 import { audioEngine } from "@/audio"
+import { getSoundById } from "@/data/sounds"
+import { useEntitlementStore } from "./entitlement-store"
+import { useToastStore } from "./toast-store"
+
+function isLocked(soundId: string): boolean {
+  const sound = getSoundById(soundId)
+  if (!sound?.isPremium) return false
+  return !useEntitlementStore.getState().isPremium
+}
+
+function notifyLocked() {
+  useToastStore.getState().addToast({
+    type: "info",
+    title: "Premium sound",
+    description: "Upgrade to Noctune Premium to unlock this soundscape.",
+  })
+}
 
 interface PlayingState {
   currentSoundId: string | null
@@ -29,6 +46,18 @@ interface AudioActions {
 type AudioStore = PlayingState & AudioActions
 
 let timerInterval: ReturnType<typeof setInterval> | null = null
+let elapsedInterval: ReturnType<typeof setInterval> | null = null
+
+function startElapsedTicker(set: (fn: (s: AudioStore) => Partial<AudioStore>) => void) {
+  if (elapsedInterval) clearInterval(elapsedInterval)
+  elapsedInterval = setInterval(() => {
+    set((s) => ({ progress: s.duration > 0 ? (s.progress + 1) % s.duration : s.progress + 1 }))
+  }, 1000)
+}
+
+function stopElapsedTicker() {
+  if (elapsedInterval) { clearInterval(elapsedInterval); elapsedInterval = null }
+}
 
 export const useAudioStore = create<AudioStore>((set, get) => ({
   currentSoundId: null,
@@ -47,45 +76,79 @@ export const useAudioStore = create<AudioStore>((set, get) => ({
       await audioEngine.stopSound(soundId)
       const next = new Set(isPlayingSounds)
       next.delete(soundId)
-      set({ isPlayingSounds: next, isPlaying: next.size > 0 })
-    } else {
+      const stillPlaying = next.size > 0
+      if (!stillPlaying) stopElapsedTicker()
+      set({ isPlayingSounds: next, isPlaying: stillPlaying, progress: stillPlaying ? get().progress : 0 })
+      return
+    }
+    if (isLocked(soundId)) {
+      notifyLocked()
+      return
+    }
+    {
       await audioEngine.init()
       audioEngine.resume()
       await audioEngine.playSound(soundId, get().volume)
       const next = new Set(isPlayingSounds)
+      const wasEmpty = isPlayingSounds.size === 0
       next.add(soundId)
-      set({ isPlayingSounds: next, isPlaying: true, isPaused: false })
+      const sound = getSoundById(soundId)
+      set({
+        isPlayingSounds: next,
+        isPlaying: true,
+        isPaused: false,
+        currentSoundId: soundId,
+        duration: wasEmpty ? (sound?.duration ?? 0) : get().duration,
+        progress: wasEmpty ? 0 : get().progress,
+      })
+      startElapsedTicker(set)
     }
   },
 
   playSound: async (soundId: string) => {
+    if (isLocked(soundId)) { notifyLocked(); return }
     await audioEngine.init()
     audioEngine.resume()
     await audioEngine.playSound(soundId, get().volume)
     const next = new Set(get().isPlayingSounds)
+    const wasEmpty = get().isPlayingSounds.size === 0
     next.add(soundId)
-    set({ isPlayingSounds: next, isPlaying: true, isPaused: false })
+    const sound = getSoundById(soundId)
+    set({
+      isPlayingSounds: next,
+      isPlaying: true,
+      isPaused: false,
+      currentSoundId: soundId,
+      duration: wasEmpty ? (sound?.duration ?? 0) : get().duration,
+      progress: wasEmpty ? 0 : get().progress,
+    })
+    startElapsedTicker(set)
   },
 
   stopSound: async (soundId: string) => {
     await audioEngine.stopSound(soundId)
     const next = new Set(get().isPlayingSounds)
     next.delete(soundId)
-    set({ isPlayingSounds: next, isPlaying: next.size > 0 })
+    const stillPlaying = next.size > 0
+    if (!stillPlaying) { stopElapsedTicker() }
+    set({ isPlayingSounds: next, isPlaying: stillPlaying, progress: stillPlaying ? get().progress : 0 })
   },
 
   stopAll: () => {
     audioEngine.stopAll()
-    set({ isPlayingSounds: new Set(), isPlaying: false, isPaused: false })
+    stopElapsedTicker()
+    set({ isPlayingSounds: new Set(), isPlaying: false, isPaused: false, progress: 0, currentSoundId: null })
   },
 
   togglePause: () => {
     const { isPaused, isPlaying } = get()
     if (!isPlaying && isPaused) {
       audioEngine.resume()
+      startElapsedTicker(set)
       set({ isPlaying: true, isPaused: false })
     } else if (isPlaying) {
       audioEngine.suspend()
+      stopElapsedTicker()
       set({ isPlaying: false, isPaused: true })
     }
   },
