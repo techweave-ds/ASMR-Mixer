@@ -25,6 +25,7 @@ export function SoundCard({
 }: SoundCardProps) {
   const [imgFailed, setImgFailed] = useState(false)
   const [hovered, setHovered] = useState(false)
+  const playSingle = useAudioStore((s) => s.playSingle)
   const toggleSound = useAudioStore((s) => s.toggleSound)
   const isSoundPlaying = useAudioStore((s) => s.isSoundPlaying)
   const toggleFav = useFavoritesStore((s) => s.toggleSound)
@@ -44,7 +45,11 @@ export function SoundCard({
       })
       return
     }
-    toggleSound(id)
+    if (playing) {
+      toggleSound(id)
+    } else {
+      playSingle(id)
+    }
   }
 
   const safeTitle = title || id.replace(/-/g, " ")

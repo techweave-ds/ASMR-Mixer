@@ -33,6 +33,7 @@ interface PlayingState {
 interface AudioActions {
   toggleSound: (soundId: string) => Promise<void>
   playSound: (soundId: string) => Promise<void>
+  playSingle: (soundId: string) => Promise<void>
   stopSound: (soundId: string) => Promise<void>
   stopAll: () => void
   togglePause: () => void
@@ -121,6 +122,31 @@ export const useAudioStore = create<AudioStore>((set, get) => ({
       currentSoundId: soundId,
       duration: wasEmpty ? (sound?.duration ?? 0) : get().duration,
       progress: wasEmpty ? 0 : get().progress,
+    })
+    startElapsedTicker(set)
+  },
+
+  playSingle: async (soundId: string) => {
+    if (isLocked(soundId)) { notifyLocked(); return }
+    const { isPlayingSounds } = get()
+    if (isPlayingSounds.has(soundId)) return
+    await audioEngine.init()
+    audioEngine.resume()
+    if (isPlayingSounds.size > 0) {
+      for (const id of isPlayingSounds) {
+        await audioEngine.stopSound(id)
+      }
+    }
+    await audioEngine.playSound(soundId, get().volume)
+    const next = new Set([soundId])
+    const sound = getSoundById(soundId)
+    set({
+      isPlayingSounds: next,
+      isPlaying: true,
+      isPaused: false,
+      currentSoundId: soundId,
+      duration: sound?.duration ?? 0,
+      progress: 0,
     })
     startElapsedTicker(set)
   },
