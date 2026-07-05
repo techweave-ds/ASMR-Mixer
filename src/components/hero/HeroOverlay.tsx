@@ -68,7 +68,7 @@ export function HeroOverlay() {
   const prevSoundRef = useRef<string | null>(null)
   const contentRef = useRef<HTMLDivElement>(null!)
 
-  const { isSoundPlaying, playSingle } = useAudioStore()
+  const { isSoundPlaying, playSingle, stopSound } = useAudioStore()
 
   useEffect(() => {
     const h = new Date().getHours()
@@ -115,34 +115,34 @@ export function HeroOverlay() {
     if (!soundId) return
 
     if (isSoundPlaying(soundId)) {
-      audioEngine.stopSound(soundId)
+      stopSound(soundId)
       setActiveEnv(null)
       return
     }
 
-    if (activeEnv) audioEngine.stopSound(envSoundMap[activeEnv])
+    if (activeEnv) stopSound(envSoundMap[activeEnv])
     playSingle(soundId)
     audioEngine.setSoundVolume(soundId, 0.2)
     setActiveEnv(id)
-  }, [isSoundPlaying, playSingle, activeEnv])
+  }, [isSoundPlaying, playSingle, stopSound, activeEnv])
 
   const handleOrbClick = useCallback((orb: { id: string; label: string; color: string; soundId: string }) => {
     if (activeOrb === orb.id) {
       setActiveOrb(null)
       if (prevSoundRef.current) {
-        audioEngine.stopSound(prevSoundRef.current)
+        stopSound(prevSoundRef.current)
         prevSoundRef.current = null
       }
       return
     }
     if (prevSoundRef.current) {
-      audioEngine.stopSound(prevSoundRef.current)
+      stopSound(prevSoundRef.current)
     }
     setActiveOrb(orb.id)
     playSingle(orb.soundId)
     audioEngine.setSoundVolume(orb.soundId, 0.2)
     prevSoundRef.current = orb.soundId
-  }, [activeOrb, playSingle])
+  }, [activeOrb, playSingle, stopSound])
 
   const orbCopy = activeOrb ? ORB_COPY[activeOrb] : null
 
@@ -253,7 +253,7 @@ export function HeroOverlay() {
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                <button onClick={() => { if (prevSoundRef.current) { audioEngine.stopSound(prevSoundRef.current); setActiveOrb(null) } }}
+                <button onClick={() => { if (prevSoundRef.current) { stopSound(prevSoundRef.current); setActiveOrb(null); prevSoundRef.current = null } }}
                   className="flex h-7 w-7 items-center justify-center rounded-full bg-accent/20 hover:bg-accent/30 transition-colors">
                   <Pause size={10} className="text-accent-light" />
                 </button>

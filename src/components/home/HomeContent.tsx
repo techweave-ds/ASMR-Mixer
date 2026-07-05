@@ -1,6 +1,6 @@
 "use client"
 
-import { useRef, useState, useEffect } from "react"
+import { useRef, useState, useEffect, useCallback } from "react"
 import { useRouter } from "next/navigation"
 import dynamic from "next/dynamic"
 import { motion } from "framer-motion"
@@ -12,7 +12,7 @@ import { MiniMixer } from "@/components/home/MiniMixer"
 import { SoundCard } from "@/components/ui/SoundCard"
 import { sounds } from "@/data/sounds"
 import { cn } from "@/lib/utils"
-import { useScrollProgress } from "@/hooks/useScrollContainer"
+import { useScrollProgress, useScrollContainer } from "@/hooks/useScrollContainer"
 
 const HeroOverlay = dynamic(() => import("@/components/hero/HeroOverlay").then((m) => ({ default: m.HeroOverlay })), { ssr: false })
 
@@ -42,7 +42,15 @@ export function HomeContent() {
   const returnVisit = mounted && Math.random() > 0.5
 
   const scrollProgress = useScrollProgress()
+  const scrollContainer = useScrollContainer()
   const heroFadedOut = scrollProgress > 0.3
+
+  const handleHeroWheel = useCallback((e: React.WheelEvent) => {
+    if (scrollContainer && !heroFadedOut) {
+      scrollContainer.scrollTop += e.deltaY
+      e.preventDefault()
+    }
+  }, [scrollContainer, heroFadedOut])
   const heroScale = 1 - scrollProgress * 0.06
   const heroOpacity = Math.max(0, 1 - scrollProgress * 2.5)
 
@@ -60,12 +68,14 @@ export function HomeContent() {
     <div className="relative">
       {/* Hero */}
       <div
+        onWheel={handleHeroWheel}
         className="fixed inset-0 overflow-hidden z-0"
         style={{
           transform: `scale(${heroScale})`,
           opacity: heroOpacity,
           transition: "transform 0.1s ease-out, opacity 0.15s ease-out",
           pointerEvents: heroFadedOut ? "none" : "auto",
+          touchAction: "pan-y",
         } as React.CSSProperties}
       >
         <HeroOverlay />
