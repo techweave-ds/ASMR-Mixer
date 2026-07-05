@@ -45,7 +45,7 @@ export function Sidebar() {
       >
         {/* Logo */}
         <div className="flex h-[68px] items-center gap-3 px-6 border-b border-border-subtle">
-          <img src="/logo.png" alt="Noctune" className="h-8 w-auto" />
+          <img src="/logo.png" alt="Noctune" className="h-10 w-auto" />
         </div>
 
         {/* Navigation */}

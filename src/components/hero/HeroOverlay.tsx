@@ -177,7 +177,7 @@ export function HeroOverlay() {
         {/* Nav */}
         <motion.nav variants={fadeIn} className="flex items-center justify-between px-6 py-4">
           <div className="flex items-center gap-2">
-            <img src="/logo.png" alt="Noctune" className="h-6 w-auto" />
+            <img src="/logo.png" alt="Noctune" className="h-10 w-auto" />
           </div>
           <div className="hidden md:flex items-center gap-6 mx-8">
             <a href="/explore" className="text-[11px] text-white/50 hover:text-white/80 transition-colors">Explore</a>

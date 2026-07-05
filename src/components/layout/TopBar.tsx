@@ -26,7 +26,7 @@ export function TopBar() {
         className="flex lg:hidden h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-glass border border-border-subtle text-text-tertiary hover:text-text-secondary transition-colors">
         <Menu size={16} />
       </button>
-      <img src="/logo.png" alt="Noctune" className="h-7 w-auto lg:hidden" />
+      <img src="/logo.png" alt="Noctune" className="h-9 w-auto lg:hidden" />
       {/* Search */}
       <button aria-label="Search"
         onClick={() => setSearchOpen(true)}
