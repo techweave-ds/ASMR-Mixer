@@ -1,6 +1,6 @@
 "use client"
 
-import { useRef } from "react"
+import { useRef, useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import dynamic from "next/dynamic"
 import { motion } from "framer-motion"
@@ -31,6 +31,15 @@ function SectionSubtitle({ children, className }: { children: React.ReactNode; c
 export function HomeContent() {
   const router = useRouter()
   const contentRef = useRef<HTMLDivElement>(null!)
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => setMounted(true), [])
+
+  const hour = new Date().getHours()
+  const greeting = hour < 12 ? "Good Morning" : hour < 18 ? "Good Afternoon" : "Good Evening"
+
+  // Simulate returning user personalization (in production, read from preferences/analytics)
+  const returnVisit = mounted && Math.random() > 0.5
 
   const scrollProgress = useScrollProgress()
   const heroFadedOut = scrollProgress > 0.3
@@ -66,7 +75,7 @@ export function HomeContent() {
       <div ref={contentRef} className="relative z-10 mt-[100vh] bg-bg-primary">
         <div className="h-10 md:h-16" />
 
-        {/* Section 1: Featured Soundscapes — fade up */}
+        {/* Section 1: Personalization + Featured Soundscapes */}
         <section id="content-start" className="px-6 md:px-16 lg:px-24 max-w-7xl mx-auto mb-16">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -74,6 +83,18 @@ export function HomeContent() {
             viewport={{ once: true, margin: "-80px" }}
             transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
           >
+            {/* Returning user greeting */}
+            {mounted && (
+              <div className="mb-10 p-5 rounded-2xl border border-white/[0.06] bg-white/[0.02]">
+                <p className="text-xs text-white/40 uppercase tracking-widest mb-1">{greeting}</p>
+                <p className="text-lg text-white/80 font-medium">
+                  {returnVisit
+                    ? "Continue your Rain Mix from last time."
+                    : "Welcome back. Find your quiet moment."}
+                </p>
+              </div>
+            )}
+
             <div className="mb-10">
               <SectionTitle>Featured Soundscapes</SectionTitle>
               <SectionSubtitle>Hand-picked environments our community loves most.</SectionSubtitle>

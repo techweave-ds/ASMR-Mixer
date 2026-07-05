@@ -3,7 +3,8 @@
 import { useState, useEffect, useCallback, useRef } from "react"
 import dynamic from "next/dynamic"
 import { motion, AnimatePresence } from "framer-motion"
-import { Sparkles, ChevronDown } from "lucide-react"
+import { Sparkles, ChevronDown, Heart, Pause, Play, Headphones } from "lucide-react"
+import { cn } from "@/lib/utils"
 
 import { EnvironmentSelector } from "./EnvironmentSelector"
 import { useAudioStore } from "@/store"
@@ -20,14 +21,22 @@ const ORB_COPY: Record<string, { headline: string; subhead: string }> = {
   wind: { headline: "Moving through pines.", subhead: "A breeze with nothing to prove. Just passing through." },
 }
 
-const DEFAULT_HEADLINE = "Find Your Quiet."
-const DEFAULT_SUBHEAD = "Discover immersive soundscapes designed for focus, sleep, relaxation, and mindfulness."
+const DEFAULT_SUBHEAD = "Immerse yourself in handcrafted ambient soundscapes for deep focus, restful sleep, and everyday calm."
 
 const HEADLINES = [
   { text: "Escape the Noise.", accent: true },
   { text: "Find Your Quiet.", accent: false },
   { text: "Listen Beyond Music.", accent: false },
 ]
+
+const ORB_LABELS: Record<string, string> = {
+  rain: "Rain Preview",
+  forest: "Forest Preview",
+  fire: "Fire Preview",
+  ocean: "Ocean Preview",
+  night: "Night Preview",
+  wind: "Wind Preview",
+}
 
 const stagger = {
   hidden: {},
@@ -57,6 +66,7 @@ export function HeroOverlay() {
   const [scrolled, setScrolled] = useState(false)
 
   const prevSoundRef = useRef<string | null>(null)
+  const contentRef = useRef<HTMLDivElement>(null!)
 
   const { isSoundPlaying, playSingle } = useAudioStore()
 
@@ -76,6 +86,12 @@ export function HeroOverlay() {
     const onScroll = () => setScrolled(window.scrollY > 100)
     window.addEventListener("scroll", onScroll, { passive: true })
     return () => window.removeEventListener("scroll", onScroll)
+  }, [])
+
+  useEffect(() => {
+    return () => {
+      if (prevSoundRef.current) audioEngine.stopSound(prevSoundRef.current)
+    }
   }, [])
 
   const scrollToContent = useCallback(() => {
@@ -121,6 +137,9 @@ export function HeroOverlay() {
 
   const orbCopy = activeOrb ? ORB_COPY[activeOrb] : null
 
+  const hour = new Date().getHours()
+  const greeting = hour < 12 ? "Good Morning" : hour < 18 ? "Good Afternoon" : "Good Evening"
+
   return (
     <section className="relative h-screen w-full overflow-hidden">
       {/* 3D Scene */}
@@ -149,22 +168,21 @@ export function HeroOverlay() {
         {/* Nav */}
         <motion.nav variants={fadeIn} className="flex items-center justify-between px-6 py-4">
           <div className="flex items-center gap-2">
-            <div className="h-7 w-7 rounded-lg bg-accent/20 border border-accent/30 flex items-center justify-center">
-              <span className="text-accent-light text-xs font-bold">N</span>
-            </div>
-            <span className="text-white/80 text-sm font-semibold tracking-tight">Noctune</span>
+            <img src="/logo.png" alt="Noctune" className="h-6 w-auto" />
           </div>
           <div className="hidden md:flex items-center gap-6 mx-8">
             <a href="/explore" className="text-[11px] text-white/50 hover:text-white/80 transition-colors">Explore</a>
             <a href="#pricing" className="text-[11px] text-white/50 hover:text-white/80 transition-colors">Pricing</a>
             <a href="#about" className="text-[11px] text-white/50 hover:text-white/80 transition-colors">About</a>
-            <a href="#blog" className="text-[11px] text-white/50 hover:text-white/80 transition-colors">Blog</a>
           </div>
         </motion.nav>
 
-        {/* Headline + CTAs */}
-        <div className="flex flex-col justify-center h-full px-8 md:px-16 lg:px-24 pb-32">
-          <div className="max-w-2xl">
+        {/* Left: Headline + CTAs */}
+        <div className="flex flex-col justify-center h-full px-8 md:px-16 lg:px-24 pb-16">
+          <div className="max-w-xl">
+            <motion.div variants={fadeUp} className="mb-2">
+              <p className="text-[10px] text-white/20 uppercase tracking-widest">{greeting}</p>
+            </motion.div>
             <motion.div variants={fadeUp}>
               <AnimatePresence mode="wait">
                 <motion.h1 key={orbCopy ? activeOrb : headlineIdx}
@@ -203,32 +221,92 @@ export function HeroOverlay() {
                 Explore Library
               </a>
             </motion.div>
-
-            {/* Hint text */}
-            <motion.div variants={fadeUp} className="mt-8">
-              <p className="text-[10px] text-white/20 uppercase tracking-widest">
-                {activeOrb ? "Click again to stop the sound" : "Click the floating orbs to preview any sound"}
-              </p>
-            </motion.div>
           </div>
         </div>
 
-        {/* Environment Selector */}
-        <motion.div variants={fadeUp} className="absolute bottom-20 left-0 right-0 px-8 md:px-16">
-          <EnvironmentSelector active={activeEnv} onChange={handleEnvChange} />
+        {/* Right: Now Playing + Environment Selector */}
+        <motion.div variants={fadeIn} className="absolute right-6 md:right-12 top-1/2 -translate-y-1/2 flex flex-col items-end gap-4">
+          {/* Now Playing Card */}
+          {activeOrb ? (
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              className="w-56 rounded-2xl border border-white/15 bg-black/50 backdrop-blur-xl p-4 shadow-2xl"
+            >
+              <p className="text-[10px] text-white/30 uppercase tracking-widest mb-2">Now Playing</p>
+              <div className="flex items-center gap-3 mb-3">
+                <div className="h-8 w-8 rounded-lg bg-accent/20 flex items-center justify-center">
+                  <Headphones size={14} className="text-accent-light" />
+                </div>
+                <div>
+                  <p className="text-xs font-medium text-white/80">{orbCopy?.headline || ORB_COPY[activeOrb]?.headline}</p>
+                  <p className="text-[10px] text-white/30">0:32 / 30:00</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <button onClick={() => { if (prevSoundRef.current) { audioEngine.stopSound(prevSoundRef.current); setActiveOrb(null) } }}
+                  className="flex h-7 w-7 items-center justify-center rounded-full bg-accent/20 hover:bg-accent/30 transition-colors">
+                  <Pause size={10} className="text-accent-light" />
+                </button>
+                <button className="flex h-7 w-7 items-center justify-center rounded-full text-white/30 hover:text-white/50 transition-colors">
+                  <Heart size={10} />
+                </button>
+                <div className="flex-1 h-1 rounded-full bg-white/10 overflow-hidden">
+                  <div className="h-full w-[12%] rounded-full bg-accent/60" />
+                </div>
+              </div>
+            </motion.div>
+          ) : (
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              className="w-56 rounded-2xl border border-white/10 bg-black/30 backdrop-blur-md p-4"
+            >
+              <p className="text-[10px] text-white/20 uppercase tracking-widest mb-2">No Sound Playing</p>
+              <p className="text-[11px] text-white/30 leading-relaxed">Click any orb to preview a soundscape</p>
+            </motion.div>
+          )}
+
+          {/* Environment Selector - vertical list */}
+          <div className="w-56">
+            <p className="text-[10px] text-white/20 uppercase tracking-widest mb-2 text-right">Popular Soundscapes</p>
+            <div className="flex flex-col gap-1.5">
+              {[
+                { id: "rainforest" as const, label: "Rainforest", icon: "🌧" },
+                { id: "forest" as const, label: "Forest", icon: "🌲" },
+                { id: "ocean" as const, label: "Ocean", icon: "🌊" },
+                { id: "campfire" as const, label: "Campfire", icon: "🔥" },
+                { id: "snow" as const, label: "Snowfall", icon: "❄" },
+                { id: "night" as const, label: "Night Sky", icon: "🌙" },
+                { id: "desert" as const, label: "Desert", icon: "☀" },
+              ].map((env) => (
+                <button key={env.id} onClick={() => handleEnvChange(env.id)}
+                  className={cn(
+                    "flex items-center gap-2 rounded-lg border px-3 py-1.5 text-[11px] font-medium transition-all duration-300 text-right justify-end",
+                    activeEnv === env.id
+                      ? "border-white/30 bg-white/10 text-white"
+                      : "border-white/10 bg-white/[0.03] text-white/40 hover:text-white/70 hover:border-white/20 hover:bg-white/[0.06]"
+                  )}>
+                  <span>{env.label}</span>
+                  <span className="text-sm">{env.icon}</span>
+                </button>
+              ))}
+            </div>
+          </div>
         </motion.div>
 
         {/* Scroll Indicator */}
         <motion.button variants={fadeIn}
           onClick={scrollToContent}
-          className="absolute bottom-4 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 text-white/30 hover:text-white/50 transition-all"
-          style={{ opacity: scrolled ? 0 : 1, pointerEvents: scrolled ? "none" : "auto" }}
-          animate={{ y: [0, 4, 0] }}
-          transition={{ y: { repeat: Infinity, duration: 2.5, ease: "easeInOut" } }}>
-          <span className="text-[10px] font-medium uppercase tracking-widest">Explore Soundscapes</span>
-          <ChevronDown size={14} />
+          className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1.5 text-white/40 hover:text-white/70 transition-all group"
+          style={{ opacity: scrolled ? 0 : 1, pointerEvents: scrolled ? "none" : "auto" }}>
+          <span className="text-[10px] font-medium uppercase tracking-widest group-hover:tracking-[0.15em] transition-all">Explore Soundscapes</span>
+          <ChevronDown size={18} className="animate-bounce" />
         </motion.button>
       </motion.div>
+
+      {/* Bottom gradient transition to content */}
+      <div className="absolute bottom-0 left-0 right-0 h-32 z-20 pointer-events-none bg-gradient-to-b from-transparent to-bg-base" />
     </section>
   )
 }
