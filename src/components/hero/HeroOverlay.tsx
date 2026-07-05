@@ -90,7 +90,10 @@ export function HeroOverlay() {
 
   useEffect(() => {
     return () => {
-      if (prevSoundRef.current) audioEngine.stopSound(prevSoundRef.current)
+      if (prevSoundRef.current) {
+        audioEngine.stopSound(prevSoundRef.current)
+        useAudioStore.getState().stopSound(prevSoundRef.current)
+      }
     }
   }, [])
 
@@ -110,36 +113,36 @@ export function HeroOverlay() {
     desert: "wind-gentle",
   }
 
-  const handleEnvChange = useCallback((id: EnvKey) => {
+  const handleEnvChange = useCallback(async (id: EnvKey) => {
     const soundId = envSoundMap[id]
     if (!soundId) return
 
     if (isSoundPlaying(soundId)) {
-      stopSound(soundId)
+      await stopSound(soundId)
       setActiveEnv(null)
       return
     }
 
-    if (activeEnv) stopSound(envSoundMap[activeEnv])
-    playSingle(soundId)
+    if (activeEnv) await stopSound(envSoundMap[activeEnv])
+    await playSingle(soundId)
     audioEngine.setSoundVolume(soundId, 0.2)
     setActiveEnv(id)
   }, [isSoundPlaying, playSingle, stopSound, activeEnv])
 
-  const handleOrbClick = useCallback((orb: { id: string; label: string; color: string; soundId: string }) => {
+  const handleOrbClick = useCallback(async (orb: { id: string; label: string; color: string; soundId: string }) => {
     if (activeOrb === orb.id) {
       setActiveOrb(null)
       if (prevSoundRef.current) {
-        stopSound(prevSoundRef.current)
+        await stopSound(prevSoundRef.current)
         prevSoundRef.current = null
       }
       return
     }
     if (prevSoundRef.current) {
-      stopSound(prevSoundRef.current)
+      await stopSound(prevSoundRef.current)
     }
     setActiveOrb(orb.id)
-    playSingle(orb.soundId)
+    await playSingle(orb.soundId)
     audioEngine.setSoundVolume(orb.soundId, 0.2)
     prevSoundRef.current = orb.soundId
   }, [activeOrb, playSingle, stopSound])
