@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import dynamic from "next/dynamic"
 import { motion, AnimatePresence } from "framer-motion"
-import { Sparkles, ChevronDown, Compass, Search, Bell, User, Clock, Cloud } from "lucide-react"
+import { Sparkles, ChevronDown, Bell, User, Clock, Cloud } from "lucide-react"
 
 
 import { cn } from "@/lib/utils"
@@ -148,10 +148,10 @@ export function HeroOverlay() {
             <a href="#blog" className="text-[11px] text-white/50 hover:text-white/80 transition-colors">Blog</a>
           </div>
           <div className="flex items-center gap-3">
-            <button className="h-8 w-8 rounded-full border border-white/10 bg-white/[0.04] flex items-center justify-center text-white/50 hover:text-white/80 hover:bg-white/[0.08] transition-all">
+            <button onClick={() => alert("No new notifications")} className="h-8 w-8 rounded-full border border-white/10 bg-white/[0.04] flex items-center justify-center text-white/50 hover:text-white/80 hover:bg-white/[0.08] transition-all">
               <Bell size={14} />
             </button>
-            <button className="h-8 w-8 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-white text-[11px] font-bold shadow-lg">
+            <button onClick={() => window.location.href = "/profile"} className="h-8 w-8 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-white text-[11px] font-bold shadow-lg">
               <User size={14} />
             </button>
           </div>

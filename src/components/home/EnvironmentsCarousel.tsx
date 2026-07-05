@@ -1,6 +1,7 @@
 "use client"
 
 import { useRef } from "react"
+import { useRouter } from "next/navigation"
 import { motion, useInView } from "framer-motion"
 import { Play, Music, Clock, ChevronRight } from "lucide-react"
 import { cn } from "@/lib/utils"
@@ -16,6 +17,7 @@ const environments = [
 ]
 
 export function EnvironmentsCarousel() {
+  const router = useRouter()
   const ref = useRef(null)
   const inView = useInView(ref, { once: true, margin: "-80px" })
   const scrollRef = useRef<HTMLDivElement>(null)
@@ -34,7 +36,7 @@ export function EnvironmentsCarousel() {
             <h2 className="text-3xl md:text-4xl font-bold text-text-primary">Popular Environments</h2>
             <p className="text-text-tertiary mt-2">Explore curated soundscapes from around the world</p>
           </div>
-          <button className="hidden sm:flex items-center gap-1 text-sm text-text-tertiary hover:text-text-secondary transition-colors">
+          <button onClick={() => router.push("/explore")} className="hidden sm:flex items-center gap-1 text-sm text-text-tertiary hover:text-text-secondary transition-colors">
             View All <ChevronRight size={14} />
           </button>
         </div>

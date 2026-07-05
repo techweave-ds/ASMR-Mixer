@@ -7,7 +7,7 @@ import {
   Clock, ListMusic, Target
 } from "lucide-react"
 import Link from "next/link"
-import { usePathname } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 import { useUiStore, useSettingsStore, useAudioStore } from "@/store"
 import { cn } from "@/lib/utils"
 import { Equalizer } from "@/components/ui/Equalizer"
@@ -27,6 +27,7 @@ const libraryItems = [
 ]
 
 export function Sidebar() {
+  const router = useRouter()
   const hydrated = useStoreHydration()
   const pathname = usePathname()
   const { sidebarOpen, setSidebarOpen } = useUiStore()
@@ -83,6 +84,11 @@ export function Sidebar() {
               {libraryItems.map(({ label, icon: Icon }) => (
                 <button
                   key={label}
+                  onClick={() => {
+                    if (label === "Downloads") router.push("/favorites")
+                    else router.push("/explore")
+                    setSidebarOpen(false)
+                  }}
                   className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-text-tertiary transition-all duration-150 hover:text-text-secondary hover:bg-glass-hover"
                 >
                   <Icon size={18} />
@@ -103,6 +109,7 @@ export function Sidebar() {
               ].map(({ label, icon: Icon }) => (
                 <button
                   key={label}
+                  onClick={() => { router.push("/explore"); setSidebarOpen(false) }}
                   className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm text-text-tertiary transition-all duration-150 hover:text-text-secondary hover:bg-glass-hover"
                 >
                   <Icon size={14} className="text-text-quaternary" />
@@ -123,6 +130,7 @@ export function Sidebar() {
               ].map(({ label, icon: Icon }) => (
                 <button
                   key={label}
+                  onClick={() => { router.push("/explore"); setSidebarOpen(false) }}
                   className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm text-text-tertiary transition-all duration-150 hover:text-text-secondary hover:bg-glass-hover"
                 >
                   <Icon size={14} className="text-text-quaternary" />
@@ -143,7 +151,7 @@ export function Sidebar() {
             <p className="mb-3 text-[11px] leading-relaxed text-text-tertiary">
               Unlock all sounds, offline mode, and high-quality audio.
             </p>
-            <button className="w-full rounded-2xl bg-accent/15 px-3 py-2 text-xs font-medium text-accent-light/90 transition-all hover:bg-accent/25">
+            <button onClick={() => router.push("/#pricing")} className="w-full rounded-2xl bg-accent/15 px-3 py-2 text-xs font-medium text-accent-light/90 transition-all hover:bg-accent/25">
               See Plans
             </button>
           </div>

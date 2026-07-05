@@ -1,9 +1,10 @@
 "use client"
 
 import { useRef } from "react"
+import { useRouter } from "next/navigation"
 import dynamic from "next/dynamic"
 import { motion } from "framer-motion"
-import { Sparkles, Moon, Sun, Cloud, Wind, Mountain, Trees, Star, Quote, Shield, Headphones, Download, Infinity, Brain, Volume2, Check, ChevronDown } from "lucide-react"
+import { Sparkles, Moon, Sun, Cloud, Wind, Mountain, Trees, Star, Quote, Check, ChevronDown } from "lucide-react"
 import { ExperienceCards } from "@/components/home/ExperienceCards"
 import { UseCasesSection } from "@/components/home/UseCasesSection"
 import { StatsSection } from "@/components/home/StatsSection"
@@ -29,6 +30,7 @@ function SectionSubtitle({ children, className }: { children: React.ReactNode; c
 }
 
 export function HomeContent() {
+  const router = useRouter()
   const contentRef = useRef<HTMLDivElement>(null!)
 
   const scrollProgress = useScrollProgress()
@@ -142,7 +144,7 @@ export function HomeContent() {
                 <SectionSubtitle>Hand-picked environments our community loves most.</SectionSubtitle>
               </div>
               <a href="/explore" className="hidden sm:flex items-center gap-1 text-sm text-white/40 hover:text-white/60 transition-colors">
-                View All <ChevronDown size={12} className="rotate-[-90deg]" />
+                View All <ChevronDown size={12} className="-rotate-90" />
               </a>
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
@@ -255,7 +257,7 @@ export function HomeContent() {
                     <li key={f} className="flex items-center gap-2 text-xs text-white/50"><Check size={12} className="text-accent-light shrink-0" />{f}</li>
                   ))}
                 </ul>
-                <button className="w-full rounded-xl border border-white/10 bg-white/[0.04] py-2.5 text-xs font-medium text-white/60 hover:bg-white/[0.08] transition-all">Current Plan</button>
+                <div className="w-full rounded-xl border border-white/10 bg-white/[0.04] py-2.5 text-xs font-medium text-white/40 text-center cursor-default">Current Plan</div>
               </div>
               <div className="rounded-2xl border border-amber-500/20 bg-gradient-to-b from-amber-500/5 to-transparent p-8 relative">
                 <div className="absolute -top-2.5 left-1/2 -translate-x-1/2 rounded-full bg-amber-500/20 border border-amber-400/30 px-3 py-0.5 text-[9px] font-bold text-amber-300 uppercase tracking-wider">Popular</div>
@@ -267,7 +269,7 @@ export function HomeContent() {
                     <li key={f} className="flex items-center gap-2 text-xs text-white/50"><Check size={12} className="text-amber-400 shrink-0" />{f}</li>
                   ))}
                 </ul>
-                <button className="w-full rounded-xl bg-amber-500/15 border border-amber-400/20 py-2.5 text-xs font-semibold text-amber-300 hover:bg-amber-500/20 transition-all shadow-lg shadow-amber-500/5">Start Free Trial</button>
+                <button onClick={() => alert("Free trial coming soon!")} className="w-full rounded-xl bg-amber-500/15 border border-amber-400/20 py-2.5 text-xs font-semibold text-amber-300 hover:bg-amber-500/20 transition-all shadow-lg shadow-amber-500/5">Start Free Trial</button>
               </div>
             </div>
           </motion.div>
@@ -321,6 +323,7 @@ export function HomeContent() {
               </div>
               <motion.button
                 whileHover={{ scale: 1.02 }}
+                onClick={() => router.push("/explore")}
                 className="flex items-center gap-2 rounded-full bg-white/10 border border-white/20 px-6 py-3 text-sm font-medium text-white transition-all hover:bg-white/15 shrink-0"
               >
                 <Sparkles size={14} className="text-accent-light" />
@@ -340,6 +343,7 @@ export function HomeContent() {
                 const Icon = col.icon
                 return (
                   <button key={col.title}
+                    onClick={() => router.push("/explore")}
                     className="group flex items-center gap-4 rounded-xl border border-white/[0.06] bg-white/[0.02] p-4 text-left transition-all hover:bg-white/[0.04] hover:border-white/[0.12]"
                   >
                     <div className="h-10 w-10 rounded-lg bg-white/[0.04] border border-white/[0.06] flex items-center justify-center shrink-0">
@@ -366,9 +370,9 @@ export function HomeContent() {
               <span className="text-white/30 text-xs">Noctune · Find your quiet.</span>
             </div>
             <div className="flex items-center gap-4 text-[11px] text-white/20">
-              <span>Accessibility</span>
-              <span>Privacy</span>
-              <span>Terms</span>
+              <a href="#">Accessibility</a>
+              <a href="#">Privacy</a>
+              <a href="#">Terms</a>
             </div>
           </div>
         </footer>

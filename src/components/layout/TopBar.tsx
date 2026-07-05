@@ -1,11 +1,13 @@
 "use client"
 
 import { Search, Bell, Sparkles, ChevronDown, Menu } from "lucide-react"
+import { useRouter } from "next/navigation"
 import { useUiStore, useAudioStore } from "@/store"
 import { cn } from "@/lib/utils"
 import { useScrollScrolled } from "@/hooks/useScrollContainer"
 
 export function TopBar() {
+  const router = useRouter()
   const { setSearchOpen, setSidebarOpen, sidebarOpen } = useUiStore()
   const isPlaying = useAudioStore((s) => s.isPlaying)
   const scrolled = useScrollScrolled(60)
@@ -47,16 +49,16 @@ export function TopBar() {
             <span className="text-[10px] font-medium text-accent-light/80">Playing</span>
           </div>
         )}
-        <button aria-label="Notifications" className="relative h-9 w-9 rounded-lg bg-glass border border-border-subtle flex items-center justify-center text-text-tertiary hover:text-text-secondary transition-colors">
+        <button onClick={() => alert("No new notifications")} aria-label="Notifications" className="relative h-9 w-9 rounded-lg bg-glass border border-border-subtle flex items-center justify-center text-text-tertiary hover:text-text-secondary transition-colors">
           <Bell size={16} />
           <span className="absolute top-1.5 right-1.5 h-1.5 w-1.5 rounded-full bg-accent-red" />
         </button>
-        <div className="flex items-center gap-2 h-9 rounded-lg bg-glass border border-border-subtle px-2 cursor-pointer hover:bg-glass-hover transition-colors">
+        <button onClick={() => router.push("/profile")} className="flex items-center gap-2 h-9 rounded-lg bg-glass border border-border-subtle px-2 cursor-pointer hover:bg-glass-hover transition-colors">
           <div className="h-7 w-7 rounded-full bg-gradient-to-br from-blue-400/20 to-indigo-600/20 flex items-center justify-center ring-1 ring-white/10">
             <Sparkles size={12} className="text-accent-light" />
           </div>
           <ChevronDown size={12} className="text-text-quaternary" />
-        </div>
+        </button>
       </div>
     </header>
   )
