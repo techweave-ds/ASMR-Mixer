@@ -61,7 +61,7 @@ export function HeroOverlay() {
   const [headlineIdx, setHeadlineIdx] = useState(0)
   const [activeOrb, setActiveOrb] = useState<string | null>(null)
   const [hoveredOrb, setHoveredOrb] = useState<string | null>(null)
-  const [activeEnv, setActiveEnv] = useState<"rainforest" | "forest" | "ocean" | "campfire" | "snow" | "night" | "desert">("rainforest")
+  const [activeEnv, setActiveEnv] = useState<"rainforest" | "forest" | "ocean" | "campfire" | "snow" | "night" | "desert" | null>("rainforest")
   const [timeWarmth, setTimeWarmth] = useState(0.5)
   const [scrolled, setScrolled] = useState(false)
 
@@ -100,22 +100,31 @@ export function HeroOverlay() {
 
   type EnvKey = "rainforest" | "forest" | "ocean" | "campfire" | "snow" | "night" | "desert"
 
+  const envSoundMap: Record<EnvKey, string> = {
+    rainforest: "rain-light",
+    forest: "forest-day",
+    ocean: "ocean-waves",
+    campfire: "campfire",
+    snow: "snow-falling",
+    night: "night-crickets",
+    desert: "wind-gentle",
+  }
+
   const handleEnvChange = useCallback((id: EnvKey) => {
+    const soundId = envSoundMap[id]
+    if (!soundId) return
+
+    if (isSoundPlaying(soundId)) {
+      audioEngine.stopSound(soundId)
+      setActiveEnv(null)
+      return
+    }
+
+    if (activeEnv) audioEngine.stopSound(envSoundMap[activeEnv])
+    playSingle(soundId)
+    audioEngine.setSoundVolume(soundId, 0.2)
     setActiveEnv(id)
-    const soundMap: Record<EnvKey, string> = {
-      rainforest: "rain-light",
-      forest: "forest-day",
-      ocean: "ocean-waves",
-      campfire: "campfire",
-      snow: "snow-falling",
-      night: "night-crickets",
-      desert: "wind-gentle",
-    }
-    const soundId = soundMap[id]
-    if (soundId && !isSoundPlaying(soundId)) {
-      playSingle(soundId)
-    }
-  }, [isSoundPlaying, playSingle])
+  }, [isSoundPlaying, playSingle, activeEnv])
 
   const handleOrbClick = useCallback((orb: { id: string; label: string; color: string; soundId: string }) => {
     if (activeOrb === orb.id) {
@@ -145,7 +154,7 @@ export function HeroOverlay() {
       {/* 3D Scene */}
       <div className="absolute inset-0 z-0">
         <HeroScene
-          env={activeEnv}
+          env={activeEnv ?? undefined}
           activeOrb={activeOrb}
           hoveredOrb={hoveredOrb}
           onOrbClick={handleOrbClick}
@@ -279,18 +288,26 @@ export function HeroOverlay() {
                 { id: "snow" as const, label: "Snowfall", icon: "❄" },
                 { id: "night" as const, label: "Night Sky", icon: "🌙" },
                 { id: "desert" as const, label: "Desert", icon: "☀" },
-              ].map((env) => (
-                <button key={env.id} onClick={() => handleEnvChange(env.id)}
-                  className={cn(
-                    "flex items-center gap-2 rounded-lg border px-3 py-1.5 text-[11px] font-medium transition-all duration-300 text-right justify-end",
-                    activeEnv === env.id
-                      ? "border-white/30 bg-white/10 text-white"
-                      : "border-white/10 bg-white/[0.03] text-white/40 hover:text-white/70 hover:border-white/20 hover:bg-white/[0.06]"
-                  )}>
-                  <span>{env.label}</span>
-                  <span className="text-sm">{env.icon}</span>
-                </button>
-              ))}
+              ].map((env) => {
+                const soundId = envSoundMap[env.id]
+                const playing = soundId ? isSoundPlaying(soundId) : false
+                return (
+                  <button key={env.id} onClick={() => handleEnvChange(env.id)}
+                    className={cn(
+                      "flex items-center gap-2 rounded-lg border px-3 py-1.5 text-[11px] font-medium transition-all duration-300 text-right justify-end",
+                      playing
+                        ? "border-accent/40 bg-accent/10 text-white"
+                        : "border-white/10 bg-white/[0.03] text-white/40 hover:text-white/70 hover:border-white/20 hover:bg-white/[0.06]"
+                    )}>
+                    <span>{env.label}</span>
+                    {playing ? (
+                      <Pause size={10} className="text-accent-light" />
+                    ) : (
+                      <span className="text-sm">{env.icon}</span>
+                    )}
+                  </button>
+                )
+              })}
             </div>
           </div>
         </motion.div>
