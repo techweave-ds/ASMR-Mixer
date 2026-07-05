@@ -210,12 +210,12 @@ export function HeroOverlay() {
             </motion.div>
 
             <motion.div variants={fadeUp} className="flex items-center gap-3 flex-wrap">
-              <button onClick={scrollToContent}
+              <a href="/explore"
                 className="group relative flex items-center gap-2.5 rounded-full bg-white/15 border border-white/25 px-7 py-3 text-sm font-semibold text-white transition-all hover:bg-white/20 active:scale-[0.97] overflow-hidden shadow-lg shadow-white/5">
                 <Sparkles size={14} className="text-accent-light" />
                 Start Listening
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity rounded-full glow-accent" />
-              </button>
+              </a>
               <a href="/explore"
                 className="flex items-center gap-2 rounded-full border border-white/10 px-5 py-2.5 text-xs font-medium text-white/40 transition-all hover:text-white/60 hover:border-white/15 active:scale-[0.97]">
                 Explore Library
