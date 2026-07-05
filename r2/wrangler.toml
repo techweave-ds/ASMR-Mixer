@@ -1,0 +1,9 @@
+# Cloudflare Pages deployment via Wrangler CLI
+# Usage: npx wrangler pages deploy out --project-name=noctune
+
+name = "noctune"
+compatibility_date = "2025-01-01"
+
+pages_build_output_dir = "out"
+
+[env.production]
