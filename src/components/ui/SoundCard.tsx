@@ -1,10 +1,11 @@
 "use client"
 
 import { useState } from "react"
-import { Play, Pause, Heart, Clock, Lock } from "lucide-react"
+import { Play, Pause, Heart, Clock, Lock, Sparkles } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useAudioStore, useFavoritesStore, useEntitlementStore } from "@/store"
 import { useToastStore } from "@/store/toast-store"
+import { categoryLabels } from "@/data/sounds"
 
 interface SoundCardProps {
   id: string
@@ -12,6 +13,7 @@ interface SoundCardProps {
   description: string
   gradient: string
   duration: number
+  category?: string
   coverUrl?: string
   isPremium?: boolean
   className?: string
@@ -19,9 +21,10 @@ interface SoundCardProps {
 }
 
 export function SoundCard({
-  id, title, description, gradient = "from-gray-800/30 to-gray-900/30", duration = 0, coverUrl, isPremium, className, onClick,
+  id, title, description, gradient = "from-gray-800/30 to-gray-900/30", duration = 0, category, coverUrl, isPremium, className, onClick,
 }: SoundCardProps) {
   const [imgFailed, setImgFailed] = useState(false)
+  const [hovered, setHovered] = useState(false)
   const toggleSound = useAudioStore((s) => s.toggleSound)
   const isSoundPlaying = useAudioStore((s) => s.isSoundPlaying)
   const toggleFav = useFavoritesStore((s) => s.toggleSound)
@@ -55,14 +58,31 @@ export function SoundCard({
   }
 
   return (
-    <div className={cn("group cursor-pointer", className)} onClick={() => onClick ? onClick() : handlePlayClick()}>
+    <div
+      className={cn("group cursor-pointer", className)}
+      onClick={() => onClick ? onClick() : handlePlayClick()}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        transform: hovered ? "translateY(-4px)" : "translateY(0)",
+        transition: "transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease",
+        boxShadow: hovered ? "0 12px 40px rgba(90, 124, 255, 0.15)" : "none",
+      }}
+    >
       {/* Artwork */}
-      <div className={cn("relative aspect-square rounded-xl bg-gradient-to-br overflow-hidden card-hover", gradient)}
-        style={safeCover ? { backgroundImage: `url(${safeCover})`, backgroundSize: 'cover', backgroundPosition: 'center' } : {}}>
+      <div
+        className={cn("relative aspect-square rounded-xl bg-gradient-to-br overflow-hidden", gradient)}
+        style={{
+          ...(safeCover ? { backgroundImage: `url(${safeCover})`, backgroundSize: 'cover', backgroundPosition: 'center' } : {}),
+          transform: hovered ? "scale(1.02)" : "scale(1)",
+          transition: "transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)",
+          filter: safeCover ? "brightness(1.08) contrast(1.03)" : "none",
+        }}
+      >
         {coverUrl && !imgFailed && (
           <img src={coverUrl} alt="" className="hidden" onError={() => setImgFailed(true)} loading="lazy" />
         )}
-        <div className={cn("absolute inset-0 transition-colors duration-300", locked ? "bg-black/40" : "bg-black/0 group-hover:bg-black/20")} />
+        <div className={cn("absolute inset-0 transition-colors duration-300", locked ? "bg-black/40" : "bg-black/0 group-hover:bg-black/10")} />
         {playing && (
           <div className="absolute top-2 left-2 flex items-center gap-1 rounded-full bg-black/50 backdrop-blur-sm px-2 py-0.5">
             <span className="h-1.5 w-1.5 rounded-full bg-accent-light animate-pulse" />
@@ -70,8 +90,9 @@ export function SoundCard({
           </div>
         )}
         {isPremium && !playing && (
-          <div className="absolute top-2 left-2 rounded-full bg-glass backdrop-blur-sm border border-[rgba(123,92,255,0.3)] px-2 py-0.5 text-[8px] font-bold text-accent-secondary uppercase tracking-wider" aria-label="Premium sound, requires subscription">
-            Premium
+          <div className="absolute top-2 left-2 flex items-center gap-1 rounded-full bg-gradient-to-r from-amber-500/20 to-yellow-600/20 backdrop-blur-sm border border-amber-400/30 px-2 py-0.5 shadow-lg shadow-amber-500/10">
+            <Sparkles size={8} className="text-amber-400" />
+            <span className="text-[8px] font-bold text-amber-300 uppercase tracking-wider" aria-label="Premium sound, requires subscription">Premium</span>
           </div>
         )}
         <button onClick={(e) => { e.stopPropagation(); handlePlayClick() }}
@@ -79,7 +100,7 @@ export function SoundCard({
           className={cn(
             "absolute bottom-2.5 right-2.5 flex h-11 w-11 items-center justify-center rounded-full shadow-xl transition-all duration-300",
             locked ? "bg-bg-elevated text-accent-secondary opacity-0 scale-90 group-hover:opacity-100 group-hover:scale-100" : "bg-accent text-white",
-            !locked && (playing ? "opacity-100 scale-100" : "opacity-0 scale-90 group-hover:opacity-100 group-hover:scale-100 hover:scale-105 active:scale-95")
+            !locked && (playing ? "opacity-100 scale-100" : "opacity-0 scale-90 group-hover:opacity-100 group-hover:scale-100 hover:scale-110 active:scale-95")
           )}>
           {locked ? <Lock size={15} /> : playing ? <Pause size={16} /> : <Play size={16} />}
         </button>
@@ -100,6 +121,9 @@ export function SoundCard({
             <Clock size={10} />
             {formatDuration(duration)}
           </span>
+          {category && categoryLabels[category] && (
+            <span className="text-[10px] text-text-quaternary/60">· {categoryLabels[category]}</span>
+          )}
         </div>
       </div>
     </div>

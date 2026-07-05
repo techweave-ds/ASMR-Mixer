@@ -4,7 +4,7 @@ import {
   Home, Compass, SlidersVertical, Heart,
   User, Crown, Moon, Sun, Settings,
   Sparkles, Music, Download,
-  Clock, ListMusic
+  Clock, ListMusic, Target
 } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
@@ -92,14 +92,34 @@ export function Sidebar() {
             </div>
           </div>
 
-          {/* Collections */}
+          {/* Discover */}
           <div className="mt-8">
-            <p className="px-3 pb-1 text-[10px] font-medium uppercase tracking-widest text-text-quaternary">Collections</p>
+            <p className="px-3 pb-1 text-[10px] font-medium uppercase tracking-widest text-text-quaternary">Discover</p>
             <div className="space-y-0.5">
               {[
-                { label: "Rainy Cabin", icon: Home },
-                { label: "Mountain Morning", icon: Music },
-                { label: "Ocean Meditation", icon: Music },
+                { label: "Recently Added", icon: Sparkles },
+                { label: "Trending", icon: Music },
+                { label: "Staff Picks", icon: Crown },
+              ].map(({ label, icon: Icon }) => (
+                <button
+                  key={label}
+                  className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm text-text-tertiary transition-all duration-150 hover:text-text-secondary hover:bg-glass-hover"
+                >
+                  <Icon size={14} className="text-text-quaternary" />
+                  <span className="truncate">{label}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Moods */}
+          <div className="mt-6">
+            <p className="px-3 pb-1 text-[10px] font-medium uppercase tracking-widest text-text-quaternary">Moods</p>
+            <div className="space-y-0.5">
+              {[
+                { label: "Sleep", icon: Moon },
+                { label: "Focus", icon: Target },
+                { label: "Meditation", icon: Sparkles },
               ].map(({ label, icon: Icon }) => (
                 <button
                   key={label}

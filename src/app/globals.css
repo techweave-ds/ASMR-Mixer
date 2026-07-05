@@ -174,3 +174,54 @@ input:focus-visible, button:focus-visible, a:focus-visible {
 
 .progress-bar { transition: width 0.3s ease; }
 .progress-bar:hover .progress-thumb { opacity: 1; }
+
+/* Micro-interactions */
+.card-lift {
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+}
+.card-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(90,124,255,0.15);
+}
+
+.btn-ripple {
+  position: relative;
+  overflow: hidden;
+}
+.btn-ripple::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at var(--x, 50%) var(--y, 50%), rgba(255,255,255,0.12) 0%, transparent 60%);
+  opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
+}
+.btn-ripple:hover::after {
+  opacity: 1;
+}
+
+.fade-in-card {
+  animation: fadeInUp 0.4s ease both;
+}
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.ambient-gradient {
+  background-size: 200% 200%;
+  animation: ambientShift 20s ease infinite;
+}
+@keyframes ambientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.glow-accent {
+  box-shadow: 0 0 30px rgba(90,124,255,0.15);
+}
+.glow-accent:hover {
+  box-shadow: 0 0 40px rgba(90,124,255,0.25);
+}

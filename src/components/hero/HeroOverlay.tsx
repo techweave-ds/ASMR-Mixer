@@ -141,12 +141,11 @@ export function HeroOverlay() {
             </div>
             <span className="text-white/80 text-sm font-semibold tracking-tight">Noctune</span>
           </div>
-          <div className="hidden md:flex items-center gap-3 max-w-md w-full mx-8">
-            <div className="relative w-full">
-              <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-white/30" />
-              <input type="text" placeholder="Search soundscapes, moods, environments..."
-                className="w-full rounded-full border border-white/10 bg-white/[0.04] backdrop-blur-sm px-9 py-2 text-xs text-white/70 placeholder:text-white/30 outline-none focus:border-white/20 focus:bg-white/[0.06] transition-all" />
-            </div>
+          <div className="hidden md:flex items-center gap-6 mx-8">
+            <a href="/explore" className="text-[11px] text-white/50 hover:text-white/80 transition-colors">Explore</a>
+            <a href="#pricing" className="text-[11px] text-white/50 hover:text-white/80 transition-colors">Pricing</a>
+            <a href="#about" className="text-[11px] text-white/50 hover:text-white/80 transition-colors">About</a>
+            <a href="#blog" className="text-[11px] text-white/50 hover:text-white/80 transition-colors">Blog</a>
           </div>
           <div className="flex items-center gap-3">
             <button className="h-8 w-8 rounded-full border border-white/10 bg-white/[0.04] flex items-center justify-center text-white/50 hover:text-white/80 hover:bg-white/[0.08] transition-all">

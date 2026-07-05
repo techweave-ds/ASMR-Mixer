@@ -55,7 +55,7 @@ export function PlayerBar() {
 
   return (
     <div className={cn("rounded-[28px] h-[92px] lg:h-[92px] md:h-[82px] flex-shrink-0 border-t flex items-center px-4 lg:px-6 gap-4 transition-all duration-300",
-      hasSounds ? "bg-bg-secondary border-[rgba(255,255,255,0.08)]" : "bg-transparent border-transparent")}>
+      hasSounds ? "bg-bg-secondary border-[rgba(255,255,255,0.08)]" : "bg-bg-secondary/50 border-white/[0.04]")}>
       {/* Left: Track Info */}
       <div className="flex items-center gap-3 min-w-0 w-[280px] flex-shrink-0">
         <div className={cn("h-14 w-14 flex-shrink-0 rounded-xl overflow-hidden shadow-lg flex items-center justify-center",
