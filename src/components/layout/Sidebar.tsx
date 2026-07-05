@@ -3,8 +3,7 @@
 import {
   Home, Compass, SlidersVertical, Heart,
   User, Crown, Moon, Sun, Settings,
-  Sparkles, Music, Download,
-  Clock, ListMusic, Target
+  Sparkles, Music, Clock, Shuffle, Star, Timer
 } from "lucide-react"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
@@ -12,18 +11,13 @@ import { useUiStore, useSettingsStore, useAudioStore } from "@/store"
 import { cn } from "@/lib/utils"
 import { Equalizer } from "@/components/ui/Equalizer"
 import { useStoreHydration } from "@/hooks/useStoreHydration"
+import { sounds } from "@/data/sounds"
 
 const navItems = [
   { href: "/", icon: Home, label: "Home" },
   { href: "/explore", icon: Compass, label: "Explore" },
   { href: "/mixer", icon: SlidersVertical, label: "Mixer" },
   { href: "/favorites", icon: Heart, label: "Favorites" },
-]
-
-const libraryItems = [
-  { label: "Recently Played", icon: Clock },
-  { label: "Your Mixes", icon: ListMusic },
-  { label: "Downloads", icon: Download },
 ]
 
 export function Sidebar() {
@@ -33,6 +27,7 @@ export function Sidebar() {
   const { sidebarOpen, setSidebarOpen } = useUiStore()
   const { theme, setTheme } = useSettingsStore()
   const isPlaying = useAudioStore((s) => s.isPlaying)
+  const playSingle = useAudioStore((s) => s.playSingle)
 
   if (!hydrated) return null
 
@@ -78,14 +73,19 @@ export function Sidebar() {
             })}
           </div>
 
+          {/* Quick Access */}
           <div className="mt-8">
-            <p className="px-3 pb-1 text-[10px] font-medium uppercase tracking-widest text-text-quaternary">Library</p>
+            <p className="px-3 pb-1 text-[10px] font-medium uppercase tracking-widest text-text-quaternary">Quick Access</p>
             <div className="space-y-0.5">
-              {libraryItems.map(({ label, icon: Icon }) => (
+              {[
+                { label: "Continue Listening", icon: Music },
+                { label: "Favorites", icon: Heart },
+                { label: "Quick Mixes", icon: SlidersVertical },
+              ].map(({ label, icon: Icon }) => (
                 <button
                   key={label}
                   onClick={() => {
-                    if (label === "Downloads") router.push("/favorites")
+                    if (label === "Favorites") router.push("/favorites")
                     else router.push("/explore")
                     setSidebarOpen(false)
                   }}
@@ -98,39 +98,28 @@ export function Sidebar() {
             </div>
           </div>
 
-          {/* Discover */}
+          {/* Tools */}
           <div className="mt-8">
-            <p className="px-3 pb-1 text-[10px] font-medium uppercase tracking-widest text-text-quaternary">Discover</p>
+            <p className="px-3 pb-1 text-[10px] font-medium uppercase tracking-widest text-text-quaternary">Tools</p>
             <div className="space-y-0.5">
               {[
-                { label: "Recently Added", icon: Sparkles },
-                { label: "Trending", icon: Music },
-                { label: "Staff Picks", icon: Crown },
+                { label: "Sleep Timer", icon: Timer },
+                { label: "Random Sound", icon: Shuffle },
+                { label: "Daily Recommendation", icon: Star },
               ].map(({ label, icon: Icon }) => (
                 <button
                   key={label}
-                  onClick={() => { router.push("/explore"); setSidebarOpen(false) }}
-                  className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm text-text-tertiary transition-all duration-150 hover:text-text-secondary hover:bg-glass-hover"
-                >
-                  <Icon size={14} className="text-text-quaternary" />
-                  <span className="truncate">{label}</span>
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Moods */}
-          <div className="mt-6">
-            <p className="px-3 pb-1 text-[10px] font-medium uppercase tracking-widest text-text-quaternary">Moods</p>
-            <div className="space-y-0.5">
-              {[
-                { label: "Sleep", icon: Moon },
-                { label: "Focus", icon: Target },
-                { label: "Meditation", icon: Sparkles },
-              ].map(({ label, icon: Icon }) => (
-                <button
-                  key={label}
-                  onClick={() => { router.push("/explore"); setSidebarOpen(false) }}
+                  onClick={() => {
+                    if (label === "Random Sound") {
+                      const randomSound = sounds[Math.floor(Math.random() * sounds.length)]
+                      if (randomSound) playSingle(randomSound.id)
+                    } else if (label === "Sleep Timer") {
+                      alert("Sleep timer: coming soon!")
+                    } else if (label === "Daily Recommendation") {
+                      router.push("/explore")
+                    }
+                    setSidebarOpen(false)
+                  }}
                   className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm text-text-tertiary transition-all duration-150 hover:text-text-secondary hover:bg-glass-hover"
                 >
                   <Icon size={14} className="text-text-quaternary" />

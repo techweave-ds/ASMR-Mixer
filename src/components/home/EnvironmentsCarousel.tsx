@@ -33,8 +33,8 @@ export function EnvironmentsCarousel() {
       >
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-3xl md:text-4xl font-bold text-text-primary">Popular Environments</h2>
-            <p className="text-text-tertiary mt-2">Explore curated soundscapes from around the world</p>
+            <h2 className="text-3xl md:text-4xl font-bold text-text-primary">Featured Soundscapes</h2>
+            <p className="text-text-tertiary mt-2">Immersive environments designed to transport you</p>
           </div>
           <button onClick={() => router.push("/explore")} className="hidden sm:flex items-center gap-1 text-sm text-text-tertiary hover:text-text-secondary transition-colors">
             View All <ChevronRight size={14} />

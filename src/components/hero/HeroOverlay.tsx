@@ -3,8 +3,7 @@
 import { useState, useEffect } from "react"
 import dynamic from "next/dynamic"
 import { motion, AnimatePresence } from "framer-motion"
-import { Sparkles, ChevronDown, Bell, User, Clock, Cloud } from "lucide-react"
-
+import { Sparkles, ChevronDown, Bell, User } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 import { FloatingControls } from "./FloatingControls"
@@ -55,19 +54,8 @@ export function HeroOverlay() {
   const [taglineIdx, setTaglineIdx] = useState(0)
   const [descIdx, setDescIdx] = useState(0)
   const [activeEnv, setActiveEnv] = useState<"rainforest" | "forest" | "ocean" | "campfire" | "snow" | "night" | "desert">("rainforest")
-  const [currentTime, setCurrentTime] = useState("")
 
   const { toggleSound, isSoundPlaying } = useAudioStore()
-
-  useEffect(() => {
-    const update = () => {
-      const now = new Date()
-      setCurrentTime(now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }))
-    }
-    update()
-    const t = setInterval(update, 30000)
-    return () => clearInterval(t)
-  }, [])
 
   useEffect(() => {
     const tagInterval = setInterval(() => {
@@ -117,7 +105,7 @@ export function HeroOverlay() {
 
   return (
     <section className="relative h-screen w-full overflow-hidden">
-      {/* 3D Scene — full viewport */}
+      {/* 3D Scene */}
       <div className="absolute inset-0 z-0">
         <HeroScene env={activeEnv} />
       </div>
@@ -126,7 +114,7 @@ export function HeroOverlay() {
       <div className="absolute inset-0 z-[1] bg-gradient-to-t from-bg-base/90 via-transparent to-bg-base/30 pointer-events-none" />
       <div className="absolute inset-0 z-[1] bg-gradient-to-r from-bg-base/40 via-transparent to-bg-base/40 pointer-events-none" />
 
-      {/* === ENTRANCE SEQUENCE (staggered entrance) — content always visible via CSS in case stagger fails === */}
+      {/* === ENTRANCE SEQUENCE === */}
       <motion.div
         variants={stagger}
         initial={false}
@@ -148,17 +136,17 @@ export function HeroOverlay() {
             <a href="#blog" className="text-[11px] text-white/50 hover:text-white/80 transition-colors">Blog</a>
           </div>
           <div className="flex items-center gap-3">
-            <button onClick={() => alert("No new notifications")} className="h-8 w-8 rounded-full border border-white/10 bg-white/[0.04] flex items-center justify-center text-white/50 hover:text-white/80 hover:bg-white/[0.08] transition-all">
+            <button onClick={() => alert("No new notifications")} className="h-8 w-8 rounded-full border border-white/10 bg-white/[0.04] flex items-center justify-center text-white/50 hover:text-white/80 hover:bg-white/[0.08] transition-all" aria-label="Notifications">
               <Bell size={14} />
             </button>
-            <button onClick={() => window.location.href = "/profile"} className="h-8 w-8 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-white text-[11px] font-bold shadow-lg">
+            <button onClick={() => window.location.href = "/profile"} className="h-8 w-8 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-white text-[11px] font-bold shadow-lg" aria-label="Profile">
               <User size={14} />
             </button>
           </div>
         </motion.nav>
 
         {/* Hero Content */}
-        <div className="flex flex-col justify-center h-full px-8 md:px-16 lg:px-24">
+        <div className="flex flex-col justify-center h-full px-8 md:px-16 lg:px-24 pb-32">
           <div className="max-w-2xl">
             <motion.div variants={fadeUp}>
               <AnimatePresence mode="wait">
@@ -197,34 +185,24 @@ export function HeroOverlay() {
                 Start Listening
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity rounded-full glow-accent" />
               </button>
-              <button onClick={scrollToContent}
+              <button onClick={() => window.location.href = "/explore"}
                 className="flex items-center gap-2 rounded-full border border-white/10 px-5 py-2.5 text-xs font-medium text-white/40 transition-all hover:text-white/60 hover:border-white/15 active:scale-[0.97]">
-                Browse Sounds
+                Explore Library
               </button>
+            </motion.div>
+
+            {/* Quick play suggestions */}
+            <motion.div variants={fadeUp} className="mt-8 flex items-center gap-2 flex-wrap">
+              <span className="text-[10px] text-white/30 uppercase tracking-wider mr-1">Quick play</span>
+              {["Rain", "Forest", "Ocean", "Fireplace", "Birds", "Wind"].map((label) => (
+                <button key={label} onClick={() => handleOrbClick(label)}
+                  className="rounded-full bg-white/[0.04] border border-white/10 px-2.5 py-1 text-[10px] text-white/40 hover:text-white/60 hover:bg-white/[0.08] transition-all">
+                  {label}
+                </button>
+              ))}
             </motion.div>
           </div>
         </div>
-
-        {/* Right Widgets */}
-        <motion.div variants={fadeIn} className="absolute right-8 md:right-16 top-1/2 -translate-y-1/2 flex flex-col items-end gap-4">
-          <div className="flex items-center gap-2 rounded-full bg-white/[0.03] backdrop-blur-sm border border-white/5 px-3 py-1.5">
-            <Clock size={12} className="text-white/30" />
-            <span className="text-[11px] text-white/40 font-mono">{currentTime}</span>
-          </div>
-          <div className="flex items-center gap-2 rounded-full bg-white/[0.03] backdrop-blur-sm border border-white/5 px-3 py-1.5">
-            <Cloud size={12} className="text-white/30" />
-            <span className="text-[11px] text-white/40">72° · Mostly Clear</span>
-          </div>
-          <div className="flex flex-col gap-1 mt-2">
-            {["Campfire", "Rain", "Forest", "Ocean", "Birds", "Wind"].map((label) => (
-              <button key={label} onClick={() => handleOrbClick(label)}
-                className="flex items-center gap-2 rounded-full bg-white/[0.02] hover:bg-white/[0.06] border border-white/5 px-2.5 py-1 transition-all group">
-                <div className="h-1.5 w-1.5 rounded-full bg-white/20 group-hover:bg-accent-light transition-colors" />
-                <span className="text-[10px] text-white/30 group-hover:text-white/50 transition-colors">{label}</span>
-              </button>
-            ))}
-          </div>
-        </motion.div>
 
         {/* Environment Selector */}
         <motion.div variants={fadeUp} className="absolute bottom-20 left-0 right-0 px-8 md:px-16">
@@ -234,10 +212,11 @@ export function HeroOverlay() {
         {/* Scroll Indicator */}
         <motion.button variants={fadeIn}
           onClick={scrollToContent}
-          className="absolute bottom-4 left-1/2 -translate-x-1/2 text-white/20 hover:text-white/50 transition-colors"
-          animate={{ y: [0, 6, 0] }}
-          transition={{ y: { repeat: Infinity, duration: 2.5 } }}>
-          <ChevronDown size={20} />
+          className="absolute bottom-4 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 text-white/30 hover:text-white/50 transition-colors"
+          animate={{ y: [0, 4, 0] }}
+          transition={{ y: { repeat: Infinity, duration: 2.5, ease: "easeInOut" } }}>
+          <span className="text-[10px] font-medium uppercase tracking-widest">Explore Soundscapes</span>
+          <ChevronDown size={14} />
         </motion.button>
       </motion.div>
 

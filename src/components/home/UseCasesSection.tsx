@@ -32,9 +32,9 @@ export function UseCasesSection() {
         className="text-center mb-16"
       >
         <h2 className="text-3xl md:text-4xl font-bold text-text-primary mb-4">
-          How do you want to <span className="bg-gradient-to-r from-blue-300 to-indigo-300 bg-clip-text text-transparent">feel</span> today?
+          What do you need <span className="bg-gradient-to-r from-blue-300 to-indigo-300 bg-clip-text text-transparent">today</span>?
         </h2>
-        <p className="text-text-tertiary max-w-lg mx-auto">Choose your mood and let Noctune create the perfect soundscape for you.</p>
+        <p className="text-text-tertiary max-w-lg mx-auto">Choose your listening experience and let Noctune create the perfect soundscape.</p>
       </motion.div>
 
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">

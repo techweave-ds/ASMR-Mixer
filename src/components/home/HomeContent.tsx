@@ -4,16 +4,16 @@ import { useRef } from "react"
 import { useRouter } from "next/navigation"
 import dynamic from "next/dynamic"
 import { motion } from "framer-motion"
-import { Sparkles, Moon, Sun, Cloud, Wind, Mountain, Trees, Star, Quote, Check, ChevronDown } from "lucide-react"
+import { Sparkles, Moon, Sun, Cloud, Wind, Mountain, Trees, Star, Quote, Check, ChevronDown, SlidersVertical, Play, Headphones } from "lucide-react"
 import { ExperienceCards } from "@/components/home/ExperienceCards"
 import { UseCasesSection } from "@/components/home/UseCasesSection"
 import { StatsSection } from "@/components/home/StatsSection"
 import { EnvironmentsCarousel } from "@/components/home/EnvironmentsCarousel"
 import { SoundCard } from "@/components/ui/SoundCard"
 import { sounds } from "@/data/sounds"
-import { categoryLabels, categoryIcons } from "@/data/sounds"
 import { cn } from "@/lib/utils"
 import { useScrollProgress } from "@/hooks/useScrollContainer"
+import { useAudioStore } from "@/store"
 
 const HeroOverlay = dynamic(() => import("@/components/hero/HeroOverlay").then((m) => ({ default: m.HeroOverlay })), { ssr: false })
 
@@ -32,15 +32,26 @@ function SectionSubtitle({ children, className }: { children: React.ReactNode; c
 export function HomeContent() {
   const router = useRouter()
   const contentRef = useRef<HTMLDivElement>(null!)
+  const isPlaying = useAudioStore((s) => s.isPlaying)
 
   const scrollProgress = useScrollProgress()
   const heroFadedOut = scrollProgress > 0.3
   const heroScale = 1 - scrollProgress * 0.06
   const heroOpacity = Math.max(0, 1 - scrollProgress * 2.5)
 
+  const trendingSounds = sounds.filter((s) => !s.isPremium).slice(0, 6)
+  const popularCollections = [
+    { title: "Deep Sleep", subtitle: "12 sounds for restful nights", icon: Moon, gradient: "from-indigo-600/20 to-purple-900/20" },
+    { title: "Morning Focus", subtitle: "10 sounds for clarity", icon: Sun, gradient: "from-amber-600/20 to-orange-900/20" },
+    { title: "Rain Collection", subtitle: "14 sounds of rain", icon: Cloud, gradient: "from-blue-600/20 to-indigo-800/20" },
+    { title: "Forest Ambience", subtitle: "9 sounds of woodland", icon: Trees, gradient: "from-emerald-600/20 to-green-900/20" },
+    { title: "Ocean Escape", subtitle: "8 sounds of the sea", icon: Wind, gradient: "from-cyan-600/20 to-blue-900/20" },
+    { title: "Cozy Cabin", subtitle: "11 sounds for warmth", icon: Mountain, gradient: "from-stone-600/20 to-amber-900/20" },
+  ]
+
   return (
     <div className="relative">
-      {/* === HERO (fixed, covers viewport) — unmounts + opaque content blocks bleed-through === */}
+      {/* === HERO === */}
       <div
         className="fixed inset-0 overflow-hidden z-0"
         style={{
@@ -53,85 +64,12 @@ export function HomeContent() {
         <HeroOverlay />
       </div>
 
-      {/* === CONTENT SECTIONS (scrolls in from below) — opaque background prevents hero bleed-through === */}
+      {/* === CONTENT SECTIONS === */}
       <div ref={contentRef} className="relative z-10 mt-[100vh] bg-bg-primary">
-        {/* Transition spacer */}
         <div className="h-10 md:h-16" />
 
-        {/* Section 1: Why Noctune Exists */}
+        {/* Section 1: Featured Soundscapes */}
         <section id="content-start" className="px-6 md:px-16 lg:px-24 max-w-7xl mx-auto mb-16">
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-80px" }}
-            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-          >
-            <div className="mb-10">
-              <SectionTitle>Why Noctune Exists</SectionTitle>
-              <SectionSubtitle>
-                The world is louder than ever. We built a space where sound becomes shelter — not stimulation.
-              </SectionSubtitle>
-            </div>
-            <ExperienceCards />
-          </motion.div>
-        </section>
-
-        {/* Section 2: How Do You Want to Feel? */}
-        <section className="px-6 md:px-16 lg:px-24 max-w-7xl mx-auto mb-16">
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-80px" }}
-            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-          >
-            <div className="mb-10">
-              <SectionTitle>How Do You Want to Feel?</SectionTitle>
-              <SectionSubtitle>
-                Not what task do you need to accomplish. How do you want to feel right now?
-              </SectionSubtitle>
-            </div>
-            <UseCasesSection />
-          </motion.div>
-        </section>
-
-        {/* Section 3: Stats / Impact */}
-        <section className="px-6 md:px-16 lg:px-24 max-w-7xl mx-auto mb-16">
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-80px" }}
-            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-          >
-            <div className="mb-10">
-              <SectionTitle>Quiet Is Contagious</SectionTitle>
-              <SectionSubtitle>
-                A growing community finding stillness together. Millions of minutes of calm created.
-              </SectionSubtitle>
-            </div>
-            <StatsSection />
-          </motion.div>
-        </section>
-
-        {/* Section 4: Explore Environments */}
-        <section className="px-6 md:px-16 lg:px-24 max-w-7xl mx-auto mb-16">
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-80px" }}
-            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-          >
-            <div className="mb-10">
-              <SectionTitle>Explore Environments</SectionTitle>
-              <SectionSubtitle>
-                Each soundscape is a place you can return to. A room tone for every moment of your day.
-              </SectionSubtitle>
-            </div>
-            <EnvironmentsCarousel />
-          </motion.div>
-        </section>
-
-        {/* Section 5: Featured Soundscapes */}
-        <section className="px-6 md:px-16 lg:px-24 max-w-7xl mx-auto mb-16">
           <motion.div
             initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -155,7 +93,90 @@ export function HomeContent() {
           </motion.div>
         </section>
 
-        {/* Section 6: Popular Categories */}
+        {/* Section 2: What do you need today? */}
+        <section className="px-6 md:px-16 lg:px-24 max-w-7xl mx-auto mb-16">
+          <UseCasesSection />
+        </section>
+
+        {/* Section 3: Continue Listening / Trending */}
+        <section className="px-6 md:px-16 lg:px-24 max-w-7xl mx-auto mb-16">
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-80px" }}
+            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <div className="flex items-center justify-between mb-10">
+              <div>
+                <SectionTitle>Trending Now</SectionTitle>
+                <SectionSubtitle>What others are listening to around the world.</SectionSubtitle>
+              </div>
+              {isPlaying && (
+                <button onClick={() => router.push("/mixer")}
+                  className="hidden sm:flex items-center gap-1.5 rounded-full bg-accent/10 border border-accent/20 px-4 py-2 text-xs font-medium text-accent-light hover:bg-accent/20 transition-all">
+                  <Headphones size={12} />
+                  Open Mixer
+                </button>
+              )}
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
+              {trendingSounds.map((sound) => (
+                <SoundCard key={sound.id} {...sound} category={sound.category} />
+              ))}
+            </div>
+          </motion.div>
+        </section>
+
+        {/* Section 4: Interactive Mixer Preview */}
+        <section className="px-6 md:px-16 lg:px-24 max-w-7xl mx-auto mb-16">
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-80px" }}
+            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+            className="rounded-2xl border border-white/10 bg-gradient-to-b from-accent/5 to-transparent p-8 md:p-12 overflow-hidden relative"
+          >
+            <div className="absolute top-0 right-0 w-64 h-64 bg-accent/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none" />
+            <div className="relative z-10">
+              <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 mb-10">
+                <div>
+                  <div className="inline-flex items-center gap-2 rounded-full bg-accent/10 px-4 py-1.5 mb-4">
+                    <SlidersVertical size={12} className="text-accent-light" />
+                    <span className="text-[11px] font-medium text-accent-light uppercase tracking-wider">Mixer</span>
+                  </div>
+                  <SectionTitle>Your Sound. Your Mix.</SectionTitle>
+                  <SectionSubtitle>Layer rain over wind. Add a fireplace beneath ocean waves. The mixer lets you compose your perfect ambience.</SectionSubtitle>
+                </div>
+                <button onClick={() => router.push("/mixer")}
+                  className="flex items-center gap-2 rounded-full bg-accent/15 border border-accent/30 px-6 py-3 text-sm font-medium text-accent-light hover:bg-accent/25 transition-all shrink-0 shadow-lg shadow-accent/10">
+                  <Play size={14} />
+                  Try Mixer
+                </button>
+              </div>
+
+              {/* Visual mixer preview */}
+              <div className="grid grid-cols-5 gap-2 md:gap-3">
+                {[
+                  { label: "Rain", pct: 75, color: "bg-blue-500" },
+                  { label: "Wind", pct: 40, color: "bg-cyan-400" },
+                  { label: "Fire", pct: 60, color: "bg-orange-500" },
+                  { label: "Birds", pct: 25, color: "bg-emerald-400" },
+                  { label: "River", pct: 50, color: "bg-sky-400" },
+                ].map((ch) => (
+                  <div key={ch.label} className="flex flex-col items-center gap-2">
+                    <div className="w-full h-24 md:h-32 rounded-xl bg-white/[0.03] border border-white/10 relative overflow-hidden">
+                      <div className={`absolute bottom-0 left-0 right-0 ${ch.color} rounded-b-xl transition-all duration-1000`}
+                        style={{ height: `${ch.pct}%`, opacity: 0.3 }} />
+                    </div>
+                    <span className="text-[10px] text-white/40">{ch.label}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </motion.div>
+        </section>
+
+        {/* Section 5: Popular Collections */}
         <section className="px-6 md:px-16 lg:px-24 max-w-7xl mx-auto mb-16">
           <motion.div
             initial={{ opacity: 0, y: 40 }}
@@ -164,30 +185,42 @@ export function HomeContent() {
             transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
           >
             <div className="mb-10">
-              <SectionTitle>Popular Categories</SectionTitle>
-              <SectionSubtitle>Browse by environment. Find your perfect background.</SectionSubtitle>
+              <SectionTitle>Popular Collections</SectionTitle>
+              <SectionSubtitle>Curated soundscapes for every moment of your day.</SectionSubtitle>
             </div>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
-              {["rain", "ocean", "forest", "fireplace", "wind", "night", "birds", "whisper", "tapping", "writing", "cafe", "library"].map((cat) => {
-                const count = sounds.filter((s) => s.category === cat).length
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {popularCollections.map((col) => {
+                const Icon = col.icon
                 return (
-                  <a key={cat} href="/explore"
-                    className="group flex flex-col items-center gap-2 rounded-2xl border border-white/[0.06] bg-white/[0.02] p-5 text-center transition-all hover:bg-white/[0.04] hover:border-white/[0.12] hover:-translate-y-0.5">
-                    <div className="h-10 w-10 rounded-xl bg-white/[0.04] border border-white/[0.06] flex items-center justify-center">
-                      <span className="text-lg">{categoryIcons[cat] === "Waves" ? "🌊" : categoryIcons[cat] === "CloudRain" ? "🌧" : categoryIcons[cat] === "Trees" ? "🌲" : categoryIcons[cat] === "Flame" ? "🔥" : categoryIcons[cat] === "Wind" ? "💨" : categoryIcons[cat] === "Moon" ? "🌙" : categoryIcons[cat] === "Bird" ? "🐦" : "🎵"}</span>
+                  <button key={col.title}
+                    onClick={() => router.push("/explore")}
+                    className={cn("group flex items-center gap-4 rounded-xl border border-white/[0.06] p-4 text-left transition-all hover:border-white/[0.12] hover:-translate-y-0.5", col.gradient)}
+                  >
+                    <div className="h-10 w-10 rounded-lg bg-white/[0.04] border border-white/[0.06] flex items-center justify-center shrink-0">
+                      <Icon size={16} className="text-white/40 group-hover:text-white/60 transition-colors" />
                     </div>
                     <div>
-                      <div className="text-xs font-medium text-white/70 group-hover:text-white/90 transition-colors">{categoryLabels[cat] || cat}</div>
-                      <div className="text-[10px] text-white/30 mt-0.5">{count} sounds</div>
+                      <div className="text-sm font-medium text-white/70 group-hover:text-white/90 transition-colors">{col.title}</div>
+                      <div className="text-xs text-white/30 mt-0.5">{col.subtitle}</div>
                     </div>
-                  </a>
+                  </button>
                 )
               })}
             </div>
           </motion.div>
         </section>
 
-        {/* Section 7: Testimonials */}
+        {/* Section 6: Environments Carousel */}
+        <section className="mb-16">
+          <EnvironmentsCarousel />
+        </section>
+
+        {/* Section 7: Why Noctune */}
+        <section className="px-6 md:px-16 lg:px-24 max-w-7xl mx-auto mb-16">
+          <ExperienceCards />
+        </section>
+
+        {/* Section 8: Testimonials */}
         <section id="about" className="px-6 md:px-16 lg:px-24 max-w-7xl mx-auto mb-16">
           <motion.div
             initial={{ opacity: 0, y: 40 }}
@@ -205,11 +238,11 @@ export function HomeContent() {
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {[
-                { name: "Alex Chen", role: "Software Engineer", quote: "I put on Rain & Thunder every night. My sleep score went from 60 to 85 in two weeks.", rating: 5 },
-                { name: "Maya Patel", role: "Designer", quote: "The mixer is a game-changer. I layer brown noise with cafe ambience and enter flow state instantly.", rating: 5 },
-                { name: "James Okafor", role: "Graduate Student", quote: "Forest Morning + writing sounds = my dissertation is finally getting done.", rating: 5 },
+                { name: "Alex Chen", role: "Software Engineer", quote: "I haven't slept this well in years. Rain & Thunder every night — my sleep score went from 60 to 85.", rating: 5, hours: 240 },
+                { name: "Maya Patel", role: "Designer", quote: "The mixer is a game-changer. I layer brown noise with cafe ambience and enter flow state instantly. Worth every penny.", rating: 5, hours: 480 },
+                { name: "James Okafor", role: "Graduate Student", quote: "Forest Morning + writing sounds = my dissertation is finally getting done. Focus has never come this easily.", rating: 5, hours: 320 },
               ].map((t) => (
-                <div key={t.name} className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-6">
+                <div key={t.name} className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-6 hover:border-white/[0.12] transition-all">
                   <div className="flex gap-0.5 mb-3">
                     {Array.from({ length: t.rating }).map((_, i) => (
                       <Star key={i} size={12} className="text-amber-400" fill="currentColor" />
@@ -222,16 +255,20 @@ export function HomeContent() {
                     </div>
                     <div>
                       <p className="text-xs font-medium text-white/80">{t.name}</p>
-                      <p className="text-[10px] text-white/30">{t.role}</p>
+                      <p className="text-[10px] text-white/30">{t.role} · {t.hours} hrs listened</p>
                     </div>
                   </div>
                 </div>
               ))}
             </div>
+            {/* Stats below testimonials */}
+            <div className="mt-10">
+              <StatsSection />
+            </div>
           </motion.div>
         </section>
 
-        {/* Section 8: Pricing */}
+        {/* Section 9: Premium */}
         <section id="pricing" className="px-6 md:px-16 lg:px-24 max-w-7xl mx-auto mb-16">
           <motion.div
             initial={{ opacity: 0, y: 40 }}
@@ -265,8 +302,20 @@ export function HomeContent() {
                 <p className="text-3xl font-bold text-white mb-1">$4.99</p>
                 <p className="text-xs text-white/30 mb-6">Per month</p>
                 <ul className="space-y-3 mb-8">
-                  {["All 60+ sounds unlocked", "Unlimited mixer layers", "Offline listening", "Lossless audio quality", "AI-generated soundscapes", "Cross-device sync", "Daily focus sessions"].map((f) => (
-                    <li key={f} className="flex items-center gap-2 text-xs text-white/50"><Check size={12} className="text-amber-400 shrink-0" />{f}</li>
+                  {[
+                    { label: "All 60+ sounds unlocked", highlight: false },
+                    { label: "Unlimited mixer layers", highlight: false },
+                    { label: "Offline listening", highlight: true },
+                    { label: "Lossless audio quality", highlight: false },
+                    { label: "AI-generated soundscapes", highlight: true },
+                    { label: "Cross-device sync", highlight: false },
+                    { label: "Sleep timer extended", highlight: false },
+                  ].map((f) => (
+                    <li key={f.label} className="flex items-center gap-2 text-xs text-white/50">
+                      <Check size={12} className={cn("shrink-0", f.highlight ? "text-amber-400" : "text-accent-light")} />
+                      {f.label}
+                      {f.highlight && <Sparkles size={8} className="text-amber-400/60" />}
+                    </li>
                   ))}
                 </ul>
                 <button onClick={() => alert("Free trial coming soon!")} className="w-full rounded-xl bg-amber-500/15 border border-amber-400/20 py-2.5 text-xs font-semibold text-amber-300 hover:bg-amber-500/20 transition-all shadow-lg shadow-amber-500/5">Start Free Trial</button>
@@ -275,7 +324,7 @@ export function HomeContent() {
           </motion.div>
         </section>
 
-        {/* Section 9: FAQ */}
+        {/* Section 10: FAQ */}
         <section className="px-6 md:px-16 lg:px-24 max-w-3xl mx-auto mb-16">
           <motion.div
             initial={{ opacity: 0, y: 40 }}
@@ -305,64 +354,9 @@ export function HomeContent() {
           </motion.div>
         </section>
 
-        {/* Section 10: Curated Collections */}
-        <section className="px-6 md:px-16 lg:px-24 max-w-7xl mx-auto mb-24">
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-80px" }}
-            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-            className="rounded-2xl border border-white/10 bg-gradient-to-b from-white/[0.02] to-transparent p-8 md:p-12"
-          >
-            <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-              <div>
-                <SectionTitle>Start Your Journey</SectionTitle>
-                <SectionSubtitle>
-                  Explore curated collections built by our community. From deep focus to dreamlike sleep.
-                </SectionSubtitle>
-              </div>
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                onClick={() => router.push("/explore")}
-                className="flex items-center gap-2 rounded-full bg-white/10 border border-white/20 px-6 py-3 text-sm font-medium text-white transition-all hover:bg-white/15 shrink-0"
-              >
-                <Sparkles size={14} className="text-accent-light" />
-                Browse All Collections
-              </motion.button>
-            </div>
-
-            <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {[
-                { title: "Deep Focus", subtitle: "Flow state, uninterrupted", icon: Mountain, count: "12 sounds" },
-                { title: "Dreamscape", subtitle: "For drifting off", icon: Moon, count: "8 sounds" },
-                { title: "Morning Light", subtitle: "Wake up gently", icon: Sun, count: "10 sounds" },
-                { title: "Rainy Day", subtitle: "Cozy and warm", icon: Cloud, count: "14 sounds" },
-                { title: "Forest Bathing", subtitle: "Shinrin-yoku at home", icon: Trees, count: "9 sounds" },
-                { title: "Night Journey", subtitle: "Late-night calm", icon: Wind, count: "11 sounds" },
-              ].map((col) => {
-                const Icon = col.icon
-                return (
-                  <button key={col.title}
-                    onClick={() => router.push("/explore")}
-                    className="group flex items-center gap-4 rounded-xl border border-white/[0.06] bg-white/[0.02] p-4 text-left transition-all hover:bg-white/[0.04] hover:border-white/[0.12]"
-                  >
-                    <div className="h-10 w-10 rounded-lg bg-white/[0.04] border border-white/[0.06] flex items-center justify-center shrink-0">
-                      <Icon size={16} className="text-white/40 group-hover:text-white/60 transition-colors" />
-                    </div>
-                    <div>
-                      <div className="text-sm font-medium text-white/70 group-hover:text-white/90 transition-colors">{col.title}</div>
-                      <div className="text-xs text-white/30 mt-0.5">{col.subtitle} · {col.count}</div>
-                    </div>
-                  </button>
-                )
-              })}
-            </div>
-          </motion.div>
-        </section>
-
-        {/* Footer area */}
+        {/* Footer */}
         <footer className="border-t border-white/[0.04] px-6 md:px-16 lg:px-24 py-8">
-          <div className="max-w-7xl mx-auto flex items-center justify-between">
+          <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-2">
               <div className="h-6 w-6 rounded-md bg-accent/20 border border-accent/30 flex items-center justify-center">
                 <span className="text-accent-light text-[10px] font-bold">N</span>
@@ -370,9 +364,11 @@ export function HomeContent() {
               <span className="text-white/30 text-xs">Noctune · Find your quiet.</span>
             </div>
             <div className="flex items-center gap-4 text-[11px] text-white/20">
-              <a href="#">Accessibility</a>
-              <a href="#">Privacy</a>
-              <a href="#">Terms</a>
+              <a href="#" className="hover:text-white/40 transition-colors">Product</a>
+              <a href="#" className="hover:text-white/40 transition-colors">Support</a>
+              <a href="#" className="hover:text-white/40 transition-colors">Accessibility</a>
+              <a href="#" className="hover:text-white/40 transition-colors">Privacy</a>
+              <a href="#" className="hover:text-white/40 transition-colors">Terms</a>
             </div>
           </div>
         </footer>
