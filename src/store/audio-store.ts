@@ -1,22 +1,6 @@
 import { create } from "zustand"
 import { audioEngine } from "@/audio"
 import { getSoundById } from "@/data/sounds"
-import { useEntitlementStore } from "./entitlement-store"
-import { useToastStore } from "./toast-store"
-
-function isLocked(soundId: string): boolean {
-  const sound = getSoundById(soundId)
-  if (!sound?.isPremium) return false
-  return !useEntitlementStore.getState().isPremium
-}
-
-function notifyLocked() {
-  useToastStore.getState().addToast({
-    type: "info",
-    title: "Premium sound",
-    description: "Upgrade to Noctune Premium to unlock this soundscape.",
-  })
-}
 
 interface PlayingState {
   currentSoundId: string | null
@@ -82,32 +66,25 @@ export const useAudioStore = create<AudioStore>((set, get) => ({
       set({ isPlayingSounds: next, isPlaying: stillPlaying, progress: stillPlaying ? get().progress : 0 })
       return
     }
-    if (isLocked(soundId)) {
-      notifyLocked()
-      return
-    }
-    {
-      await audioEngine.init()
-      audioEngine.resume()
-      await audioEngine.playSound(soundId, get().volume)
-      const next = new Set(isPlayingSounds)
-      const wasEmpty = isPlayingSounds.size === 0
-      next.add(soundId)
-      const sound = getSoundById(soundId)
-      set({
-        isPlayingSounds: next,
-        isPlaying: true,
-        isPaused: false,
-        currentSoundId: soundId,
-        duration: wasEmpty ? (sound?.duration ?? 0) : get().duration,
-        progress: wasEmpty ? 0 : get().progress,
-      })
-      startElapsedTicker(set)
-    }
+    await audioEngine.init()
+    audioEngine.resume()
+    await audioEngine.playSound(soundId, get().volume)
+    const next = new Set(isPlayingSounds)
+    const wasEmpty = isPlayingSounds.size === 0
+    next.add(soundId)
+    const sound = getSoundById(soundId)
+    set({
+      isPlayingSounds: next,
+      isPlaying: true,
+      isPaused: false,
+      currentSoundId: soundId,
+      duration: wasEmpty ? (sound?.duration ?? 0) : get().duration,
+      progress: wasEmpty ? 0 : get().progress,
+    })
+    startElapsedTicker(set)
   },
 
   playSound: async (soundId: string) => {
-    if (isLocked(soundId)) { notifyLocked(); return }
     await audioEngine.init()
     audioEngine.resume()
     await audioEngine.playSound(soundId, get().volume)
@@ -127,7 +104,6 @@ export const useAudioStore = create<AudioStore>((set, get) => ({
   },
 
   playSingle: async (soundId: string) => {
-    if (isLocked(soundId)) { notifyLocked(); return }
     const { isPlayingSounds } = get()
     if (isPlayingSounds.has(soundId)) return
     await audioEngine.init()
@@ -218,8 +194,6 @@ export const useAudioStore = create<AudioStore>((set, get) => ({
     audioEngine.cancelFadeTimer()
     set({ timerMinutes: null, timerRemaining: null })
   },
-
-
 
   isSoundPlaying: (soundId: string) => {
     return get().isPlayingSounds.has(soundId)

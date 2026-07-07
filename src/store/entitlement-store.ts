@@ -14,7 +14,7 @@ type EntitlementStore = EntitlementState & EntitlementActions
 export const useEntitlementStore = create<EntitlementStore>()(
   persist(
     (set) => ({
-      isPremium: false,
+      isPremium: true,
       setIsPremium: (value: boolean) => set({ isPremium: value }),
     }),
     { name: "noctune-entitlement-storage" }

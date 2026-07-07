@@ -17,10 +17,10 @@ export function ProfileContent() {
         </div>
         <div>
           <h1 className="text-xl font-bold text-text-primary">Listener</h1>
-          <p className="text-sm text-text-tertiary">Free Account</p>
-          <button className="mt-1 flex items-center gap-1 rounded-full bg-gradient-to-r from-amber-500/20 to-orange-500/20 px-3 py-0.5 text-[10px] font-medium text-accent-amber">
-            <Crown size={10} />Upgrade to Premium
-          </button>
+          <p className="text-sm text-text-tertiary">Premium</p>
+          <div className="mt-1 flex items-center gap-1 rounded-full bg-gradient-to-r from-amber-500/20 to-orange-500/20 px-3 py-0.5 text-[10px] font-medium text-accent-amber">
+            <Crown size={10} />All Sounds Unlocked
+          </div>
         </div>
       </div>
 

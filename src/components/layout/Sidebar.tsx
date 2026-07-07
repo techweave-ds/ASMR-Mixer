@@ -3,15 +3,16 @@
 import {
   Home, Compass, SlidersVertical, Heart,
   User, Crown, Moon, Sun, Settings,
-  Sparkles, Music, Clock, Shuffle, Star, Timer
+  Music, Shuffle, Star, Timer, Play, Headphones
 } from "lucide-react"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
-import { useUiStore, useSettingsStore, useAudioStore } from "@/store"
+import { useUiStore, useSettingsStore, useAudioStore, useMixerStore, useFavoritesStore } from "@/store"
+import { useToastStore } from "@/store/toast-store"
 import { cn } from "@/lib/utils"
 import { Equalizer } from "@/components/ui/Equalizer"
 import { useStoreHydration } from "@/hooks/useStoreHydration"
-import { sounds } from "@/data/sounds"
+import { sounds, getSoundById } from "@/data/sounds"
 
 const navItems = [
   { href: "/", icon: Home, label: "Home" },
@@ -27,7 +28,10 @@ export function Sidebar() {
   const { sidebarOpen, setSidebarOpen } = useUiStore()
   const { theme, setTheme } = useSettingsStore()
   const isPlaying = useAudioStore((s) => s.isPlaying)
+  const isPlayingSounds = useAudioStore((s) => s.isPlayingSounds)
   const playSingle = useAudioStore((s) => s.playSingle)
+  const presets = useMixerStore((s) => s.presets)
+  const loadPreset = useMixerStore((s) => s.loadPreset)
 
   if (!hydrated) return null
 
@@ -77,24 +81,69 @@ export function Sidebar() {
           <div className="mt-8">
             <p className="px-3 pb-1 text-[10px] font-medium uppercase tracking-widest text-text-quaternary">Quick Access</p>
             <div className="space-y-0.5">
-              {[
-                { label: "Continue Listening", icon: Music },
-                { label: "Favorites", icon: Heart },
-                { label: "Quick Mixes", icon: SlidersVertical },
-              ].map(({ label, icon: Icon }) => (
-                <button
-                  key={label}
-                  onClick={() => {
-                    if (label === "Favorites") router.push("/favorites")
-                    else router.push("/explore")
-                    setSidebarOpen(false)
-                  }}
-                  className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-text-tertiary transition-all duration-150 hover:text-text-secondary hover:bg-glass-hover"
-                >
-                  <Icon size={18} />
-                  <span>{label}</span>
-                </button>
-              ))}
+              {/* Continue Listening */}
+              <button
+                onClick={() => {
+                  if (isPlayingSounds.size > 0) {
+                    router.push("/mixer")
+                  } else {
+                    const favs = useFavoritesStore.getState().soundIds
+                    if (favs.length > 0) playSingle(favs[0])
+                  }
+                  setSidebarOpen(false)
+                }}
+                className={cn(
+                  "flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-150",
+                  isPlayingSounds.size > 0
+                    ? "text-accent-light hover:bg-accent/10"
+                    : "text-text-tertiary hover:text-text-secondary hover:bg-glass-hover"
+                )}
+              >
+                {isPlayingSounds.size > 0 ? <Headphones size={18} /> : <Music size={18} />}
+                <span className="truncate">
+                  {isPlayingSounds.size > 0
+                    ? (() => {
+                        const first = getSoundById(Array.from(isPlayingSounds)[0])
+                        return first?.title ?? "Playing"
+                      })()
+                    : "Continue Listening"}
+                </span>
+                {isPlayingSounds.size > 0 && <Equalizer className="ml-auto" size="sm" />}
+              </button>
+              {/* Favorites */}
+              <button
+                onClick={() => { router.push("/favorites"); setSidebarOpen(false) }}
+                className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-text-tertiary transition-all duration-150 hover:text-text-secondary hover:bg-glass-hover"
+              >
+                <Heart size={18} />
+                <span>Favorites</span>
+              </button>
+              {/* Quick Mixes */}
+              <button
+                onClick={() => { router.push("/mixer"); setSidebarOpen(false) }}
+                className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-text-tertiary transition-all duration-150 hover:text-text-secondary hover:bg-glass-hover"
+              >
+                <SlidersVertical size={18} />
+                <span>Quick Mixes</span>
+              </button>
+              {presets.length > 0 && (
+                <div className="ml-6 mt-1 space-y-0.5 border-l border-border-subtle pl-2">
+                  {presets.map((preset) => (
+                    <button
+                      key={preset.id}
+                      onClick={() => {
+                        loadPreset(preset.id)
+                        router.push("/mixer")
+                        setSidebarOpen(false)
+                      }}
+                      className="flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-xs text-text-tertiary transition-all hover:text-text-secondary hover:bg-glass-hover"
+                    >
+                      <Play size={10} className="shrink-0" />
+                      <span className="truncate">{preset.name}</span>
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
 
@@ -114,7 +163,7 @@ export function Sidebar() {
                       const randomSound = sounds[Math.floor(Math.random() * sounds.length)]
                       if (randomSound) playSingle(randomSound.id)
                     } else if (label === "Sleep Timer") {
-                      alert("Sleep timer: coming soon!")
+                      useToastStore.getState().addToast({ type: "info", title: "Sleep Timer", description: "Set a timer from the player bar." })
                     } else if (label === "Daily Recommendation") {
                       router.push("/explore")
                     }
@@ -132,17 +181,14 @@ export function Sidebar() {
 
         {/* Premium Card */}
         <div className="px-4 py-3">
-          <div className="rounded-3xl bg-gradient-to-br from-blue-500/8 to-indigo-600/8 p-4 ring-1 ring-accent/10">
+          <div className="rounded-3xl bg-gradient-to-br from-amber-500/8 to-yellow-600/8 p-4 ring-1 ring-amber-500/10">
             <div className="flex items-center gap-2 mb-2">
               <Crown size={14} className="text-accent-amber" />
-              <span className="text-xs font-semibold text-accent-amber/90">Go Premium</span>
+              <span className="text-xs font-semibold text-accent-amber/90">Premium</span>
             </div>
-            <p className="mb-3 text-[11px] leading-relaxed text-text-tertiary">
-              Unlock all sounds, offline mode, and high-quality audio.
+            <p className="mb-1 text-[11px] leading-relaxed text-text-tertiary">
+              All sounds unlocked. No subscription needed.
             </p>
-            <button onClick={() => router.push("/#pricing")} className="w-full rounded-2xl bg-accent/15 px-3 py-2 text-xs font-medium text-accent-light/90 transition-all hover:bg-accent/25">
-              See Plans
-            </button>
           </div>
         </div>
 
@@ -163,7 +209,7 @@ export function Sidebar() {
             </div>
             <div className="flex-1">
               <p className="text-sm font-medium text-text-secondary">Listener</p>
-              <p className="text-[10px] text-text-tertiary">Free Account</p>
+              <p className="text-[10px] text-text-tertiary">Premium</p>
             </div>
           </Link>
           <div className="mt-2 flex items-center gap-1 px-1">

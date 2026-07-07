@@ -12,6 +12,7 @@ import { MiniMixer } from "@/components/home/MiniMixer"
 import { SoundCard } from "@/components/ui/SoundCard"
 import { sounds } from "@/data/sounds"
 import { cn } from "@/lib/utils"
+import { useToastStore } from "@/store/toast-store"
 import { useScrollProgress, useScrollContainer } from "@/hooks/useScrollContainer"
 
 const HeroOverlay = dynamic(() => import("@/components/hero/HeroOverlay").then((m) => ({ default: m.HeroOverlay })), { ssr: false })
@@ -218,7 +219,7 @@ export function HomeContent() {
                     <li key={f} className="flex items-center gap-2 text-xs text-white/50"><Sparkles size={10} className="text-amber-400 shrink-0" />{f}</li>
                   ))}
                 </ul>
-                <button onClick={() => alert("Free trial coming soon!")} className="w-full rounded-xl bg-amber-500/15 border border-amber-400/20 py-2.5 text-xs font-semibold text-amber-300 hover:bg-amber-500/20 transition-all shadow-lg shadow-amber-500/5">Start Free Trial</button>
+                <button onClick={() => { useToastStore.getState().addToast({ type: "info", title: "All sounds unlocked", description: "Premium content is now available to everyone." }) }} className="w-full rounded-xl bg-amber-500/15 border border-amber-400/20 py-2.5 text-xs font-semibold text-amber-300 hover:bg-amber-500/20 transition-all shadow-lg shadow-amber-500/5">All Sounds Unlocked</button>
               </div>
             </div>
           </motion.div>
