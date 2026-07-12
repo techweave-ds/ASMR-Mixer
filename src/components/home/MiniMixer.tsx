@@ -55,7 +55,7 @@ export function MiniMixer() {
   return (
     <section className="relative py-24 md:py-32 overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-b from-accent/5 via-transparent to-bg-primary pointer-events-none" />
-      <div className="relative z-10 max-w-4xl mx-auto px-8 md:px-16 lg:px-24">
+      <div className="relative z-10 max-w-4xl mx-auto px-6 md:px-16 lg:px-24">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}

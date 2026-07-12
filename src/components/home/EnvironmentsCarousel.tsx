@@ -75,7 +75,7 @@ export function EnvironmentsCarousel() {
         </motion.div>
       </AnimatePresence>
 
-      <div className="absolute inset-0 z-10 flex flex-col justify-end pb-16 md:pb-24 px-8 md:px-16 lg:px-24">
+      <div className="absolute inset-0 z-10 flex flex-col justify-end pb-16 md:pb-24 px-6 md:px-16 lg:px-24">
         <div className="max-w-2xl">
           <motion.p
             key={`${env.id}-label`}

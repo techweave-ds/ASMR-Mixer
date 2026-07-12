@@ -9,7 +9,7 @@ export function StatsSection() {
   const collectionCount = collections.length
 
   return (
-    <section className="py-16 md:py-24 px-8 md:px-16 lg:px-24 max-w-4xl mx-auto">
+    <section className="py-16 md:py-24 px-6 md:px-16 lg:px-24 max-w-4xl mx-auto">
       <motion.p
         initial={{ opacity: 0, y: 12 }}
         whileInView={{ opacity: 1, y: 0 }}

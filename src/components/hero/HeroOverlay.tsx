@@ -180,7 +180,7 @@ export function HeroOverlay() {
         {/* Nav */}
         <motion.nav variants={fadeIn} className="flex items-center justify-between px-6 py-4">
           <div className="flex items-center gap-2">
-            <img src="/logo.png" alt="Noctune" className="h-10 w-auto" />
+            <img src="/logo.png" alt="Noctune" className="h-8 md:h-10 w-auto" />
           </div>
           <div className="hidden md:flex items-center gap-6 mx-8">
             <a href="/explore" className="text-[11px] text-white/50 hover:text-white/80 transition-colors">Explore</a>
@@ -190,7 +190,7 @@ export function HeroOverlay() {
         </motion.nav>
 
         {/* Left: Headline + CTAs */}
-        <div className="flex flex-col justify-center h-full px-8 md:px-16 lg:px-24 pb-16">
+        <div className="flex flex-col justify-center h-full px-6 md:px-16 lg:px-24 pb-20 lg:pb-16">
           <div className="max-w-xl">
             <motion.div variants={fadeUp} className="mb-2">
               <p className="text-[10px] text-white/20 uppercase tracking-widest">{greeting}</p>
@@ -202,7 +202,7 @@ export function HeroOverlay() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -24 }}
                   transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-                  className="text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold tracking-tight mb-4 leading-[1.1] text-white">
+                  className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold tracking-tight mb-3 md:mb-4 leading-[1.1] text-white">
                   {orbCopy ? orbCopy.headline : HEADLINES[headlineIdx].text}
                 </motion.h1>
               </AnimatePresence>
@@ -215,21 +215,21 @@ export function HeroOverlay() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -12 }}
                   transition={{ duration: 0.6, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
-                  className="text-sm md:text-base text-white/40 max-w-lg leading-relaxed mb-8">
+                  className="text-xs sm:text-sm md:text-base text-white/40 max-w-lg leading-relaxed mb-6 md:mb-8">
                   {orbCopy ? orbCopy.subhead : DEFAULT_SUBHEAD}
                 </motion.p>
               </AnimatePresence>
             </motion.div>
 
-            <motion.div variants={fadeUp} className="flex items-center gap-3 flex-wrap">
+            <motion.div variants={fadeUp} className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3">
               <a href="/explore"
-                className="group relative flex items-center gap-2.5 rounded-full bg-white/15 border border-white/25 px-7 py-3 text-sm font-semibold text-white transition-all hover:bg-white/20 active:scale-[0.97] overflow-hidden shadow-lg shadow-white/5">
-                <Sparkles size={14} className="text-accent-light" />
+                className="group relative flex items-center justify-center gap-2 rounded-full bg-white/15 border border-white/25 px-5 sm:px-7 py-2.5 sm:py-3 text-xs sm:text-sm font-semibold text-white transition-all hover:bg-white/20 active:scale-[0.97] overflow-hidden shadow-lg shadow-white/5">
+                <Sparkles size={12} className="text-accent-light" />
                 Start Listening
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity rounded-full glow-accent" />
               </a>
               <a href="/explore"
-                className="flex items-center gap-2 rounded-full border border-white/10 px-5 py-2.5 text-xs font-medium text-white/40 transition-all hover:text-white/60 hover:border-white/15 active:scale-[0.97]">
+                className="flex items-center justify-center gap-2 rounded-full border border-white/10 px-4 sm:px-5 py-2 sm:py-2.5 text-[11px] sm:text-xs font-medium text-white/40 transition-all hover:text-white/60 hover:border-white/15 active:scale-[0.97]">
                 Explore Library
               </a>
             </motion.div>

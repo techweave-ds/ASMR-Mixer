@@ -51,7 +51,7 @@ export function PlayerBar() {
   }
 
   return (
-    <div className={cn("rounded-[28px] h-[92px] lg:h-[92px] md:h-[82px] flex-shrink-0 border-t flex items-center px-4 lg:px-6 gap-4 transition-all duration-300",
+    <div className={cn("rounded-[28px] h-[72px] md:h-[82px] lg:h-[92px] flex-shrink-0 border-t flex items-center px-3 lg:px-6 gap-2 md:gap-4 transition-all duration-300",
       hasSounds ? "bg-bg-secondary border-[rgba(255,255,255,0.08)]" : "bg-bg-secondary/50 border-white/[0.04]")}>
       {/* Left: Track Info + Sound Selector */}
       <div className="flex items-center gap-3 min-w-0 w-[200px] lg:w-[280px] flex-shrink-0 relative">
@@ -66,15 +66,20 @@ export function PlayerBar() {
             </div>
           )}
         </button>
-        <div className="min-w-0 flex-1 hidden sm:block">
-          <div className="flex items-center gap-2">
-            <p className={cn("truncate text-sm font-medium", hasSounds ? "text-text-primary" : "text-text-tertiary")}>
-              {hasSounds ? (singleMode ? (firstSound?.title ?? playingArray[0]) : `${playingArray.length} sounds`) : "No sounds playing"}
+        <div className="min-w-0 flex-1">
+          <p className="block sm:hidden truncate text-xs font-medium text-text-primary max-w-[100px]">
+            {hasSounds ? (firstSound?.title ?? "Playing") : "No sounds"}
+          </p>
+          <div className="hidden sm:block">
+            <div className="flex items-center gap-2">
+              <p className={cn("truncate text-sm font-medium", hasSounds ? "text-text-primary" : "text-text-tertiary")}>
+                {hasSounds ? (singleMode ? (firstSound?.title ?? playingArray[0]) : `${playingArray.length} sounds`) : "No sounds playing"}
+              </p>
+            </div>
+            <p className="truncate text-xs text-text-tertiary">
+              {hasSounds ? (singleMode ? (firstSound ? categoryLabels[firstSound.category] || firstSound.category : "") : "Tap to manage layers") : "Pick a sound to begin"}
             </p>
           </div>
-          <p className="truncate text-xs text-text-tertiary">
-            {hasSounds ? (singleMode ? (firstSound ? categoryLabels[firstSound.category] || firstSound.category : "") : "Tap to manage layers") : "Pick a sound to begin"}
-          </p>
         </div>
 
         {/* Sound picker dropdown */}

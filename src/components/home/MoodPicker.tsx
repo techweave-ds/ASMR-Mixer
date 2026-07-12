@@ -66,7 +66,7 @@ export function MoodPicker() {
           : undefined,
       }}>
       <div className="absolute inset-0 bg-bg-primary/60 pointer-events-none" />
-      <div className="relative z-10 max-w-6xl mx-auto px-8 md:px-16 lg:px-24">
+      <div className="relative z-10 max-w-6xl mx-auto px-6 md:px-16 lg:px-24">
         <div className="mb-8">
           <p className="text-[10px] uppercase tracking-widest text-white/20 mb-3">Hear It First</p>
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white leading-tight">
