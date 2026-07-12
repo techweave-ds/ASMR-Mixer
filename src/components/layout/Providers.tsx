@@ -11,6 +11,7 @@ import { AmbientOverlay } from "@/components/player/AmbientOverlay"
 import { BottomNav } from "@/components/layout/BottomNav"
 import { SearchContent } from "@/components/search/SearchContent"
 import { ToastContainer } from "@/components/ui/ToastContainer"
+import { KeyboardShortcutsHelp } from "@/components/ui/KeyboardShortcutsHelp"
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts"
 import { useSettingsStore, useToastStore } from "@/store"
 import { ScrollContainerContext } from "@/hooks/useScrollContainer"
@@ -34,6 +35,7 @@ function ProvidersInner({ children, pathname, isHome, transitionProps, scrollRef
         <BottomNav />
         <SearchContent />
         <AmbientOverlay />
+        <KeyboardShortcutsHelp />
         <ToastContainer />
       </div>
     )
@@ -59,6 +61,7 @@ function ProvidersInner({ children, pathname, isHome, transitionProps, scrollRef
       <BottomNav />
       <SearchContent />
       <AmbientOverlay />
+      <KeyboardShortcutsHelp />
       <ToastContainer />
     </div>
   )

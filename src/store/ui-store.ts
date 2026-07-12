@@ -8,6 +8,7 @@ interface UiState {
   searchOpen: boolean
   recentSearches: string[]
   ambientMode: boolean
+  helpOpen: boolean
 }
 
 interface UiActions {
@@ -20,6 +21,7 @@ interface UiActions {
   addRecentSearch: (query: string) => void
   clearRecentSearches: () => void
   setAmbientMode: (on: boolean) => void
+  setHelpOpen: (open: boolean) => void
 }
 
 type UiStore = UiState & UiActions
@@ -33,6 +35,7 @@ export const useUiStore = create<UiStore>()(
       searchOpen: false,
       recentSearches: [],
       ambientMode: false,
+      helpOpen: false,
 
       toggleSidebar: () => set({ sidebarOpen: !get().sidebarOpen }),
       setSidebarOpen: (open) => set({ sidebarOpen: open }),
@@ -47,6 +50,7 @@ export const useUiStore = create<UiStore>()(
       },
       clearRecentSearches: () => set({ recentSearches: [] }),
       setAmbientMode: (on) => set({ ambientMode: on }),
+      setHelpOpen: (open) => set({ helpOpen: open }),
     }),
     { name: "noctune-ui-storage" }
   )
