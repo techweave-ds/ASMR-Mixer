@@ -236,8 +236,8 @@ export function HeroOverlay() {
           </div>
         </div>
 
-        {/* Right: Now Playing + Environment Selector */}
-        <motion.div variants={fadeIn} className="absolute right-6 md:right-12 top-1/2 -translate-y-1/2 flex flex-col items-end gap-4">
+        {/* Right: Now Playing + Environment Selector (desktop only) */}
+        <motion.div variants={fadeIn} className="hidden lg:flex absolute right-6 md:right-12 top-1/2 -translate-y-1/2 flex-col items-end gap-4">
           {/* Now Playing Card */}
           {activeOrb ? (
             <motion.div
@@ -315,10 +315,40 @@ export function HeroOverlay() {
           </div>
         </motion.div>
 
+        {/* Mobile: horizontal env strip */}
+        <motion.div variants={fadeIn} className="lg:hidden absolute bottom-20 left-0 right-0 px-6 z-10">
+          <div className="flex overflow-x-auto gap-2 pb-2 scrollbar-none">
+            {[
+              { id: "rainforest" as const, label: "Rainforest", icon: "🌧" },
+              { id: "forest" as const, label: "Forest", icon: "🌲" },
+              { id: "ocean" as const, label: "Ocean", icon: "🌊" },
+              { id: "campfire" as const, label: "Campfire", icon: "🔥" },
+              { id: "snow" as const, label: "Snowfall", icon: "❄" },
+              { id: "night" as const, label: "Night Sky", icon: "🌙" },
+              { id: "desert" as const, label: "Desert", icon: "☀" },
+            ].map((env) => {
+              const soundId = envSoundMap[env.id]
+              const playing = soundId ? isSoundPlaying(soundId) : false
+              return (
+                <button key={env.id} onClick={() => handleEnvChange(env.id)}
+                  className={cn(
+                    "flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-[11px] font-medium transition-all whitespace-nowrap flex-shrink-0",
+                    playing
+                      ? "border-accent/40 bg-accent/10 text-white"
+                      : "border-white/10 bg-white/[0.06] text-white/50 hover:text-white/80 hover:border-white/20"
+                  )}>
+                  <span className="text-sm">{playing ? <Pause size={10} className="text-accent-light" /> : env.icon}</span>
+                  <span>{env.label}</span>
+                </button>
+              )
+            })}
+          </div>
+        </motion.div>
+
         {/* Scroll Indicator */}
         <motion.button variants={fadeIn}
           onClick={scrollToContent}
-          className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1.5 text-white/40 hover:text-white/70 transition-all group"
+          className="absolute bottom-6 left-1/2 -translate-x-1/2 flex-col items-center gap-1.5 text-white/40 hover:text-white/70 transition-all group hidden lg:flex"
           style={{ opacity: scrolled ? 0 : 1, pointerEvents: scrolled ? "none" : "auto" }}>
           <span className="text-[10px] font-medium uppercase tracking-widest group-hover:tracking-[0.15em] transition-all">Explore Soundscapes</span>
           <ChevronDown size={18} className="animate-bounce" />

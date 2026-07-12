@@ -98,10 +98,10 @@ export function SoundCard({
         </button>
         <button onClick={(e) => { e.stopPropagation(); toggleFav(id) }}
           className={cn(
-            "absolute top-2.5 right-2.5 flex h-8 w-8 items-center justify-center rounded-full transition-all duration-300",
+            "absolute top-2.5 right-2.5 flex h-11 w-11 items-center justify-center rounded-full transition-all duration-300",
             favorited ? "text-accent-red bg-black/40" : "text-white/60 bg-black/20 opacity-0 group-hover:opacity-100 hover:text-white hover:bg-black/40"
           )}>
-          <Heart size={13} fill={favorited ? "currentColor" : "none"} />
+          <Heart size={15} fill={favorited ? "currentColor" : "none"} />
         </button>
       </div>
       {/* Info */}

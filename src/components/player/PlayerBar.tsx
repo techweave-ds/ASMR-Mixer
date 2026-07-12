@@ -54,19 +54,19 @@ export function PlayerBar() {
     <div className={cn("rounded-[28px] h-[92px] lg:h-[92px] md:h-[82px] flex-shrink-0 border-t flex items-center px-4 lg:px-6 gap-4 transition-all duration-300",
       hasSounds ? "bg-bg-secondary border-[rgba(255,255,255,0.08)]" : "bg-bg-secondary/50 border-white/[0.04]")}>
       {/* Left: Track Info + Sound Selector */}
-      <div className="flex items-center gap-3 min-w-0 w-[280px] flex-shrink-0 relative">
+      <div className="flex items-center gap-3 min-w-0 w-[200px] lg:w-[280px] flex-shrink-0 relative">
         <button onClick={() => setShowSoundPicker(!showSoundPicker)}
-          className={cn("h-14 w-14 flex-shrink-0 rounded-xl overflow-hidden shadow-lg flex items-center justify-center transition-all hover:ring-2 hover:ring-accent/30",
+          className={cn("h-10 w-10 md:h-14 md:w-14 flex-shrink-0 rounded-xl overflow-hidden shadow-lg flex items-center justify-center transition-all hover:ring-2 hover:ring-accent/30",
             hasSounds ? "bg-gradient-to-br" : "bg-glass border border-border-subtle")}
           style={firstSound?.coverUrl && hasSounds ? { backgroundImage: `url(${firstSound.coverUrl})`, backgroundSize: 'cover', backgroundPosition: 'center' } : {}}>
-          {!hasSounds && <Disc3 size={20} className="text-text-quaternary" />}
+          {!hasSounds && <Disc3 size={16} className="text-text-quaternary" />}
           {hasSounds && playingArray.length > 1 && (
             <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
               <span className="text-xs font-bold text-white">{playingArray.length}</span>
             </div>
           )}
         </button>
-        <div className="min-w-0 flex-1">
+        <div className="min-w-0 flex-1 hidden sm:block">
           <div className="flex items-center gap-2">
             <p className={cn("truncate text-sm font-medium", hasSounds ? "text-text-primary" : "text-text-tertiary")}>
               {hasSounds ? (singleMode ? (firstSound?.title ?? playingArray[0]) : `${playingArray.length} sounds`) : "No sounds playing"}
@@ -79,7 +79,7 @@ export function PlayerBar() {
 
         {/* Sound picker dropdown */}
         {showSoundPicker && hasSounds && (
-          <div className="absolute bottom-full left-0 mb-2 w-72 rounded-xl border border-border-subtle bg-bg-elevated shadow-2xl p-2 z-20">
+          <div className="absolute bottom-full left-0 mb-2 w-64 lg:w-72 rounded-xl border border-border-subtle bg-bg-elevated shadow-2xl p-2 z-20">
             <p className="px-2 py-1 text-[10px] font-medium uppercase tracking-widest text-text-quaternary">Active Sounds</p>
             <div className="space-y-1 mt-1">
               {playingArray.map((sid) => {
@@ -90,12 +90,12 @@ export function PlayerBar() {
                     <span className="flex-1 text-xs text-text-secondary truncate">{s?.title || sid}</span>
                     <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                       <button onClick={(e) => { e.stopPropagation(); togglePause?.() }}
-                        className="rounded p-1 text-text-quaternary hover:text-text-secondary transition-colors">
-                        {showPlayIcon ? <Play size={10} /> : <Pause size={10} />}
+                        className="rounded p-1.5 text-text-quaternary hover:text-text-secondary transition-colors">
+                        {showPlayIcon ? <Play size={12} /> : <Pause size={12} />}
                       </button>
                       <button onClick={(e) => { e.stopPropagation(); stopSound(sid) }}
-                        className="rounded p-1 text-text-quaternary hover:text-accent-red transition-colors">
-                        <X size={10} />
+                        className="rounded p-1.5 text-text-quaternary hover:text-accent-red transition-colors">
+                        <X size={12} />
                       </button>
                     </div>
                   </div>
@@ -149,8 +149,8 @@ export function PlayerBar() {
       </div>
 
       {/* Right: Volume + Widgets */}
-      <div className="flex items-center gap-3 w-[280px] flex-shrink-0 justify-end">
-        <div className="flex items-center gap-2">
+      <div className="flex items-center gap-1 lg:gap-3 w-auto lg:w-[280px] flex-shrink-0 justify-end">
+        <div className="items-center gap-2 hidden lg:flex">
           <button aria-label="Volume"
             onMouseEnter={() => setShowVolume(true)}
             onMouseLeave={() => setShowVolume(false)}
@@ -174,13 +174,13 @@ export function PlayerBar() {
 
         <div className="flex items-center gap-1">
           <button aria-label="Open current mix" onClick={() => setRightPanelOpen(true)}
-            className={cn("h-8 w-8 rounded-2xl transition-all flex items-center justify-center lg:hidden",
+            className={cn("h-9 w-9 rounded-2xl transition-all flex items-center justify-center lg:hidden",
               hasSounds ? "text-text-quaternary hover:text-text-secondary hover:bg-glass-hover" : "text-text-quaternary/30")} disabled={!hasSounds}>
-            <ListMusic size={15} />
+            <ListMusic size={16} />
           </button>
           <div className="relative">
             <button aria-label="Sleep timer" onClick={() => setShowTimer(!showTimer)}
-              className={cn("h-8 w-8 rounded-2xl transition-all flex items-center justify-center gap-1",
+              className={cn("h-9 w-9 lg:h-8 lg:w-8 rounded-2xl transition-all flex items-center justify-center gap-1",
                 timerMinutes ? "text-accent-light bg-accent/10 w-auto px-2" : hasSounds ? "text-text-quaternary hover:text-text-secondary hover:bg-glass-hover" : "text-text-quaternary/30")}>
               <Timer size={15} />
               {timerMinutes && timerRemaining && timerRemaining > 0 && (
