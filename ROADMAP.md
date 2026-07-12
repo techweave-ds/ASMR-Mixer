@@ -47,15 +47,15 @@
 - **Sound of the day** — featured procedural sound with description
 
 ## Phase 5: Advanced Audio & UI ⚡ (Partially started)
-- **Sleep timer UI** — store logic exists in `audio-store.ts` (`setTimer`, `cancelTimer`, `timerRemaining`, auto-fade), needs front-end UI component
+- **Sleep timer UI** — ✓ implemented in PlayerBar dropdown (15/30/45/60/120 min options, timer remaining display, cancel)
+- **Ambient mode** — ✓ full-screen overlay with dimmed gradient background, large play/pause, current sound info, volume slider, timer badge, auto-hide cursor, ESC to exit. Toggle via Moon icon in PlayerBar
 - **Remaining Audio v2 features**:
   - Convolution reverb for spatial depth
   - Dynamic compressor for smooth blending
   - Stereo panning per sound layer
   - Parametric EQ per channel
-- **Visualizer** — real-time waveform and spectrum display
+- **Visualizer** — real-time waveform and spectrum display (CSS decorative version exists, needs AnalyserNode wiring)
 - **Crossfade presets** — smooth transitions between mixes
-- **Ambient mode** — full-screen audio-only with dimmed UI for sleep
 
 ## Phase 6: Premium & Monetization ⏳ (Planned)
 - **Premium tier**:
