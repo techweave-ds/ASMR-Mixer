@@ -212,7 +212,13 @@ export function Sidebar() {
               <p className="text-[10px] text-text-tertiary">Premium</p>
             </div>
           </Link>
-          <div className="mt-2 flex items-center gap-1 px-1">
+          <div className="mt-2 flex flex-wrap items-center gap-1 px-1">
+            <Link href="/support" onClick={() => setSidebarOpen(false)}
+              className="rounded-lg px-2.5 py-1.5 text-[11px] text-text-tertiary hover:text-text-secondary hover:bg-glass-hover transition-colors">Support</Link>
+            <Link href="/privacy" onClick={() => setSidebarOpen(false)}
+              className="rounded-lg px-2.5 py-1.5 text-[11px] text-text-tertiary hover:text-text-secondary hover:bg-glass-hover transition-colors">Privacy</Link>
+            <Link href="/terms" onClick={() => setSidebarOpen(false)}
+              className="rounded-lg px-2.5 py-1.5 text-[11px] text-text-tertiary hover:text-text-secondary hover:bg-glass-hover transition-colors">Terms</Link>
             <button
               onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
               className="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-[11px] text-text-tertiary hover:text-text-secondary hover:bg-glass-hover transition-colors"

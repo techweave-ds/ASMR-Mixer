@@ -235,10 +235,10 @@ export function HomeContent() {
               <span className="text-white/30 text-xs">Noctune · Find your quiet.</span>
             </div>
             <div className="flex items-center gap-4 text-[11px] text-white/20">
-              <a href="#" className="hover:text-white/40 transition-colors">Product</a>
-              <a href="#" className="hover:text-white/40 transition-colors">Support</a>
-              <a href="#" className="hover:text-white/40 transition-colors">Privacy</a>
-              <a href="#" className="hover:text-white/40 transition-colors">Terms</a>
+              <a href="/explore" className="hover:text-white/40 transition-colors">Explore</a>
+              <a href="/support" className="hover:text-white/40 transition-colors">Support</a>
+              <a href="/privacy" className="hover:text-white/40 transition-colors">Privacy</a>
+              <a href="/terms" className="hover:text-white/40 transition-colors">Terms</a>
             </div>
           </div>
         </footer>

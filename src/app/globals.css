@@ -61,14 +61,14 @@ html, body {
 }
 
 body {
-  background: #090B12;
-  color: #F8FAFC;
+  background: var(--color-bg-primary);
+  color: var(--color-text-primary);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-::selection { background: rgba(90, 124, 255, 0.2); color: #F8FAFC; }
+::selection { background: rgba(90, 124, 255, 0.2); color: var(--color-text-primary); }
 
 input, textarea, button { outline: none; }
 input:focus-visible, button:focus-visible, a:focus-visible {
@@ -78,6 +78,52 @@ input:focus-visible, button:focus-visible, a:focus-visible {
 
 .scrollbar-none::-webkit-scrollbar { display: none; }
 .scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
+
+:root:not(.dark) {
+  --color-bg-primary: #F8FAFC;
+  --color-bg-base: #F8FAFC;
+  --color-bg-secondary: #EDF2F7;
+  --color-bg-elevated: #E2E8F0;
+  --color-surface-1: #E2E8F0;
+  --color-surface-2: #CBD5E0;
+  --color-surface-glass: rgba(0, 0, 0, 0.04);
+  --color-accent-primary: #4A6CF7;
+  --color-accent: #4A6CF7;
+  --color-accent-light: #4A6CF7;
+  --color-accent-lighter: #6B8AFF;
+  --color-accent-secondary: #6B4CE6;
+  --color-accent-success: #2DBD8F;
+  --color-accent-green: #2DBD8F;
+  --color-accent-warning: #E6A800;
+  --color-accent-amber: #E6A800;
+  --color-accent-red: #E05050;
+  --color-text-primary: #0F172A;
+  --color-text-secondary: #334155;
+  --color-text-muted: #64748B;
+  --color-text-tertiary: #64748B;
+  --color-text-quaternary: #94A3B8;
+  --color-glass: rgba(0, 0, 0, 0.03);
+  --color-glass-hover: rgba(0, 0, 0, 0.06);
+  --color-border: rgba(0, 0, 0, 0.08);
+  --color-border-hover: rgba(0, 0, 0, 0.12);
+  --color-border-subtle: rgba(0, 0, 0, 0.06);
+}
+
+:root:not(.dark) ::selection { background: rgba(74, 108, 247, 0.2); color: #0F172A; }
+
+:root:not(.dark) .glass {
+  background: rgba(255,255,255,0.7);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-color: rgba(0,0,0,0.08);
+}
+
+:root:not(.dark) .glow-accent {
+  box-shadow: 0 0 30px rgba(74, 108, 247, 0.12);
+}
+:root:not(.dark) .glow-accent:hover {
+  box-shadow: 0 0 40px rgba(74, 108, 247, 0.2);
+}
 
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 @keyframes slideUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
@@ -111,7 +157,7 @@ input:focus-visible, button:focus-visible, a:focus-visible {
 .glow-accent { box-shadow: 0 0 30px color-mix(in srgb, var(--color-accent-primary) 10%, transparent); }
 
 .cinema-gradient {
-  background: linear-gradient(180deg, transparent 0%, rgba(9,11,18,0.3) 40%, rgba(9,11,18,0.7) 70%, #090B12 100%);
+  background: linear-gradient(180deg, transparent 0%, color-mix(in srgb, var(--color-bg-primary) 30%, transparent) 40%, color-mix(in srgb, var(--color-bg-primary) 70%, transparent) 70%, var(--color-bg-primary) 100%);
 }
 
 .card-hover {

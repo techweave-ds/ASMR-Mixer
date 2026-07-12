@@ -161,6 +161,7 @@ export const useAudioStore = create<AudioStore>((set, get) => ({
 
   setMasterVolume: (volume: number) => {
     audioEngine.setMasterVolume(volume)
+    set({ volume })
   },
 
   setTimer: (minutes: number | null) => {

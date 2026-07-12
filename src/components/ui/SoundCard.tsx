@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Play, Pause, Heart, Clock, Sparkles } from "lucide-react"
+import { Play, Pause, Heart, Clock, Sparkles, Music } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useAudioStore, useFavoritesStore } from "@/store"
 import { categoryLabels } from "@/data/sounds"
@@ -64,7 +64,7 @@ export function SoundCard({
     >
       {/* Artwork */}
       <div
-        className={cn("relative aspect-square rounded-xl bg-gradient-to-br overflow-hidden", gradient)}
+        className={cn("relative aspect-square rounded-xl bg-bg-elevated bg-gradient-to-br overflow-hidden", gradient)}
         style={{
           ...(safeCover ? { backgroundImage: `url(${safeCover})`, backgroundSize: 'cover', backgroundPosition: 'center' } : {}),
           transform: hovered ? "scale(1.02)" : "scale(1)",
@@ -74,6 +74,11 @@ export function SoundCard({
       >
         {coverUrl && !imgFailed && (
           <img src={coverUrl} alt="" className="hidden" onError={() => setImgFailed(true)} loading="lazy" />
+        )}
+        {imgFailed && (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <Music size={24} className="text-white/20" />
+          </div>
         )}
         <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
         {playing && (
