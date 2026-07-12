@@ -7,6 +7,7 @@ import { Sidebar } from "@/components/layout/Sidebar"
 import { TopBar } from "@/components/layout/TopBar"
 import { RightPanel } from "@/components/layout/RightPanel"
 import { PlayerBar } from "@/components/player/PlayerBar"
+import { AmbientOverlay } from "@/components/player/AmbientOverlay"
 import { BottomNav } from "@/components/layout/BottomNav"
 import { SearchContent } from "@/components/search/SearchContent"
 import { ToastContainer } from "@/components/ui/ToastContainer"
@@ -32,6 +33,7 @@ function ProvidersInner({ children, pathname, isHome, transitionProps, scrollRef
         <PlayerBar />
         <BottomNav />
         <SearchContent />
+        <AmbientOverlay />
         <ToastContainer />
       </div>
     )
@@ -56,6 +58,7 @@ function ProvidersInner({ children, pathname, isHome, transitionProps, scrollRef
       <PlayerBar />
       <BottomNav />
       <SearchContent />
+      <AmbientOverlay />
       <ToastContainer />
     </div>
   )

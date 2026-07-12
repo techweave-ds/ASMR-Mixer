@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import {
-  Play, Pause, X, Volume2, Timer, Disc3, ListMusic, Music
+  Play, Pause, X, Volume2, Timer, Disc3, ListMusic, Music, Moon
 } from "lucide-react"
 import { useAudioStore, useUiStore } from "@/store"
 import { cn } from "@/lib/utils"
@@ -25,6 +25,7 @@ export function PlayerBar() {
   const setTimer = useAudioStore((s) => s.setTimer)
   const cancelTimer = useAudioStore((s) => s.cancelTimer)
   const setRightPanelOpen = useUiStore((s) => s.setRightPanelOpen)
+  const setAmbientMode = useUiStore((s) => s.setAmbientMode)
   const [showTimer, setShowTimer] = useState(false)
   const [showVolume, setShowVolume] = useState(false)
   const [showSoundPicker, setShowSoundPicker] = useState(false)
@@ -212,9 +213,17 @@ export function PlayerBar() {
                 </div>
               </div>
             )}
-          </div>
-        </div>
-      </div>
-    </div>
-  )
-}
+           </div>
+
+           <button onClick={() => setAmbientMode(true)}
+             className={cn("h-9 w-9 rounded-2xl transition-all flex items-center justify-center",
+               hasSounds ? "text-text-quaternary hover:text-text-secondary hover:bg-glass-hover" : "text-text-quaternary/30")}
+             disabled={!hasSounds}
+             aria-label="Ambient mode">
+             <Moon size={15} />
+           </button>
+         </div>
+       </div>
+     </div>
+   )
+ }
