@@ -4,7 +4,7 @@ export type SoundCategory =
   | "fan" | "clock" | "kitchen" | "coffee-machine" | "library" | "office"
   | "keyboard" | "writing" | "city" | "cafe" | "train" | "airport"
   | "traffic" | "white-noise" | "brown-noise" | "pink-noise" | "space"
-  | "whisper" | "tapping" | "crinkling" | "scratching"
+  | "whisper" | "tapping" | "crinkling" | "scratching" | "trigger"
 
 export interface Sound {
   id: string

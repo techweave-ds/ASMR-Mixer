@@ -614,6 +614,183 @@ const SOUND_BUILDERS: Record<string, SoundBuilder> = {
     const extraNodes: AudioNode[] = []
     return { nodes: [...n.nodes, ...m.nodes], cleanup: () => { active.current = false; clearInterval(scratchTimer) } }
   },
+  "rain-on-glass": (ctx, dest) => {
+    const n = noiseSource(ctx, "white", 0.06, dest, { type: "highpass", freq: 4000, Q: 0.8 })
+    n.gain.gain.linearRampToValueAtTime(0.1, ctx.currentTime + 2)
+    const m = lfoModulate(ctx, 0.6, 0.05, n.gain.gain)
+    const n2 = noiseSource(ctx, "white", 0.03, dest, { type: "bandpass", freq: 6000, Q: 1.5 })
+    n2.gain.gain.linearRampToValueAtTime(0.04, ctx.currentTime + 2)
+    const m2 = lfoModulate(ctx, 0.3, 0.03, n2.gain.gain)
+    return { nodes: [...n.nodes, ...n2.nodes, ...m.nodes, ...m2.nodes] }
+  },
+  "rain-on-leaves": (ctx, dest) => {
+    const n = noiseSource(ctx, "white", 0.05, dest, { type: "bandpass", freq: 2500, Q: 0.6 })
+    n.gain.gain.linearRampToValueAtTime(0.08, ctx.currentTime + 2)
+    const m = lfoModulate(ctx, 0.5, 0.04, n.gain.gain)
+    const n2 = noiseSource(ctx, "brown", 0.03, dest, { type: "lowpass", freq: 400, Q: 0.5 })
+    n2.gain.gain.linearRampToValueAtTime(0.04, ctx.currentTime + 2)
+    return { nodes: [...n.nodes, ...n2.nodes, ...m.nodes] }
+  },
+  "rain-on-tent": (ctx, dest) => {
+    const n = noiseSource(ctx, "white", 0.07, dest, { type: "lowpass", freq: 3000, Q: 0.4 })
+    n.gain.gain.linearRampToValueAtTime(0.09, ctx.currentTime + 2)
+    const m = lfoModulate(ctx, 0.4, 0.04, n.gain.gain)
+    const n2 = noiseSource(ctx, "brown", 0.02, dest, { type: "lowpass", freq: 200, Q: 0.5 })
+    n2.gain.gain.linearRampToValueAtTime(0.03, ctx.currentTime + 2)
+    return { nodes: [...n.nodes, ...n2.nodes, ...m.nodes] }
+  },
+  "rain-on-car": (ctx, dest) => {
+    const n = noiseSource(ctx, "white", 0.1, dest, { type: "bandpass", freq: 1500, Q: 1.2 })
+    n.gain.gain.linearRampToValueAtTime(0.14, ctx.currentTime + 2)
+    const m = lfoModulate(ctx, 0.3, 0.06, n.gain.gain)
+    const n2 = noiseSource(ctx, "white", 0.04, dest, { type: "highpass", freq: 5000, Q: 0.3 })
+    n2.gain.gain.linearRampToValueAtTime(0.05, ctx.currentTime + 2)
+    const m2 = lfoModulate(ctx, 0.5, 0.03, n2.gain.gain)
+    return { nodes: [...n.nodes, ...n2.nodes, ...m.nodes, ...m2.nodes] }
+  },
+  "glass-fruit-slicing": (ctx, dest) => {
+    const active = { current: true }
+    const sliceTimer = setInterval(() => {
+      if (!active.current) { clearInterval(sliceTimer); return }
+      const d = Math.random() * 1.5
+      const osc = ctx.createOscillator()
+      const gain = ctx.createGain()
+      osc.type = "sine"
+      osc.frequency.setValueAtTime(3000 + Math.random() * 2000, ctx.currentTime + d)
+      gain.gain.setValueAtTime(0, ctx.currentTime + d)
+      gain.gain.linearRampToValueAtTime(0.08, ctx.currentTime + d + 0.005)
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + d + 0.15)
+      osc.connect(gain)
+      gain.connect(dest)
+      osc.start(ctx.currentTime + d)
+      osc.stop(ctx.currentTime + d + 0.15)
+      extraNodes.push(osc, gain)
+      const buf = createNoiseBuffer(ctx, "white", 0.08)
+      const src = ctx.createBufferSource()
+      src.buffer = buf
+      const g2 = ctx.createGain()
+      const f = ctx.createBiquadFilter()
+      f.type = "highpass"
+      f.frequency.setValueAtTime(4000, ctx.currentTime + d)
+      f.Q.setValueAtTime(0.5, ctx.currentTime + d)
+      g2.gain.setValueAtTime(0.06, ctx.currentTime + d)
+      g2.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + d + 0.08)
+      src.connect(f)
+      f.connect(g2)
+      g2.connect(dest)
+      src.start(ctx.currentTime + d)
+      extraNodes.push(src, f, g2)
+    }, 2000)
+    const n = noiseSource(ctx, "pink", 0.01, dest, { type: "lowpass", freq: 200, Q: 0.5 })
+    const extraNodes: AudioNode[] = []
+    return { nodes: [...n.nodes], cleanup: () => { active.current = false; clearInterval(sliceTimer) } }
+  },
+  "soap-carving": (ctx, dest) => {
+    const n = noiseSource(ctx, "brown", 0.03, dest, { type: "bandpass", freq: 800, Q: 1.5 })
+    n.gain.gain.linearRampToValueAtTime(0.04, ctx.currentTime + 2)
+    const m = lfoModulate(ctx, 0.6, 0.02, n.gain.gain)
+    const active = { current: true }
+    const carveTimer = setInterval(() => {
+      if (!active.current) { clearInterval(carveTimer); return }
+      if (Math.random() < 0.35) {
+        const d = Math.random() * 0.5
+        const buf = createNoiseBuffer(ctx, "white", 0.1)
+        const src = ctx.createBufferSource()
+        src.buffer = buf
+        const g = ctx.createGain()
+        const f = ctx.createBiquadFilter()
+        f.type = "bandpass"
+        f.frequency.setValueAtTime(1000 + Math.random() * 800, ctx.currentTime + d)
+        f.Q.setValueAtTime(3.0, ctx.currentTime + d)
+        g.gain.setValueAtTime(0, ctx.currentTime + d)
+        g.gain.linearRampToValueAtTime(0.04, ctx.currentTime + d + 0.02)
+        g.gain.linearRampToValueAtTime(0, ctx.currentTime + d + 0.15 + Math.random() * 0.15)
+        src.connect(f)
+        f.connect(g)
+        g.connect(dest)
+        src.start(ctx.currentTime + d)
+        extraNodes.push(src, f, g)
+      }
+    }, 1200)
+    const extraNodes: AudioNode[] = []
+    return { nodes: [...n.nodes, ...m.nodes], cleanup: () => { active.current = false; clearInterval(carveTimer) } }
+  },
+  "glass-clink": (ctx, dest) => {
+    const active = { current: true }
+    const clinkTimer = setInterval(() => {
+      if (!active.current) { clearInterval(clinkTimer); return }
+      if (Math.random() < 0.4) {
+        const d = Math.random() * 2.0
+        const osc = ctx.createOscillator()
+        const gain = ctx.createGain()
+        osc.type = "sine"
+        osc.frequency.setValueAtTime(3500 + Math.random() * 1500, ctx.currentTime + d)
+        gain.gain.setValueAtTime(0, ctx.currentTime + d)
+        gain.gain.linearRampToValueAtTime(0.06, ctx.currentTime + d + 0.002)
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + d + 0.25)
+        osc.connect(gain)
+        gain.connect(dest)
+        osc.start(ctx.currentTime + d)
+        osc.stop(ctx.currentTime + d + 0.3)
+        extraNodes.push(osc, gain)
+        if (Math.random() < 0.3) {
+          const osc2 = ctx.createOscillator()
+          const g2 = ctx.createGain()
+          osc2.type = "sine"
+          osc2.frequency.setValueAtTime(5000 + Math.random() * 1000, ctx.currentTime + d + 0.02)
+          g2.gain.setValueAtTime(0.03, ctx.currentTime + d + 0.02)
+          g2.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + d + 0.15)
+          osc2.connect(g2)
+          g2.connect(dest)
+          osc2.start(ctx.currentTime + d + 0.02)
+          osc2.stop(ctx.currentTime + d + 0.2)
+          extraNodes.push(osc2, g2)
+        }
+      }
+    }, 1800)
+    const extraNodes: AudioNode[] = []
+    return { nodes: [], cleanup: () => { active.current = false; clearInterval(clinkTimer) } }
+  },
+  "glass-shatter": (ctx, dest) => {
+    const active = { current: true }
+    const shatterTimer = setInterval(() => {
+      if (!active.current) { clearInterval(shatterTimer); return }
+      const d = Math.random() * 5.0
+      const count = 5 + Math.floor(Math.random() * 8)
+      for (let i = 0; i < count; i++) {
+        const offset = d + i * 0.015 + Math.random() * 0.01
+        const osc = ctx.createOscillator()
+        const gain = ctx.createGain()
+        osc.type = "sine"
+        osc.frequency.setValueAtTime(2000 + Math.random() * 4000, ctx.currentTime + offset)
+        gain.gain.setValueAtTime(0, ctx.currentTime + offset)
+        gain.gain.linearRampToValueAtTime(0.03 + Math.random() * 0.04, ctx.currentTime + offset + 0.002)
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + offset + 0.08 + Math.random() * 0.12)
+        osc.connect(gain)
+        gain.connect(dest)
+        osc.start(ctx.currentTime + offset)
+        osc.stop(ctx.currentTime + offset + 0.2)
+        extraNodes.push(osc, gain)
+      }
+      const buf = createNoiseBuffer(ctx, "white", 0.08)
+      const src = ctx.createBufferSource()
+      src.buffer = buf
+      const g = ctx.createGain()
+      const f = ctx.createBiquadFilter()
+      f.type = "highpass"
+      f.frequency.setValueAtTime(5000, ctx.currentTime + d)
+      f.Q.setValueAtTime(0.5, ctx.currentTime + d)
+      g.gain.setValueAtTime(0.07, ctx.currentTime + d)
+      g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + d + 0.15)
+      src.connect(f)
+      f.connect(g)
+      g.connect(dest)
+      src.start(ctx.currentTime + d)
+      extraNodes.push(src, f, g)
+    }, 6000)
+    const extraNodes: AudioNode[] = []
+    return { nodes: [], cleanup: () => { active.current = false; clearInterval(shatterTimer) } }
+  },
 }
 
 const MAX_CONCURRENT_SOUNDS = 16
