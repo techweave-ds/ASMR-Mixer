@@ -10,7 +10,7 @@
 | **Platform** | Web (desktop-first, responsive tablet/mobile) |
 | **Render** | Static export (SPA with routing) |
 | **Deploy target** | Cloudflare Pages |
-| **State** | Production-readiness audit — Prompts A–L (A–J complete) |
+| **State** | Production-ready — Prompts A–J ✓; mobile responsive ongoing; sound count 62 |
 | **URL** | https://noctune.pages.dev |
 | **Source** | https://github.com/techweave-ds/ASMR-Mixer.git |
 
@@ -20,7 +20,7 @@ Noctune generates ambient/ASMR sounds entirely procedurally via the Web Audio AP
 
 ## Key Features
 
-- **Procedural audio engine** — 56+ sound types using oscillators, noise buffers, LFO modulation, scheduled intervals; linear ramps for all gain changes; soft ceiling at 16 concurrent sounds; suspended-state recovery
+- **Procedural audio engine** — 62 sound types using oscillators, noise buffers, LFO modulation, scheduled intervals; linear ramps for all gain changes; soft ceiling at 16 concurrent sounds; suspended-state recovery
 - **3D immersive hero** — Three.js/R3F scene with mountain ranges, stars, fog, fireflies, 6 interactive glass orbs, 7 environments; auto-degrades to static gradient on low-power mobile GPUs
 - **Desktop-first layout** — 100vw/100vh, fixed 280px sidebar + fluid content + 360px right panel + 92px player bar + mobile bottom nav
 - **Volume 2 design system** — Full design token system (bg, accent, text, surface, glass, motion vars), rounded-2xl buttons, rounded-3xl cards, glassmorphism
