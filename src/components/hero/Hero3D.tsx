@@ -174,9 +174,8 @@ function GroundGlow({ env }: { env: EnvKey }) {
   )
 }
 
-function InteractiveOrb({ orb, index, activeOrb, hoveredOrb, onOrbClick, onOrbHover, reducedMotion }: {
+function InteractiveOrb({ orb, activeOrb, hoveredOrb, onOrbClick, onOrbHover, reducedMotion }: {
   orb: OrbData
-  index: number
   activeOrb: string | null
   hoveredOrb: string | null
   onOrbClick: (orb: OrbData) => void
@@ -186,7 +185,7 @@ function InteractiveOrb({ orb, index, activeOrb, hoveredOrb, onOrbClick, onOrbHo
   const meshRef = useRef<THREE.Mesh>(null!)
   const glowRef = useRef<THREE.Mesh>(null!)
   const basePos = useMemo(() => new THREE.Vector3(...orb.pos), [orb.pos])
-  const phase = useMemo(() => Math.random() * Math.PI * 2, [])
+  const [phase] = useState(() => Math.random() * Math.PI * 2)
   const isActive = activeOrb === orb.id
   const isHovered = hoveredOrb === orb.id
 
@@ -324,11 +323,10 @@ function SceneContent({ env, activeOrb, hoveredOrb, onOrbClick, onOrbHover, redu
       </mesh>
 
       {/* Interactive Orbs */}
-      {ORBS.map((orb, i) => (
+      {ORBS.map((orb) => (
         <InteractiveOrb
           key={orb.id}
           orb={orb}
-          index={i}
           activeOrb={activeOrb}
           hoveredOrb={hoveredOrb}
           onOrbClick={onOrbClick}

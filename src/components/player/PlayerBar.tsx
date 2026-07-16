@@ -68,7 +68,7 @@ export function PlayerBar() {
           )}
         </button>
         <div className="min-w-0 flex-1">
-          <p className="block sm:hidden truncate text-xs font-medium text-text-primary max-w-[100px]">
+          <p className="block sm:hidden truncate text-xs font-medium text-text-primary max-w-[120px]">
             {hasSounds ? (firstSound?.title ?? "Playing") : "No sounds"}
           </p>
           <div className="hidden sm:block">

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useRef, useCallback } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { SlidersHorizontal, Play, Volume2 } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { motion } from "framer-motion"
@@ -25,7 +25,6 @@ export function MiniMixer() {
     campfire: false,
     "wind-gentle": false,
   })
-  const cleanupRef = useRef<(() => void) | null>(null)
   const { playSingle } = useAudioStore()
 
   useEffect(() => {
@@ -81,7 +80,7 @@ export function MiniMixer() {
           className="rounded-2xl border border-white/10 bg-white/[0.02] p-8 md:p-10"
         >
           <div className="space-y-6">
-            {MIXER_SOUNDS.map((sound, i) => (
+            {MIXER_SOUNDS.map((sound) => (
               <div key={sound.id} className="flex items-center gap-4 md:gap-6">
                 <div className="w-12 text-right shrink-0">
                   <span className="text-xs font-medium text-white/50">{sound.label}</span>

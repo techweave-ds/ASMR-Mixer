@@ -1,12 +1,11 @@
 "use client"
 
-import { useState, useEffect, useCallback, useRef } from "react"
+import { useState, useEffect, useCallback, useRef, useMemo } from "react"
 import dynamic from "next/dynamic"
 import { motion, AnimatePresence } from "framer-motion"
-import { Sparkles, ChevronDown, Heart, Pause, Play, Headphones } from "lucide-react"
+import { Sparkles, ChevronDown, Heart, Pause, Headphones } from "lucide-react"
 import { cn } from "@/lib/utils"
 
-import { EnvironmentSelector } from "./EnvironmentSelector"
 import { useAudioStore } from "@/store"
 import { audioEngine } from "@/audio"
 
@@ -28,15 +27,6 @@ const HEADLINES = [
   { text: "Find Your Quiet.", accent: false },
   { text: "Listen Beyond Music.", accent: false },
 ]
-
-const ORB_LABELS: Record<string, string> = {
-  rain: "Rain Preview",
-  forest: "Forest Preview",
-  fire: "Fire Preview",
-  ocean: "Ocean Preview",
-  night: "Night Preview",
-  wind: "Wind Preview",
-}
 
 const stagger = {
   hidden: {},
@@ -62,17 +52,16 @@ export function HeroOverlay() {
   const [activeOrb, setActiveOrb] = useState<string | null>(null)
   const [hoveredOrb, setHoveredOrb] = useState<string | null>(null)
   const [activeEnv, setActiveEnv] = useState<"rainforest" | "forest" | "ocean" | "campfire" | "snow" | "night" | "desert" | null>("rainforest")
-  const [timeWarmth, setTimeWarmth] = useState(0.5)
   const [scrolled, setScrolled] = useState(false)
 
   const prevSoundRef = useRef<string | null>(null)
-  const contentRef = useRef<HTMLDivElement>(null!)
 
   const { isSoundPlaying, playSingle, stopSound } = useAudioStore()
 
-  useEffect(() => {
+  const timeWarmth = useMemo(() => {
+    if (typeof window === "undefined") return 0.5
     const h = new Date().getHours()
-    setTimeWarmth(h >= 6 && h < 12 ? 0.2 : h >= 12 && h < 18 ? 0.1 : h >= 18 && h < 21 ? 0.6 : 0.8)
+    return h >= 6 && h < 12 ? 0.2 : h >= 12 && h < 18 ? 0.1 : h >= 18 && h < 21 ? 0.6 : 0.8
   }, [])
 
   useEffect(() => {
@@ -103,7 +92,7 @@ export function HeroOverlay() {
 
   type EnvKey = "rainforest" | "forest" | "ocean" | "campfire" | "snow" | "night" | "desert"
 
-  const envSoundMap: Record<EnvKey, string> = {
+  const envSoundMap = useMemo((): Record<EnvKey, string> => ({
     rainforest: "rain-light",
     forest: "forest-day",
     ocean: "ocean-waves",
@@ -111,7 +100,7 @@ export function HeroOverlay() {
     snow: "snow-falling",
     night: "night-crickets",
     desert: "wind-gentle",
-  }
+  }), [])
 
   const handleEnvChange = useCallback(async (id: EnvKey) => {
     const soundId = envSoundMap[id]
@@ -127,7 +116,7 @@ export function HeroOverlay() {
     await playSingle(soundId)
     audioEngine.setSoundVolume(soundId, 0.2)
     setActiveEnv(id)
-  }, [isSoundPlaying, playSingle, stopSound, activeEnv])
+  }, [isSoundPlaying, playSingle, stopSound, activeEnv, envSoundMap])
 
   const handleOrbClick = useCallback(async (orb: { id: string; label: string; color: string; soundId: string }) => {
     if (activeOrb === orb.id) {

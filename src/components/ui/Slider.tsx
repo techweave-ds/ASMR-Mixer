@@ -34,12 +34,12 @@ export function Slider({
       border-radius: 50%;
       background: var(--color-accent-primary);
       cursor: pointer;
-      transition: transform 0.15s;
+      transition: transform 0.15s, opacity 0.15s;
       box-shadow: 0 0 8px color-mix(in srgb, var(--color-accent-primary) 30%, transparent);
-      opacity: 0;
     }
-    .group:hover .slider-thumb::-webkit-slider-thumb {
-      opacity: 1;
+    @media (hover: hover) {
+      .slider-thumb::-webkit-slider-thumb { opacity: 0; }
+      .group:hover .slider-thumb::-webkit-slider-thumb { opacity: 1; }
     }
     .slider-thumb::-webkit-slider-thumb:hover {
       transform: scale(1.2);

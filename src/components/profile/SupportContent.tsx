@@ -1,8 +1,7 @@
 "use client"
 
-import { Mail, MessageCircle, Book, Bug } from "lucide-react"
+import { Mail, MessageCircle, Bug } from "lucide-react"
 import Link from "next/link"
-import { cn } from "@/lib/utils"
 
 const FAQS = [
   { q: "How do I play a sound?", a: "Browse the Explore page or Hero section and click any SoundCard. Use the PlayerBar at the bottom to control playback, adjust volume, or set a sleep timer." },

@@ -1,7 +1,6 @@
 "use client"
 
-import { useRef, useState, useEffect, useCallback } from "react"
-import { useRouter } from "next/navigation"
+import { useRef, useState, useCallback } from "react"
 import dynamic from "next/dynamic"
 import { motion } from "framer-motion"
 import { Sparkles, Star, Quote } from "lucide-react"
@@ -30,17 +29,24 @@ function SectionSubtitle({ children, className }: { children: React.ReactNode; c
 }
 
 export function HomeContent() {
-  const router = useRouter()
   const contentRef = useRef<HTMLDivElement>(null!)
-  const [mounted, setMounted] = useState(false)
-
-  useEffect(() => setMounted(true), [])
+  const [mounted] = useState(true)
+  const [visitType] = useState(() => {
+    if (typeof window === "undefined") return "first"
+    const now = Date.now()
+    const stored = localStorage.getItem("noctune-last-visit")
+    if (!stored) {
+      localStorage.setItem("noctune-last-visit", String(now))
+      return "first"
+    }
+    const last = Number(stored)
+    const hoursAgo = (now - last) / 36e5
+    localStorage.setItem("noctune-last-visit", String(now))
+    return hoursAgo < 24 ? "recent" : "stale"
+  })
 
   const hour = new Date().getHours()
   const greeting = hour < 12 ? "Good Morning" : hour < 18 ? "Good Afternoon" : "Good Evening"
-
-  // Simulate returning user personalization (in production, read from preferences/analytics)
-  const returnVisit = mounted && Math.random() > 0.5
 
   const scrollProgress = useScrollProgress()
   const scrollContainer = useScrollContainer()
@@ -48,7 +54,7 @@ export function HomeContent() {
 
   const handleHeroWheel = useCallback((e: React.WheelEvent) => {
     if (scrollContainer && !heroFadedOut) {
-      scrollContainer.scrollTop += e.deltaY
+      scrollContainer.scrollBy({ top: e.deltaY, behavior: "instant" })
       e.preventDefault()
     }
   }, [scrollContainer, heroFadedOut])
@@ -56,14 +62,6 @@ export function HomeContent() {
   const heroOpacity = Math.max(0, 1 - scrollProgress * 2.5)
 
   const featuredSounds = sounds.filter((s) => !s.isPremium).slice(0, 8)
-
-  const sectionVariants = [
-    { initial: { opacity: 0, y: 20 }, transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] } },
-    { initial: { opacity: 0 }, transition: { duration: 0.8 } },
-    { initial: { opacity: 0, scale: 0.98 }, transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] } },
-    { initial: { opacity: 0, y: 20 }, transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] } },
-    { initial: { opacity: 0, scale: 0.98 }, transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] } },
-  ]
 
   return (
     <div className="relative">
@@ -99,9 +97,11 @@ export function HomeContent() {
               <div className="mb-10 p-5 rounded-2xl border border-white/[0.06] bg-white/[0.02]">
                 <p className="text-xs text-white/40 uppercase tracking-widest mb-1">{greeting}</p>
                 <p className="text-lg text-white/80 font-medium">
-                  {returnVisit
-                    ? "Continue your Rain Mix from last time."
-                    : "Welcome back. Find your quiet moment."}
+                  {visitType === "first"
+                    ? "Welcome to Noctune. Find your quiet."
+                    : visitType === "stale"
+                      ? "Good to see you again. Pick up where you left off?"
+                      : "Welcome back. Continue your mix from last time."}
                 </p>
               </div>
             )}
@@ -165,7 +165,7 @@ export function HomeContent() {
                       <Star key={i} size={12} className="text-amber-400" fill="currentColor" />
                     ))}
                   </div>
-                  <p className="text-sm text-white/60 leading-relaxed mb-4">"{t.quote}"</p>
+                  <p className="text-sm text-white/60 leading-relaxed mb-4">&ldquo;{t.quote}&rdquo;</p>
                   <div className="flex items-center gap-3">
                     <div className="h-8 w-8 rounded-full bg-gradient-to-br from-accent/20 to-purple-600/20 flex items-center justify-center text-[10px] font-bold text-accent-light">
                       {t.name.split(" ").map((n) => n[0]).join("")}
@@ -219,7 +219,7 @@ export function HomeContent() {
                     <li key={f} className="flex items-center gap-2 text-xs text-white/50"><Sparkles size={10} className="text-amber-400 shrink-0" />{f}</li>
                   ))}
                 </ul>
-                <button onClick={() => { useToastStore.getState().addToast({ type: "info", title: "All sounds unlocked", description: "Premium content is now available to everyone." }) }} className="w-full rounded-xl bg-amber-500/15 border border-amber-400/20 py-2.5 text-xs font-semibold text-amber-300 hover:bg-amber-500/20 transition-all shadow-lg shadow-amber-500/5">All Sounds Unlocked</button>
+                <button onClick={() => { useToastStore.getState().addToast({ type: "info", title: "Premium launching soon", description: "Join the waitlist to be the first to know when Premium launches." }) }} className="w-full rounded-xl bg-amber-500/15 border border-amber-400/20 py-2.5 text-xs font-semibold text-amber-300 hover:bg-amber-500/20 transition-all shadow-lg shadow-amber-500/5">Coming Soon — Join Waitlist</button>
               </div>
             </div>
           </motion.div>

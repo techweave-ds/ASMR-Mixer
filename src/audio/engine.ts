@@ -1,5 +1,13 @@
 "use client"
 
+import * as Sentry from "@sentry/nextjs"
+
+function captureError(error: unknown, context: string) {
+  if (typeof window !== "undefined" && process.env.NEXT_PUBLIC_SENTRY_DSN) {
+    Sentry.captureMessage(`[Audio] ${context}: ${String(error)}`, "error")
+  }
+}
+
 function createNoiseBuffer(ctx: AudioContext, type: "white" | "brown" | "pink", duration: number): AudioBuffer {
   const sampleRate = ctx.sampleRate
   const length = sampleRate * duration
@@ -871,6 +879,7 @@ class AsmrAudioEngine {
   private ctx: AudioContext | null = null
   private initialized = false
   private masterGain: GainNode | null = null
+  private analyser: AnalyserNode | null = null
   private activeSounds = new Map<string, { gain: GainNode; nodes: AudioNode[]; cleanup?: () => void }>()
   private volumeCache = new Map<string, number>()
   private fadeTimer: ReturnType<typeof setTimeout> | null = null
@@ -886,19 +895,23 @@ class AsmrAudioEngine {
       this.ctx = new AudioContext()
       this.masterGain = this.ctx.createGain()
       this.masterGain.gain.setValueAtTime(0.8, this.ctx.currentTime)
-      this.masterGain.connect(this.ctx.destination)
+      this.analyser = this.ctx.createAnalyser()
+      this.analyser.fftSize = 256
+      this.masterGain.connect(this.analyser)
+      this.analyser.connect(this.ctx.destination)
       this.initialized = true
     } catch (e) {
-      console.warn("[ASMR Audio] Web Audio API not available", e)
+      captureError(e, "AudioContext init failed")
     }
   }
 
-  destroy(): void {
-    this.stopAll()
+  async destroy(): Promise<void> {
+    await this.stopAll()
     this.ctx?.close()
     this.ctx = null
     this.initialized = false
     this.masterGain = null
+    this.analyser = null
   }
 
   private ensureContext(): void {
@@ -977,8 +990,9 @@ class AsmrAudioEngine {
     this.activeSounds.delete(soundId)
   }
 
-  stopAll(): void {
-    this.activeSounds.forEach((_, id) => this.stopSound(id, false))
+  async stopAll(): Promise<void> {
+    const ids = Array.from(this.activeSounds.keys())
+    await Promise.all(ids.map((id) => this.stopSound(id, false)))
     this.activeSounds.clear()
   }
 
@@ -988,6 +1002,13 @@ class AsmrAudioEngine {
 
   getPlayingSounds(): string[] {
     return Array.from(this.activeSounds.keys())
+  }
+
+  getFrequencyData(): Uint8Array {
+    if (!this.analyser) return new Uint8Array(128).fill(0)
+    const data = new Uint8Array(this.analyser.frequencyBinCount)
+    this.analyser.getByteFrequencyData(data)
+    return data
   }
 
   setFadeTimer(durationMinutes: number, callback: () => void): void {

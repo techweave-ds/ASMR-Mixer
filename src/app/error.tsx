@@ -1,6 +1,10 @@
 "use client"
 
-export default function Error({ reset }: { error: Error; reset: () => void }) {
+import * as Sentry from "@sentry/nextjs"
+import { useEffect } from "react"
+
+export default function Error({ error, reset }: { error: Error; reset: () => void }) {
+  useEffect(() => { Sentry.captureException(error) }, [error])
   return (
     <div className="h-screen flex flex-col items-center justify-center bg-bg-base text-center px-6">
       <p className="text-7xl font-bold bg-gradient-to-br from-red-300 to-orange-300 bg-clip-text text-transparent mb-4">!</p>

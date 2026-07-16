@@ -79,8 +79,8 @@ export function MixerContent() {
           if (!sound) return null
           const isAudible = layer.isMuted || (hasSolo && !layer.isSolo) ? false : true
           return (
-            <div key={layer.soundId}
-              className={cn("flex items-center gap-4 rounded-xl border p-4 transition-all",
+              <div key={layer.soundId}
+              className={cn("flex items-center gap-3 sm:gap-4 rounded-xl border p-3 sm:p-4 transition-all",
                 isAudible ? "border-border-subtle bg-glass" : "border-border-subtle/50 bg-glass/50 opacity-50")}>
               <div className={cn("h-10 w-10 flex-shrink-0 rounded-lg bg-gradient-to-br overflow-hidden", sound.gradient)}
                 style={sound.coverUrl ? { backgroundImage: `url(${sound.coverUrl})`, backgroundSize: 'cover', backgroundPosition: 'center' } : {}} />

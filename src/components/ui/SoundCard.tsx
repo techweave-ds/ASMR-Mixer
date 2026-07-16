@@ -90,7 +90,7 @@ export function SoundCard({
         {isPremium && !playing && (
           <div className="absolute top-2 left-2 flex items-center gap-1 rounded-full bg-gradient-to-r from-amber-500/20 to-yellow-600/20 backdrop-blur-sm border border-amber-400/30 px-2 py-0.5 shadow-lg shadow-amber-500/10">
             <Sparkles size={8} className="text-amber-400" />
-            <span className="text-[8px] font-bold text-amber-300 uppercase tracking-wider" aria-label="Premium sound, requires subscription">Premium</span>
+            <span className="text-[8px] font-bold text-amber-300 uppercase tracking-wider" aria-label="Premium sound — coming soon">Premium</span>
           </div>
         )}
         <button onClick={(e) => { e.stopPropagation(); handlePlayClick() }}

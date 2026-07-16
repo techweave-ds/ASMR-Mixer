@@ -19,7 +19,7 @@ export function StatsSection() {
       >
         <span className="text-white/60 font-semibold">{soundCount}</span> sounds.{" "}
         <span className="text-white/60 font-semibold">{collectionCount}</span> collections.{" "}
-        Built for one purpose: helping you find the quiet you didn't know you needed.
+        Built for one purpose: helping you find the quiet you didn&apos;t know you needed.
       </motion.p>
     </section>
   )

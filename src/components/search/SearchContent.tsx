@@ -40,6 +40,15 @@ export function SearchContent() {
   const inputRef = useRef<HTMLInputElement>(null)
   const listRef = useRef<HTMLDivElement>(null)
 
+  useEffect(() => {
+    if (searchOpen) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setQuery("")
+      setSelectedIdx(-1)
+      setTimeout(() => inputRef.current?.focus(), 50)
+    }
+  }, [searchOpen])
+
   const suggestions = useMemo(() => {
     if (!query.trim()) return []
     const q = query.toLowerCase()
@@ -64,18 +73,6 @@ export function SearchContent() {
   const results = keywordResults.length > 0 ? keywordResults : textResults
 
   const hasSuggestions = suggestions.length > 0 && query.trim().length > 0 && results.length === 0
-
-  useEffect(() => {
-    if (searchOpen) {
-      setQuery("")
-      setSelectedIdx(-1)
-      setTimeout(() => inputRef.current?.focus(), 50)
-    }
-  }, [searchOpen])
-
-  useEffect(() => {
-    setSelectedIdx(-1)
-  }, [query])
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "ArrowDown") {
@@ -109,7 +106,7 @@ export function SearchContent() {
         <div className="relative">
           <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-text-quaternary" />
           <input ref={inputRef} type="text" placeholder="Search sounds, categories, tags..." value={query}
-            onChange={(e) => setQuery(e.target.value)}
+            onChange={(e) => { setQuery(e.target.value); setSelectedIdx(-1) }}
             onKeyDown={handleKeyDown}
             className="w-full rounded-xl border border-border bg-glass py-4 pl-12 pr-12 text-base text-text-primary outline-none placeholder:text-text-quaternary focus:border-accent/50 transition-all"
             autoFocus aria-label="Search input" />
