@@ -34,8 +34,8 @@ jobs:
             echo "::warning::CLOUDFLARE_API_TOKEN not set — skipping deploy"
             exit 0
           fi
-          ARGS="pages deploy out --project-name=noctune --branch main"
+          GLOBALS=""
           if [ -n "$CLOUDFLARE_ACCOUNT_ID" ]; then
-            ARGS="$ARGS --account-id $CLOUDFLARE_ACCOUNT_ID"
+            GLOBALS="--account-id $CLOUDFLARE_ACCOUNT_ID"
           fi
-          npx wrangler@3 $ARGS 2>&1
+          npx wrangler@3 $GLOBALS pages deploy out --project-name=noctune --branch main 2>&1
