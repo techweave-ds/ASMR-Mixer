@@ -157,16 +157,16 @@ export function PlayerBar() {
       {/* Right: Volume + Widgets */}
       <div className="flex items-center gap-1 lg:gap-3 w-auto lg:w-[280px] flex-shrink-0 justify-end">
         <div className="items-center gap-2 hidden lg:flex">
-          <button aria-label="Volume"
+          <div className="relative"
             onMouseEnter={() => setShowVolume(true)}
-            onMouseLeave={() => setShowVolume(false)}
-            className="text-text-quaternary hover:text-text-secondary transition-colors relative"
-          >
-            <Volume2 size={16} />
+            onMouseLeave={() => setShowVolume(false)}>
+            <button aria-label="Volume"
+              className="text-text-quaternary hover:text-text-secondary transition-colors"
+            >
+              <Volume2 size={16} />
+            </button>
             {showVolume && (
-              <div className="absolute bottom-full right-0 mb-2 p-2 rounded-lg bg-bg-elevated border border-border-subtle shadow-2xl"
-                onMouseEnter={() => setShowVolume(true)}
-                onMouseLeave={() => setShowVolume(false)}>
+              <div className="absolute bottom-full right-0 mb-2 p-2 rounded-lg bg-bg-elevated border border-border-subtle shadow-2xl">
                 <div className="h-20 w-5 flex items-center justify-center">
                   <input type="range" min={0} max={1} step={0.01} value={volume} onChange={(e) => setMasterVolume(parseFloat(e.target.value))}
                     className="h-full w-1 appearance-none bg-border rounded-full cursor-pointer"
@@ -174,7 +174,7 @@ export function PlayerBar() {
                 </div>
               </div>
             )}
-          </button>
+          </div>
           <span className="text-[10px] text-text-quaternary w-6">{Math.round(volume * 100)}%</span>
         </div>
 

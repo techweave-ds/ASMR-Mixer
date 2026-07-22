@@ -89,7 +89,7 @@ export function MixerContent() {
                 <p className="text-xs text-text-tertiary truncate capitalize">{sound.category}</p>
               </div>
               <div className="flex items-center gap-3">
-                <Slider value={layer.volume} onChange={(v) => setLayerVolume(layer.soundId, v)} size="sm" className="w-20 sm:w-28" />
+                <Slider value={layer.volume} onChange={(v) => { setLayerVolume(layer.soundId, v); audioEngine.setSoundVolume(layer.soundId, v) }} size="sm" className="w-20 sm:w-28" />
                 <span className="text-[10px] text-text-quaternary w-8 text-right">{Math.round(layer.volume * 100)}%</span>
               </div>
               <div className="flex items-center gap-1">

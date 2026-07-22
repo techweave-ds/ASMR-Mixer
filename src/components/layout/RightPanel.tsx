@@ -7,6 +7,7 @@ import {
 } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { useAudioStore, useMixerStore, useUiStore } from "@/store"
+import { audioEngine } from "@/audio"
 import { Slider } from "@/components/ui/Slider"
 import { cn } from "@/lib/utils"
 import { Equalizer } from "@/components/ui/Equalizer"
@@ -83,11 +84,11 @@ export function RightPanel() {
                   </button>
                 </div>
                 <div className="flex items-center gap-2 mt-2">
-                  <button onClick={() => toggleMute(layer.soundId)}
+                  <button onClick={() => { const willMute = !layer.isMuted; toggleMute(layer.soundId); audioEngine.setSoundVolume(layer.soundId, willMute ? 0 : layer.volume) }}
                     className={cn("rounded-lg p-1 transition-colors", layer.isMuted ? "text-accent-red" : "text-text-quaternary hover:text-text-secondary")}>
                     {layer.isMuted ? <VolumeX size={13} /> : <Volume2 size={13} />}
                   </button>
-                  <Slider value={layer.volume} onChange={(v) => setLayerVolume(layer.soundId, v)} size="sm" className="flex-1" />
+                  <Slider value={layer.volume} onChange={(v) => { setLayerVolume(layer.soundId, v); audioEngine.setSoundVolume(layer.soundId, v) }} size="sm" className="flex-1" />
                   <span className="w-7 text-right text-[10px] text-text-quaternary">{Math.round(layer.volume * 100)}%</span>
                 </div>
               </div>
@@ -100,7 +101,7 @@ export function RightPanel() {
         {layers.length > 0 && (
           <div className="flex items-center gap-3">
             <Volume2 size={14} className="text-text-quaternary" />
-            <Slider value={masterVolume} onChange={setMasterVolume} size="sm" className="flex-1" />
+            <Slider value={masterVolume} onChange={(v) => { setMasterVolume(v); audioEngine.setMasterVolume(v) }} size="sm" className="flex-1" />
             <span className="w-7 text-right text-[10px] text-text-quaternary">{Math.round(masterVolume * 100)}%</span>
           </div>
         )}
