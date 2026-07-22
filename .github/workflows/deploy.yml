@@ -25,10 +25,12 @@ jobs:
 
       - if: github.ref == 'refs/heads/main'
         name: Deploy to Cloudflare Pages
-        uses: cloudflare/wrangler-action@v3
-        continue-on-error: true
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          command: pages deploy out --project-name=noctune
         env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
+        run: |
+          if [ -z "$CLOUDFLARE_API_TOKEN" ]; then
+            echo "::warning::CLOUDFLARE_API_TOKEN not set — skipping deploy"
+            exit 0
+          fi
+          npx wrangler@3 pages deploy out --project-name=noctune --branch main 2>&1
