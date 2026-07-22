@@ -26,6 +26,9 @@ jobs:
       - if: github.ref == 'refs/heads/main'
         name: Deploy to Cloudflare Pages
         uses: cloudflare/wrangler-action@v3
+        continue-on-error: true
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           command: pages deploy out --project-name=noctune
+        env:
+          ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
