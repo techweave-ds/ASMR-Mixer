@@ -27,10 +27,15 @@ jobs:
         name: Deploy to Cloudflare Pages
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
         run: |
           if [ -z "$CLOUDFLARE_API_TOKEN" ]; then
             echo "::warning::CLOUDFLARE_API_TOKEN not set — skipping deploy"
             exit 0
           fi
-          npx wrangler@3 pages deploy out --project-name=noctune --branch main 2>&1
+          ARGS="pages deploy out --project-name=noctune --branch main"
+          if [ -n "$CLOUDFLARE_ACCOUNT_ID" ]; then
+            ARGS="$ARGS --account-id $CLOUDFLARE_ACCOUNT_ID"
+          fi
+          npx wrangler@3 $ARGS 2>&1
